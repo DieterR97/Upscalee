@@ -58,48 +58,67 @@ const ImageQualityAssessment: React.FC<IQAProps> = ({ originalImage, upscaledIma
 
         setLoading({ isLoading: true, message: 'Evaluating image quality...' });
         try {
+            const formData = new FormData();
+            
             // Convert blob URLs to actual files
             const originalResponse = await fetch(originalImage);
             const upscaledResponse = await fetch(upscaledImage);
-
             const originalBlob = await originalResponse.blob();
             const upscaledBlob = await upscaledResponse.blob();
-
-            // Create FormData and append files
-            const formData = new FormData();
+            
             formData.append('original_image', originalBlob, 'original.png');
             formData.append('upscaled_image', upscaledBlob, 'upscaled.png');
             formData.append('metrics', JSON.stringify(selectedMetrics));
 
-            const response = await fetch('http://localhost:5000/evaluate-quality', {
-                method: 'POST',
-                body: formData,
-            });
+            let isDownloading = true;
+            let retryCount = 0;
+            const MAX_RETRIES = 30; // Increased max retries
+            const RETRY_DELAY = 2000; // 2 seconds between retries
 
-            const data = await response.json();
-
-            // If weights are being downloaded, show downloading message and retry
-            if (data.downloading) {
-                setLoading({ isLoading: true, message: 'Downloading metric weights (this may take a few minutes)...' });
-                
-                // Wait a bit before retrying to allow download to progress
-                await new Promise(resolve => setTimeout(resolve, 2000));
-                
-                // Retry the evaluation
-                const retryResponse = await fetch('http://localhost:5000/evaluate-quality', {
+            while (isDownloading && retryCount < MAX_RETRIES) {
+                const response = await fetch('http://localhost:5000/evaluate-quality', {
                     method: 'POST',
                     body: formData,
                 });
-                
-                const retryData = await retryResponse.json();
-                setResults(retryData);
-            } else {
-                setResults(data);
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                console.log(`Attempt ${retryCount + 1} results:`, data);
+
+                if (data.error) {
+                    throw new Error(data.error);
+                }
+
+                if (data.downloading?.status) {
+                    setLoading({ 
+                        isLoading: true, 
+                        message: `${data.downloading.message} (attempt ${retryCount + 1}/${MAX_RETRIES})`
+                    });
+                    await new Promise(resolve => setTimeout(resolve, RETRY_DELAY));
+                    retryCount++;
+                } else {
+                    isDownloading = false;
+                    setResults(data);
+                }
             }
+
+            if (retryCount >= MAX_RETRIES) {
+                throw new Error('Maximum retries reached while waiting for metric weights download');
+            }
+
         } catch (error) {
             console.error('Error evaluating image quality:', error);
+            setResults(null);
+            // Show error to user
+            setLoading({ 
+                isLoading: false, 
+                message: `Error: ${error instanceof Error ? error.message : 'Unknown error occurred'}`
+            });
         } finally {
-            setLoading({ isLoading: false, message: '' });
+            setLoading(prev => ({ ...prev, isLoading: false }));
         }
     };
 
@@ -196,12 +215,16 @@ const ImageQualityAssessment: React.FC<IQAProps> = ({ originalImage, upscaledIma
                             {Object.entries(results)
                                 .filter(([key, _]) => key !== 'downloading') // Filter out the downloading status
                                 .map(([metric, result]) => {
-                                    // Skip if result is not valid
-                                    if (!result || typeof result !== 'object') return null;
+                                    if (!result || typeof result !== 'object') {
+                                        console.log('Skipping invalid result:', metric, result);
+                                        return null;
+                                    }
 
-                                    // Get the metric info from available metrics
                                     const metricInfo = availableMetrics[metric];
-                                    if (!metricInfo) return null;
+                                    if (!metricInfo) {
+                                        console.log('Missing metric info for:', metric);
+                                        return null;
+                                    }
 
                                     return (
                                         <tr key={metric}>
@@ -211,11 +234,11 @@ const ImageQualityAssessment: React.FC<IQAProps> = ({ originalImage, upscaledIma
                                                 {result.error ? (
                                                     <span className="error">{result.error}</span>
                                                 ) : result.type === 'fr' ? (
-                                                    result.score?.toFixed(4)
+                                                    result.score !== undefined ? result.score.toFixed(4) : 'N/A'
                                                 ) : (
                                                     <>
-                                                        Original: {result.original?.toFixed(4)}<br />
-                                                        Upscaled: {result.upscaled?.toFixed(4)}
+                                                        Original: {result.original !== undefined ? result.original.toFixed(4) : 'N/A'}<br />
+                                                        Upscaled: {result.upscaled !== undefined ? result.upscaled.toFixed(4) : 'N/A'}
                                                     </>
                                                 )}
                                             </td>

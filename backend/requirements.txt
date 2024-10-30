@@ -10,3 +10,5 @@ realesrgan==0.3.0           # A Real-World Super Resolution Generative Adversari
 torch==2.4.1+cu118          # PyTorch, an open-source machine learning framework for tensor computation.
 torchaudio==2.4.1+cu118     # PyTorch's audio processing library, providing functionalities for audio processing.
 torchvision==0.19.1         # PyTorch's computer vision library, providing datasets, model architectures, and image transformations.
+requests
+tqdm

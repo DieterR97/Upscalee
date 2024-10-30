@@ -17,6 +17,7 @@ import numpy as np
 from PIL.ExifTags import TAGS
 import math
 from get_image_info import get_image_info
+from functools import lru_cache
 
 app = Flask(__name__)
 CORS(app, resources={
@@ -290,6 +291,12 @@ def temporary_torch_home():
         else:
             os.environ.pop('TORCH_HOME', None)
 
+# Add this cache for loaded metrics
+@lru_cache(maxsize=None)
+def get_cached_metric(metric_name):
+    """Cache the loaded metric to prevent reloading."""
+    return pyiqa.create_metric(metric_name, device=device)
+
 @app.route('/evaluate-quality', methods=['POST'])
 def evaluate_quality():
     try:
@@ -315,55 +322,69 @@ def evaluate_quality():
             original_img.save(resized_original_path)
         
         results = {}
-        downloading = False
+        downloading_metrics = []
         
-        for metric_name in metrics:
-            try:
+        try:
+            # First attempt to create all metrics to trigger downloads
+            for metric_name in metrics:
+                try:
+                    with temporary_torch_home():
+                        # This will trigger the download if needed
+                        metric = get_cached_metric(metric_name)
+                except Exception as e:
+                    print(f"Error loading metric {metric_name}: {str(e)}")
+                    downloading_metrics.append(metric_name)
+            
+            # If we're still downloading, inform the client
+            if downloading_metrics:
+                return jsonify({
+                    'downloading': {
+                        'status': True,
+                        'metrics': downloading_metrics,
+                        'message': f'Downloading weights for {", ".join(downloading_metrics)}...'
+                    }
+                })
+            
+            # Process all metrics
+            for metric_name in metrics:
                 with temporary_torch_home():
-                    # Check if weights file exists
-                    metric_path = os.path.join(METRIC_WEIGHTS_DIR, f"{metric_name}_weights.pth")
-                    if not os.path.exists(metric_path):
-                        downloading = True
-                    
-                    metric = pyiqa.create_metric(metric_name, device=device)
+                    metric = get_cached_metric(metric_name)
                     metric_info = SUPPORTED_METRICS[metric_name]
-                
-                if metric_info['type'] == 'fr':
-                    # For full-reference metrics, use the resized original
-                    score = metric(upscaled_path, resized_original_path).item()
-                    results[metric_name] = {
-                        'score': score,
-                        'type': 'fr',
-                        'score_range': metric_info['score_range'],
-                        'higher_better': metric_info['higher_better']
-                    }
-                else:  # No-reference metric
-                    original_score = metric(resized_original_path).item()
-                    upscaled_score = metric(upscaled_path).item()
-                    results[metric_name] = {
-                        'original': original_score,
-                        'upscaled': upscaled_score,
-                        'type': 'nr',
-                        'score_range': metric_info['score_range'],
-                        'higher_better': metric_info['higher_better']
-                    }
                     
-            except Exception as e:
-                print(f"Error evaluating metric {metric_name}: {str(e)}")
-                results[metric_name] = {
-                    'error': str(e),
-                    'type': metric_info['type'],
-                    'score_range': metric_info['score_range'],
-                    'higher_better': metric_info['higher_better']
-                }
+                    if metric_info['type'] == 'fr':
+                        score = metric(upscaled_path, resized_original_path).item()
+                        results[metric_name] = {
+                            'score': score,
+                            'type': 'fr',
+                            'score_range': metric_info['score_range'],
+                            'higher_better': metric_info['higher_better']
+                        }
+                    else:  # No-reference metric
+                        original_score = metric(resized_original_path).item()
+                        upscaled_score = metric(upscaled_path).item()
+                        results[metric_name] = {
+                            'original': original_score,
+                            'upscaled': upscaled_score,
+                            'type': 'nr',
+                            'score_range': metric_info['score_range'],
+                            'higher_better': metric_info['higher_better']
+                        }
+            
+            # Add downloading status to results
+            results['downloading'] = {
+                'status': False,
+                'metrics': []
+            }
+            
+        except Exception as e:
+            print(f"Error processing metrics: {str(e)}")
+            results['error'] = str(e)
         
-        # Add downloading status to response
-        results['downloading'] = downloading
-        
-        # Clean up temporary files
-        os.remove(original_path)
-        os.remove(upscaled_path)
-        os.remove(resized_original_path)
+        finally:
+            # Clean up temporary files
+            for path in [original_path, upscaled_path, resized_original_path]:
+                if os.path.exists(path):
+                    os.remove(path)
         
         return jsonify(results)
         
