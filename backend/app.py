@@ -278,24 +278,48 @@ SUPPORTED_METRICS = {
 def get_available_metrics():
     return jsonify(SUPPORTED_METRICS)
 
-# Create a temporary environment context manager
+# Force PyTorch to use our directory
+os.environ['TORCH_HOME'] = METRIC_WEIGHTS_DIR
+os.environ['TORCH_HUB_DIR'] = METRIC_WEIGHTS_DIR
+torch.hub.set_dir(METRIC_WEIGHTS_DIR)
+
+# Update the temporary_torch_home context manager
 @contextmanager
 def temporary_torch_home():
-    original_torch_home = os.environ.get('TORCH_HOME')
+    """Temporarily set torch home and hub dir to our metric weights directory."""
+    original_torch_home = os.environ.get('TORCH_HOME', None)
+    original_hub_dir = os.environ.get('TORCH_HUB_DIR', None)
+    original_cache_dir = torch.hub.get_dir()
+    
+    os.environ['TORCH_HOME'] = METRIC_WEIGHTS_DIR
+    os.environ['TORCH_HUB_DIR'] = METRIC_WEIGHTS_DIR
+    torch.hub.set_dir(METRIC_WEIGHTS_DIR)
+    
     try:
-        os.environ['TORCH_HOME'] = METRIC_WEIGHTS_DIR
         yield
     finally:
         if original_torch_home:
             os.environ['TORCH_HOME'] = original_torch_home
-        else:
-            os.environ.pop('TORCH_HOME', None)
+        if original_hub_dir:
+            os.environ['TORCH_HUB_DIR'] = original_hub_dir
+        torch.hub.set_dir(original_cache_dir)
 
 # Add this cache for loaded metrics
 @lru_cache(maxsize=None)
 def get_cached_metric(metric_name):
     """Cache the loaded metric to prevent reloading."""
     return pyiqa.create_metric(metric_name, device=device)
+
+def check_metric_weights_available(metric_name):
+    """Check if metric weights are available."""
+    try:
+        with temporary_torch_home():
+            # Try to create metric - this will use existing weights if available
+            metric = get_cached_metric(metric_name)
+            return True
+    except Exception as e:
+        print(f"Weights not found for {metric_name}: {str(e)}")
+        return False
 
 @app.route('/evaluate-quality', methods=['POST'])
 def evaluate_quality():
@@ -312,47 +336,36 @@ def evaluate_quality():
         original_file.save(original_path)
         upscaled_file.save(upscaled_path)
         
-        # Resize original to match upscaled dimensions
-        with Image.open(upscaled_path) as upscaled_img:
-            upscaled_size = upscaled_img.size
-            
-        with Image.open(original_path) as original_img:
-            original_img = original_img.resize(upscaled_size, Image.Resampling.LANCZOS)
-            resized_original_path = os.path.join(UPLOAD_FOLDER, 'resized_' + secure_filename(original_file.filename))
-            original_img.save(resized_original_path)
-        
         results = {}
         downloading_metrics = []
         
-        try:
-            # First attempt to create all metrics to trigger downloads
-            for metric_name in metrics:
-                try:
-                    with temporary_torch_home():
-                        # This will trigger the download if needed
-                        metric = get_cached_metric(metric_name)
-                except Exception as e:
-                    print(f"Error loading metric {metric_name}: {str(e)}")
-                    downloading_metrics.append(metric_name)
-            
-            # If we're still downloading, inform the client
-            if downloading_metrics:
-                return jsonify({
-                    'downloading': {
-                        'status': True,
-                        'metrics': downloading_metrics,
-                        'message': f'Downloading weights for {", ".join(downloading_metrics)}...'
-                    }
-                })
-            
-            # Process all metrics
-            for metric_name in metrics:
+        # Check which metrics need downloading
+        for metric_name in metrics:
+            try:
+                with temporary_torch_home():
+                    metric = get_cached_metric(metric_name)
+            except Exception as e:
+                print(f"Weights not found for {metric_name}: {str(e)}")
+                downloading_metrics.append(metric_name)
+        
+        if downloading_metrics:
+            return jsonify({
+                'downloading': {
+                    'status': True,
+                    'metrics': downloading_metrics,
+                    'message': f'Downloading weights for {", ".join(downloading_metrics)}... This is a one-time download for future use.'
+                }
+            })
+        
+        # Process metrics
+        for metric_name in metrics:
+            try:
                 with temporary_torch_home():
                     metric = get_cached_metric(metric_name)
                     metric_info = SUPPORTED_METRICS[metric_name]
                     
                     if metric_info['type'] == 'fr':
-                        score = metric(upscaled_path, resized_original_path).item()
+                        score = metric(upscaled_path, original_path).item()
                         results[metric_name] = {
                             'score': score,
                             'type': 'fr',
@@ -360,7 +373,7 @@ def evaluate_quality():
                             'higher_better': metric_info['higher_better']
                         }
                     else:  # No-reference metric
-                        original_score = metric(resized_original_path).item()
+                        original_score = metric(original_path).item()
                         upscaled_score = metric(upscaled_path).item()
                         results[metric_name] = {
                             'original': original_score,
@@ -369,26 +382,19 @@ def evaluate_quality():
                             'score_range': metric_info['score_range'],
                             'higher_better': metric_info['higher_better']
                         }
-            
-            # Add downloading status to results
-            results['downloading'] = {
-                'status': False,
-                'metrics': []
-            }
-            
-        except Exception as e:
-            print(f"Error processing metrics: {str(e)}")
-            results['error'] = str(e)
-        
-        finally:
-            # Clean up temporary files
-            for path in [original_path, upscaled_path, resized_original_path]:
-                if os.path.exists(path):
-                    os.remove(path)
+            except Exception as e:
+                print(f"Error processing metric {metric_name}: {str(e)}")
+                results[metric_name] = {
+                    'error': str(e),
+                    'type': metric_info['type'],
+                    'score_range': metric_info['score_range'],
+                    'higher_better': metric_info['higher_better']
+                }
         
         return jsonify(results)
         
     except Exception as e:
+        print(f"Error in evaluate_quality: {str(e)}")
         return jsonify({'error': str(e)}), 500
 
 # Add this to disable Flask's reloader for specific paths

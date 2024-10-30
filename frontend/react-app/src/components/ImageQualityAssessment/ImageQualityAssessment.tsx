@@ -56,7 +56,10 @@ const ImageQualityAssessment: React.FC<IQAProps> = ({ originalImage, upscaledIma
     const evaluateQuality = async () => {
         if (!originalImage || !upscaledImage || selectedMetrics.length === 0) return;
 
+        // Clear previous results before starting new evaluation
+        setResults(null);
         setLoading({ isLoading: true, message: 'Evaluating image quality...' });
+        
         try {
             const formData = new FormData();
             
@@ -72,8 +75,8 @@ const ImageQualityAssessment: React.FC<IQAProps> = ({ originalImage, upscaledIma
 
             let isDownloading = true;
             let retryCount = 0;
-            const MAX_RETRIES = 30; // Increased max retries
-            const RETRY_DELAY = 2000; // 2 seconds between retries
+            const MAX_RETRIES = 30;
+            const RETRY_DELAY = 2000;
 
             while (isDownloading && retryCount < MAX_RETRIES) {
                 const response = await fetch('http://localhost:5000/evaluate-quality', {
@@ -93,9 +96,10 @@ const ImageQualityAssessment: React.FC<IQAProps> = ({ originalImage, upscaledIma
                 }
 
                 if (data.downloading?.status) {
+                    // Update loading message with download information
                     setLoading({ 
                         isLoading: true, 
-                        message: `${data.downloading.message} (attempt ${retryCount + 1}/${MAX_RETRIES})`
+                        message: data.downloading.message
                     });
                     await new Promise(resolve => setTimeout(resolve, RETRY_DELAY));
                     retryCount++;
@@ -112,7 +116,6 @@ const ImageQualityAssessment: React.FC<IQAProps> = ({ originalImage, upscaledIma
         } catch (error) {
             console.error('Error evaluating image quality:', error);
             setResults(null);
-            // Show error to user
             setLoading({ 
                 isLoading: false, 
                 message: `Error: ${error instanceof Error ? error.message : 'Unknown error occurred'}`
