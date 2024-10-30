@@ -1,8 +1,12 @@
+@import url('https://unpkg.com/@catppuccin/palette/css/catppuccin.css');
+
 .image-queue {
     margin: 20px 0;
     padding: 20px;
-    border: 1px solid #ddd;
+    border: 1px solid var(--ctp-mocha-overlay0);
     border-radius: 8px;
+    background: var(--ctp-mocha-base);
+    color: var(--ctp-mocha-text);
 }
 
 .queue-list {
@@ -13,7 +17,8 @@
 }
 
 .queue-item {
-    border: 1px solid #eee;
+    border: 1px solid var(--ctp-mocha-surface0);
+    background: var(--ctp-mocha-mantle);
     border-radius: 8px;
     padding: 10px;
     display: flex;
@@ -36,27 +41,29 @@
     width: 100%;
     padding: 8px;
     border-radius: 4px;
-    border: 1px solid #ddd;
+    border: 1px solid var(--ctp-mocha-overlay0);
+    background: var(--ctp-mocha-surface0);
+    color: var(--ctp-mocha-text);
 }
 
 .clear-queue-btn {
     margin: 20px 0;
     padding: 10px 20px;
-    background-color: #ff4444;
-    color: white;
+    background-color: var(--ctp-mocha-red);
+    color: var(--ctp-mocha-crust);
     border: none;
     border-radius: 4px;
     cursor: pointer;
 }
 
 .clear-queue-btn:hover {
-    background-color: #cc0000;
+    background-color: var(--ctp-mocha-maroon);
 }
 
 .comparison-view {
     margin-top: 30px;
     padding-top: 20px;
-    border-top: 1px solid #ddd;
+    border-top: 1px solid var(--ctp-mocha-overlay0);
 }
 
 .comparison-info {
@@ -64,6 +71,6 @@
     justify-content: space-between;
     margin-top: 10px;
     padding: 10px;
-    background-color: #f5f5f5;
+    background-color: var(--ctp-mocha-surface0);
     border-radius: 4px;
 }

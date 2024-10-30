@@ -1,11 +1,15 @@
+@import url('https://unpkg.com/@catppuccin/palette/css/catppuccin.css');
+
 .iqa-container {
     margin: 20px 0;
     padding: 20px;
-    border: 1px solid #ddd;
+    border: 1px solid var(--ctp-mocha-overlay0);
     border-radius: 8px;
     overflow: visible;
     height: auto;
     min-height: fit-content;
+    background: var(--ctp-mocha-base);
+    color: var(--ctp-mocha-text);
 }
 
 .iqa-container h2 {
@@ -28,6 +32,11 @@
 button {
     margin: 20px 0;
     padding: 8px 16px;
+    background-color: var(--ctp-mocha-blue);
+    color: var(--ctp-mocha-crust);
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
 }
 
 .results {
@@ -45,12 +54,12 @@ button {
 .results th,
 .results td {
     padding: 12px 8px;
-    border: 1px solid #ddd;
+    border: 1px solid var(--ctp-mocha-overlay0);
     text-align: left;
 }
 
 .results th {
-    background-color: #f5f5f5;
+    background-color: var(--ctp-mocha-surface0);
     position: sticky;
     top: 0;
     z-index: 1;
@@ -76,20 +85,21 @@ button {
 .metric-group-description {
     margin-bottom: 15px;
     padding-bottom: 5px;
-    border-bottom: 2px solid #eee;
-    color: #666;
+    border-bottom: 2px solid var(--ctp-mocha-overlay0);
+    color: var(--ctp-mocha-subtext0);
 }
 
 .metric-item {
     margin-bottom: 20px;
     padding: 15px;
-    border: 1px solid #eee;
+    border: 1px solid var(--ctp-mocha-overlay0);
     border-radius: 8px;
     transition: background-color 0.2s;
+    background-color: var(--ctp-mocha-mantle);
 }
 
 .metric-item:hover {
-    background-color: #f9f9f9;
+    background-color: var(--ctp-mocha-surface0);
 }
 
 .metric-item label {
@@ -105,21 +115,19 @@ button {
 .metric-info strong {
     display: block;
     margin-bottom: 8px;
-    color: #333;
+    color: var(--ctp-mocha-text);
 }
 
 .metric-info p {
     margin: 5px 0;
     font-size: 0.9em;
-    color: #666;
+    color: var(--ctp-mocha-subtext0);
 }
 
 .score-range {
     font-style: italic;
-    color: #888;
+    color: var(--ctp-mocha-subtext1);
 }
-
-/* .metric-item input[ */
 
 .iqa-loading-status {
     display: flex;
@@ -129,8 +137,8 @@ button {
 }
 
 .loading-spinner {
-    border: 4px solid #f3f3f3;
-    border-top: 4px solid #3498db;
+    border: 4px solid var(--ctp-mocha-surface0);
+    border-top: 4px solid var(--ctp-mocha-blue);
     border-radius: 50%;
     width: 40px;
     height: 40px;
@@ -145,7 +153,7 @@ button {
 
 .iqa-loading-status p {
     margin: 0;
-    color: #2c3e50;
+    color: var(--ctp-mocha-text);
     font-size: 1.1em;
 }
 
@@ -157,17 +165,56 @@ button {
 
 /* Style for the button when disabled */
 button:disabled {
-    background-color: #cccccc;
+    background-color: var(--ctp-mocha-overlay0);
+    color: var(--ctp-mocha-overlay2);
     cursor: not-allowed;
+}
+
+button:hover:not(:disabled) {
+    background-color: var(--ctp-mocha-sapphire);
 }
 
 .score-hint {
     font-size: 0.8em;
-    color: #666;
+    color: var(--ctp-mocha-subtext0);
     font-style: italic;
 }
 
 .error {
-    color: #d32f2f;
+    color: var(--ctp-mocha-red);
     font-size: 0.9em;
+}
+
+/* Checkbox styling */
+.metric-item input[type="checkbox"] {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 18px;
+    height: 18px;
+    border: 2px solid var(--ctp-mocha-overlay0);
+    border-radius: 4px;
+    background: var(--ctp-mocha-surface0);
+    cursor: pointer;
+    position: relative;
+}
+
+.metric-item input[type="checkbox"]:checked {
+    background-color: var(--ctp-mocha-blue);
+    border-color: var(--ctp-mocha-blue);
+}
+
+.metric-item input[type="checkbox"]:checked::after {
+    content: '✓';
+    position: absolute;
+    color: var(--ctp-mocha-base);
+    font-size: 14px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.metric-item input[type="checkbox"]:disabled {
+    background-color: var(--ctp-mocha-surface1);
+    border-color: var(--ctp-mocha-overlay0);
+    cursor: not-allowed;
 }

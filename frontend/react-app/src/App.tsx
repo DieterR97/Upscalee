@@ -84,6 +84,7 @@ const ImageUpscaler: React.FC = () => {
     } else if (activeTab === 'upscale') {
       setShowQueue(false);
       setQueuedImages([]);
+      setImagePreview(null);
     }
   }, [activeTab]);
 
