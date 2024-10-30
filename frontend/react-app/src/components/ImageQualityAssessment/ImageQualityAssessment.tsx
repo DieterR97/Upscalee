@@ -76,36 +76,53 @@ const ImageQualityAssessment: React.FC<IQAProps> = ({ originalImage, upscaledIma
             let isDownloading = true;
             let retryCount = 0;
             const MAX_RETRIES = 30;
-            const RETRY_DELAY = 2000;
+            const INITIAL_DELAY = 5000;  // 5 seconds for first retry to allow download to complete
+            const RETRY_DELAY = 2000;    // 2 seconds for subsequent retries
 
             while (isDownloading && retryCount < MAX_RETRIES) {
-                const response = await fetch('http://localhost:5000/evaluate-quality', {
-                    method: 'POST',
-                    body: formData,
-                });
+                try {
+                    // Add longer delay for first retry to allow download to complete
+                    if (retryCount === 1) {
+                        await new Promise(resolve => setTimeout(resolve, INITIAL_DELAY));
+                    } else if (retryCount > 1) {
+                        await new Promise(resolve => setTimeout(resolve, RETRY_DELAY));
+                    }
 
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-
-                const data = await response.json();
-                console.log(`Attempt ${retryCount + 1} results:`, data);
-
-                if (data.error) {
-                    throw new Error(data.error);
-                }
-
-                if (data.downloading?.status) {
-                    // Update loading message with download information
-                    setLoading({ 
-                        isLoading: true, 
-                        message: data.downloading.message
+                    const response = await fetch('http://localhost:5000/evaluate-quality', {
+                        method: 'POST',
+                        body: formData,
                     });
-                    await new Promise(resolve => setTimeout(resolve, RETRY_DELAY));
-                    retryCount++;
-                } else {
-                    isDownloading = false;
-                    setResults(data);
+
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+
+                    const data = await response.json();
+                    console.log(`Attempt ${retryCount + 1} results:`, data);
+
+                    if (data.error) {
+                        throw new Error(data.error);
+                    }
+
+                    if (data.downloading?.status) {
+                        // Update loading message with download information
+                        setLoading({ 
+                            isLoading: true, 
+                            message: data.downloading.message
+                        });
+                        await new Promise(resolve => setTimeout(resolve, RETRY_DELAY));
+                        retryCount++;
+                    } else {
+                        isDownloading = false;
+                        setResults(data);
+                    }
+                } catch (error) {
+                    console.error('Error evaluating image quality:', error);
+                    setResults(null);
+                    setLoading({ 
+                        isLoading: false, 
+                        message: `Error: ${error instanceof Error ? error.message : 'Unknown error occurred'}`
+                    });
                 }
             }
 

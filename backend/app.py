@@ -18,6 +18,8 @@ from PIL.ExifTags import TAGS
 import math
 from get_image_info import get_image_info
 from functools import lru_cache
+import sys
+from threading import Lock
 
 app = Flask(__name__)
 CORS(app, resources={
@@ -321,67 +323,188 @@ def check_metric_weights_available(metric_name):
         print(f"Weights not found for {metric_name}: {str(e)}")
         return False
 
+@contextmanager
+def download_detector():
+    """Context manager to detect when downloads start."""
+    class DownloadStartedException(Exception):
+        def __init__(self, metric_name):
+            self.metric_name = metric_name
+
+    class Detector:
+        def __init__(self):
+            self.original_stdout = sys.__stdout__
+            
+        def write(self, text):
+            # Check for download message
+            if "Downloading:" in text:
+                # Extract metric name from the path
+                if "pyiqa/" in text:
+                    metric_name = text.split("pyiqa/")[1].split("_")[0].lower()
+                    raise DownloadStartedException(metric_name)
+            self.original_stdout.write(text)
+            
+        def flush(self):
+            self.original_stdout.flush()
+
+    detector = Detector()
+    original_stdout = sys.stdout
+    sys.stdout = detector
+    
+    try:
+        yield detector
+    finally:
+        sys.stdout = original_stdout
+
+def check_metric_downloads(metrics):
+    """Check if any metrics need downloading and return download status if needed."""
+    class DownloadChecker:
+        def __init__(self, metric_name):
+            self._original_stdout = sys.stdout
+            self._original_write = sys.stdout.write
+            self.metric_name = metric_name
+            self.needs_download = False
+            
+        def __enter__(self):
+            def new_write(text):
+                if "Downloading:" in text:
+                    self.needs_download = True
+                return self._original_write(text)
+            
+            sys.stdout.write = new_write
+            return self
+            
+        def __exit__(self, exc_type, exc_val, exc_tb):
+            sys.stdout.write = self._original_write
+            return False
+
+    # Check each metric
+    for metric_name in metrics:
+        try:
+            with DownloadChecker(metric_name) as checker:
+                # Just try to create the metric to see if it needs downloading
+                _ = get_cached_metric(metric_name)
+                if checker.needs_download:
+                    return jsonify({
+                        'downloading': {
+                            'status': True,
+                            'metrics': [metric_name],
+                            'message': f'Downloading weights for {metric_name}... This is a one-time download for future use.'
+                        }
+                    })
+        except Exception as e:
+            print(f"Error checking metric {metric_name}: {str(e)}")
+            continue
+    
+    return None
+
+# Global download tracking
+download_in_progress = False
+download_lock = Lock()
+
+# Define exception class at module level
+class DownloadStartedException(Exception):
+    def __init__(self, metric_name):
+        self.metric_name = metric_name
+
+def get_cached_metric_with_download_check(metric_name):
+    """Try to create metric and detect if download is needed."""
+    global download_in_progress
+    
+    class DownloadDetector:
+        def __init__(self):
+            self._original_stdout = sys.stdout
+            self._original_write = sys.stdout.write
+            
+        def __enter__(self):
+            def new_write(text):
+                global download_in_progress
+                if "Downloading:" in text and not download_in_progress:
+                    with download_lock:
+                        download_in_progress = True
+                    self._original_write(text)
+                    raise DownloadStartedException(metric_name)
+                return self._original_write(text)
+            
+            sys.stdout.write = new_write
+            return self
+            
+        def __exit__(self, exc_type, exc_val, exc_tb):
+            sys.stdout.write = self._original_write
+            return False
+
+    with DownloadDetector():
+        return get_cached_metric(metric_name)
+    
 @app.route('/evaluate-quality', methods=['POST'])
 def evaluate_quality():
+    global download_in_progress
+    
     try:
-        # Get files from request
         original_file = request.files['original_image']
         upscaled_file = request.files['upscaled_image']
         metrics = json.loads(request.form['metrics'])
         
-        # Save files temporarily
         original_path = os.path.join(UPLOAD_FOLDER, secure_filename(original_file.filename))
         upscaled_path = os.path.join(UPLOAD_FOLDER, secure_filename(upscaled_file.filename))
         
         original_file.save(original_path)
         upscaled_file.save(upscaled_path)
+        # Load images
+        original_img = Image.open(original_file)
+        upscaled_img = Image.open(upscaled_file)
         
-        results = {}
-        downloading_metrics = []
+        # Resize original image to match upscaled dimensions for FR metrics
+        original_img_resized = original_img.resize(upscaled_img.size, Image.LANCZOS)
         
-        # Check which metrics need downloading
+        # Save the images
+        original_img_resized.save(original_path)
+        upscaled_img.save(upscaled_path)
+
+        # Check each metric for downloads
         for metric_name in metrics:
             try:
-                with temporary_torch_home():
-                    metric = get_cached_metric(metric_name)
+                metric = get_cached_metric_with_download_check(metric_name)
+            except DownloadStartedException as e:
+                return jsonify({
+                    'downloading': {
+                        'status': True,
+                        'metrics': [e.metric_name],
+                        'message': f'Downloading weights for {e.metric_name}... This is a one-time download for future use.'
+                    }
+                })
             except Exception as e:
-                print(f"Weights not found for {metric_name}: {str(e)}")
-                downloading_metrics.append(metric_name)
-        
-        if downloading_metrics:
-            return jsonify({
-                'downloading': {
-                    'status': True,
-                    'metrics': downloading_metrics,
-                    'message': f'Downloading weights for {", ".join(downloading_metrics)}... This is a one-time download for future use.'
-                }
-            })
-        
-        # Process metrics
+                print(f"Error with metric {metric_name}: {str(e)}")
+                continue
+
+        # Reset download flag after successful evaluation
+        with download_lock:
+            download_in_progress = False
+
+        # If we get here, proceed with evaluation
+        results = {}
         for metric_name in metrics:
             try:
-                with temporary_torch_home():
-                    metric = get_cached_metric(metric_name)
-                    metric_info = SUPPORTED_METRICS[metric_name]
-                    
-                    if metric_info['type'] == 'fr':
-                        score = metric(upscaled_path, original_path).item()
-                        results[metric_name] = {
-                            'score': score,
-                            'type': 'fr',
-                            'score_range': metric_info['score_range'],
-                            'higher_better': metric_info['higher_better']
-                        }
-                    else:  # No-reference metric
-                        original_score = metric(original_path).item()
-                        upscaled_score = metric(upscaled_path).item()
-                        results[metric_name] = {
-                            'original': original_score,
-                            'upscaled': upscaled_score,
-                            'type': 'nr',
-                            'score_range': metric_info['score_range'],
-                            'higher_better': metric_info['higher_better']
-                        }
+                metric = get_cached_metric(metric_name)
+                metric_info = SUPPORTED_METRICS[metric_name]
+                
+                if metric_info['type'] == 'fr':
+                    score = metric(upscaled_path, original_path).item()
+                    results[metric_name] = {
+                        'score': score,
+                        'type': 'fr',
+                        'score_range': metric_info['score_range'],
+                        'higher_better': metric_info['higher_better']
+                    }
+                else:  # No-reference metric
+                    original_score = metric(original_path).item()
+                    upscaled_score = metric(upscaled_path).item()
+                    results[metric_name] = {
+                        'original': original_score,
+                        'upscaled': upscaled_score,
+                        'type': 'nr',
+                        'score_range': metric_info['score_range'],
+                        'higher_better': metric_info['higher_better']
+                    }
             except Exception as e:
                 print(f"Error processing metric {metric_name}: {str(e)}")
                 results[metric_name] = {
@@ -422,3 +545,4 @@ if __name__ == "__main__":
         './app.py',
         './model.py'
     ])
+

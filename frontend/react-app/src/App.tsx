@@ -124,7 +124,7 @@ const ImageUpscaler: React.FC = () => {
     const isModelDownloaded = await checkModelStatus(selectedModel);
     if (!isModelDownloaded) {
       setModelDownloading(true);
-      setDownloadProgress('Downloading model weights... This may take a few minutes.');
+      setDownloadProgress('Downloading model weights... This may take a few minutes. This is a one-time download for future use.');
     }
 
     const formData = new FormData();
