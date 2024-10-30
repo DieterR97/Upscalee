@@ -31,6 +31,17 @@ backend/metric_weights/
 frontend/node_modules
 frontend/.pnp
 frontend/.pnp.js
+frontend/react-app/node_modules
+frontend/react-app/.pnp
+frontend/react-app/.pnp.js
+frontend/react-app/build
+frontend/react-app/.env.local
+frontend/react-app/.env.development.local
+frontend/react-app/.env.test.local
+frontend/react-app/.env.production.local
+frontend/react-app/npm-debug.log*
+frontend/react-app/yarn-debug.log*
+frontend/react-app/yarn-error.log*
 
 # testing
 frontend/coverage
