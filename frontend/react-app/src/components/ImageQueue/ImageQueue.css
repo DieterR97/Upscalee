@@ -17,13 +17,14 @@
 }
 
 .queue-item {
-    border: 1px solid var(--ctp-mocha-surface0);
-    background: var(--ctp-mocha-mantle);
+    border: 1px solid var(--ctp-mocha-overlay0);
+    background: var(--ctp-mocha-surface0);
     border-radius: 8px;
     padding: 10px;
     display: flex;
     flex-direction: column;
     gap: 10px;
+    box-shadow: 0 2px 4px var(--ctp-mocha-crust);
 }
 
 .thumbnail {
@@ -31,10 +32,12 @@
     height: 150px;
     object-fit: cover;
     border-radius: 4px;
+    border: 1px solid var(--ctp-mocha-overlay0);
 }
 
 .queue-item-info {
     font-size: 0.9em;
+    color: var(--ctp-mocha-subtext0);
 }
 
 .queue-item-actions select {
@@ -42,28 +45,50 @@
     padding: 8px;
     border-radius: 4px;
     border: 1px solid var(--ctp-mocha-overlay0);
-    background: var(--ctp-mocha-surface0);
+    background: var(--ctp-mocha-surface1);
     color: var(--ctp-mocha-text);
+}
+
+.queue-item-actions select:hover {
+    border-color: var(--ctp-mocha-blue);
+}
+
+.queue-item-actions select:disabled {
+    background: var(--ctp-mocha-surface2);
+    color: var(--ctp-mocha-overlay2);
+    border-color: var(--ctp-mocha-overlay0);
 }
 
 .clear-queue-btn {
     margin: 20px 0;
     padding: 10px 20px;
     background-color: var(--ctp-mocha-red);
-    color: var(--ctp-mocha-crust);
+    color: var(--ctp-mocha-base);
     border: none;
     border-radius: 4px;
     cursor: pointer;
+    transition: background-color 0.2s ease;
 }
 
 .clear-queue-btn:hover {
     background-color: var(--ctp-mocha-maroon);
 }
 
+.clear-queue-btn:disabled {
+    background-color: var(--ctp-mocha-surface1);
+    color: var(--ctp-mocha-overlay2);
+    cursor: not-allowed;
+}
+
 .comparison-view {
     margin-top: 30px;
     padding-top: 20px;
     border-top: 1px solid var(--ctp-mocha-overlay0);
+}
+
+.comparison-view h4 {
+    color: var(--ctp-mocha-subtext0);
+    margin-bottom: 15px;
 }
 
 .comparison-info {
@@ -73,4 +98,5 @@
     padding: 10px;
     background-color: var(--ctp-mocha-surface0);
     border-radius: 4px;
+    border: 1px solid var(--ctp-mocha-overlay0);
 }

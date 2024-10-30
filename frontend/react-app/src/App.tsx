@@ -411,7 +411,7 @@ const ImageUpscaler: React.FC = () => {
                   <p>Click "Upscale Image" to start processing</p>
                 </div>
               ) : (
-                <p>Please select and upscale an image to use the comparison slider.</p>
+                <p>Select and upscale an image to use the comparison slider.</p>
               )}
             </div>
 
@@ -548,7 +548,7 @@ const ImageUpscaler: React.FC = () => {
                 )}
               </div>
             ) : (
-              <p>Please select an image and click "Get Image Info" to view its information.</p>
+              <p>Select an image and click "Get Image Info" to view its information.</p>
             )}
           </div>
         )}
@@ -570,6 +570,7 @@ const ImageUpscaler: React.FC = () => {
             </div>
           </div>
         )}
+        
       </div>
     </div>
   );

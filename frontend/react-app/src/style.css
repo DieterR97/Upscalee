@@ -27,7 +27,7 @@
 .model-selection select:disabled {
   background-color: var(--ctp-mocha-surface1);
   cursor: not-allowed;
-  color: var(--ctp-mocha-overlay2);
+  color: var(--ctp-mocha-subtext1);
 }
 
 .model-selection-label,
@@ -278,6 +278,7 @@
 
 .tab:hover {
   color: var(--ctp-mocha-blue);
+  background-color: transparent !important;
 }
 
 .info-tab,
@@ -463,4 +464,78 @@
 html {
   background-color: var(--ctp-mocha-base);
   color: var(--ctp-mocha-text);
+}
+
+/* Update channel stats and exif sections */
+.channel-stats, .exif-category {
+    background: var(--ctp-mocha-mantle);
+    padding: 10px;
+    border-radius: 4px;
+    margin-bottom: 10px;
+}
+
+.channel-stats h4, .exif-category h4 {
+    margin: 0 0 8px 0;
+    color: var(--ctp-mocha-subtext0);
+}
+
+/* Update tooltips */
+.model-description-tooltip::after,
+.select-option::after {
+    background-color: var(--ctp-mocha-surface0);
+    color: var(--ctp-mocha-text);
+    border: 1px solid var(--ctp-mocha-overlay0);
+}
+
+/* Update loading text */
+.loading-text {
+    color: var(--ctp-mocha-subtext0);
+}
+
+/* Update toast notifications */
+.Toastify__toast {
+    background-color: var(--ctp-mocha-surface0) !important;
+    color: var(--ctp-mocha-text) !important;
+    border: 1px solid var(--ctp-mocha-overlay0);
+}
+
+/* Update info sections */
+.info-section {
+    background: var(--ctp-mocha-surface0);
+    border: 1px solid var(--ctp-mocha-overlay0);
+    box-shadow: 0 1px 3px var(--ctp-mocha-crust);
+}
+
+.info-section h3 {
+    color: var(--ctp-mocha-text);
+    border-bottom: 2px solid var(--ctp-mocha-overlay0);
+}
+
+/* Update buttons */
+.button-container button {
+    background-color: var(--ctp-mocha-blue);
+    color: var(--ctp-mocha-crust);
+    border: 1px solid var(--ctp-mocha-overlay0);
+}
+
+.button-container button:hover:not(:disabled) {
+    background-color: var(--ctp-mocha-sapphire);
+}
+
+.button-container button:disabled {
+    background-color: var(--ctp-mocha-surface1);
+    color: var(--ctp-mocha-overlay2);
+    border-color: var(--ctp-mocha-overlay0);
+}
+
+/* Update file input */
+.file-input {
+    background-color: var(--ctp-mocha-surface0);
+    color: var(--ctp-mocha-text);
+    border: 1px solid var(--ctp-mocha-overlay0);
+}
+
+.file-input:disabled {
+    background-color: var(--ctp-mocha-surface1);
+    color: var(--ctp-mocha-subtext1);
 }
