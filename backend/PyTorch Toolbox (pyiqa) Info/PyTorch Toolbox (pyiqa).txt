@@ -1,0 +1,159 @@
+PyTorch Toolbox for Image Quality Assessment
+
+PyTorch Toolbox for Image Quality Assessment, including LPIPS, FID, NIQE, NRQM(Ma), MUSIQ, TOPIQ, NIMA, DBCNN, BRISQUE, PI and more...
+
+An IQA toolbox with pure python and pytorch. Please refer to [Awesome-Image-Quality-Assessment](https://github.com/chaofengc/Awesome-Image-Quality-Assessment) for a comprehensive survey of IQA methods and download links for IQA datasets.
+
+This is a comprehensive image quality assessment (IQA) toolbox built with pure Python and PyTorch. We provide reimplementation of many mainstream full reference (FR) and no reference (NR) metrics (results are calibrated with official matlab scripts if exist). With GPU acceleration, most of our implementations are much faster than Matlab. Please refer to the following documents for details:
+
+[Model Cards](docs/ModelCard.md)
+[Dataset Cards](docs/Dataset_Preparation.md)
+[Datasets Download](https://huggingface.co/datasets/chaofengc/IQA-Toolbox-Datasets/tree/main)
+[Documentation](https://iqa-pytorch.readthedocs.io/en/latest/)
+[Benchmark](https://github.com/chaofengc/IQA-PyTorch/tree/main?tab=readme-ov-file#performance-evaluation-protocol)
+
+
+
+Installation:
+# Install with pip
+pip install pyiqa
+
+# Install latest github version
+pip uninstall pyiqa # if have older version installed already 
+pip install git+https://github.com/chaofengc/IQA-PyTorch.git
+
+# Install with git clone
+git clone https://github.com/chaofengc/IQA-PyTorch.git
+cd IQA-PyTorch
+pip install -r requirements.txt
+python setup.py develop
+
+
+
+Basic Usage:
+You can simply use the package with commandline interface.
+
+# list all available metrics
+pyiqa -ls
+
+# test with default settings
+pyiqa [metric_name(s)] -t [image_path or dir] -r [image_path or dir] --device [cuda or cpu] --verbose
+
+
+
+=========================
+
+
+
+Advanced Usage with Codes
+Test metrics
+
+import pyiqa
+import torch
+
+# list all available metrics
+print(pyiqa.list_models())
+
+device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
+
+# create metric with default setting
+iqa_metric = pyiqa.create_metric('lpips', device=device)
+
+# check if lower better or higher better
+print(iqa_metric.lower_better)
+
+# example for iqa score inference
+# Tensor inputs, img_tensor_x/y: (N, 3, H, W), RGB, 0 ~ 1
+score_fr = iqa_metric(img_tensor_x, img_tensor_y)
+
+# img path as inputs.
+score_fr = iqa_metric('./ResultsCalibra/dist_dir/I03.bmp', './ResultsCalibra/ref_dir/I03.bmp')
+
+# For FID metric, use directory or precomputed statistics as inputs
+# refer to clean-fid for more details: https://github.com/GaParmar/clean-fid
+fid_metric = pyiqa.create_metric('fid')
+score = fid_metric('./ResultsCalibra/dist_dir/', './ResultsCalibra/ref_dir')
+score = fid_metric('./ResultsCalibra/dist_dir/', dataset_name="FFHQ", dataset_res=1024, dataset_split="trainval70k")
+
+
+
+Use as loss functions
+
+Note that gradient propagation is disabled by default. Set as_loss=True to enable it as a loss function. Not all metrics support backpropagation, please refer to Model Cards and be sure that you are using it in a lower_better way.
+
+lpips_loss = pyiqa.create_metric('lpips', device=device, as_loss=True)
+
+ssim_loss = pyiqa.create_metric('ssimc', device=device, as_loss=True)
+loss = 1 - ssim_loss(img_tensor_x, img_tensor_y)   # ssim is not lower better
+
+
+
+Use custom settings and weights
+
+We also provide a flexible way to use custom settings and weights in case you want to retrain or fine-tune the models.
+
+iqa_metric = pyiqa.create_metric('topiq_nr', device=device, **custom_opts)
+
+# Note that if you train the model with this package, the weights will be saved in weight_dict['params']. Otherwise, please set weight_keys=None.
+iqa_metric.load_weights('path/to/weights.pth', weight_keys='params')
+
+
+
+Example Test script
+
+Example test script with input directory/images and reference directory/images.
+
+# example for FR metric with dirs
+python inference_iqa.py -m LPIPS[or lpips] -i ./ResultsCalibra/dist_dir[dist_img] -r ./ResultsCalibra/ref_dir[ref_img]
+
+# example for NR metric with single image
+python inference_iqa.py -m brisque -i ./ResultsCalibra/dist_dir/I03.bmp
+
+
+
+
+
+
+
+Examples
+Basic Usage
+
+import pyiqa
+import torch
+
+# list all available metrics
+print(pyiqa.list_models())
+
+device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
+
+# create metric with default setting
+iqa_metric = pyiqa.create_metric('lpips', device=device)
+# Note that gradient propagation is disabled by default. set as_loss=True to enable it as a loss function.
+iqa_loss = pyiqa.create_metric('lpips', device=device, as_loss=True)
+
+# create metric with custom setting
+iqa_metric = pyiqa.create_metric('psnr', test_y_channel=True, color_space='ycbcr').to(device)
+
+# check if lower better or higher better
+print(iqa_metric.lower_better)
+
+# example for iqa score inference
+# Tensor inputs, img_tensor_x/y: (N, 3, H, W), RGB, 0 ~ 1
+score_fr = iqa_metric(img_tensor_x, img_tensor_y)
+score_nr = iqa_metric(img_tensor_x)
+
+# img path as inputs.
+score_fr = iqa_metric('./ResultsCalibra/dist_dir/I03.bmp', './ResultsCalibra/ref_dir/I03.bmp')
+
+# For FID metric, use directory or precomputed statistics as inputs
+# refer to clean-fid for more details: https://github.com/GaParmar/clean-fid
+fid_metric = pyiqa.create_metric('fid')
+score = fid_metric('./ResultsCalibra/dist_dir/', './ResultsCalibra/ref_dir')
+score = fid_metric('./ResultsCalibra/dist_dir/', dataset_name="FFHQ", dataset_res=1024, dataset_split="trainval70k")
+
+
+
+
+
+
+

@@ -1,0 +1,46 @@
+-----
+
+Go to:
+...\Lib\site-packages\basicsr\data\degradations.py
+
+change line 8 from:
+    from torchvision.transforms.functional_tensor import rgb_to_grayscale
+to:
+    from torchvision.transforms._functional_tensor import rgb_to_grayscale
+
+to avoid the following error:
+    ModuleNotFoundError: No module named 'torchvision.transforms.functional_tensor'
+
+-----
+
+Go to:
+...\Lib\site-packages\realesrgan\utils.py
+
+change line 63 from:
+    loadnet = torch.load(model_path, map_location=torch.device('cpu'))
+to:
+    loadnet = torch.load(model_path, map_location=torch.device('cpu'), weights_only=True)
+
+^ do this to avoid errors/future errors
+
+-----
+
+Go to:
+...\Lib\site-packages\realesrgan\utils.py
+
+To hard-code realesrgan to use gpu and use gpu_id=0 do the following:
+
+change line 39 from:
+gpu_id=None):
+to:
+gpu_id=0):
+
+AND
+
+change line 52 from:
+    self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu') if device is None else device
+to:
+    self.device = torch.device('cuda' if torch.cuda.is_available() else 'cuda') if device is None else device
+
+-----
+
