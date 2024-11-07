@@ -1,1 +1,90 @@
-{}
+{
+  "4xNomos2_otf_esrgan": {
+    "name": "4xNomos2_otf_esrgan",
+    "description": "4x ESRGAN model for Photography Restoration",
+    "scale": 4,
+    "variable_scale": false,
+    "architecture": "ESRGAN",
+    "file_pattern": "4xNomos2_otf_esrgan.pth",
+    "is_spandrel": true,
+    "spandrel_info": {
+      "input_channels": 3,
+      "output_channels": 3,
+      "supports_half": true,
+      "supports_bfloat16": true,
+      "size_requirements": {
+        "minimum": 2,
+        "multiple_of": 1,
+        "square": false
+      },
+      "tiling": "ModelTiling.SUPPORTED",
+      "scale": 4
+    }
+  },
+  "2x_Text2HD_v.1-RealPLKSR": {
+    "name": "Text2HD v.1",
+    "description": "x2 Upscale text in very low quality to normal quality.",
+    "scale": 2,
+    "variable_scale": false,
+    "architecture": "RealPLKSR",
+    "file_pattern": "2x_Text2HD_v.1-RealPLKSR.pth",
+    "is_spandrel": true,
+    "spandrel_info": {
+      "input_channels": 3,
+      "output_channels": 3,
+      "supports_half": false,
+      "supports_bfloat16": true,
+      "size_requirements": {
+        "minimum": 0,
+        "multiple_of": 1,
+        "square": false
+      },
+      "tiling": "ModelTiling.SUPPORTED",
+      "scale": 2
+    }
+  },
+  "4x-ClearRealityV1": {
+    "name": "ClearRealityV1",
+    "description": "x4 Upscaling intended for realistic imagery, and works especially well on faces, hair, and nature shots.",
+    "scale": 4,
+    "variable_scale": false,
+    "architecture": "SPAN",
+    "file_pattern": "4x-ClearRealityV1.pth",
+    "is_spandrel": true,
+    "spandrel_info": {
+      "input_channels": 3,
+      "output_channels": 3,
+      "supports_half": true,
+      "supports_bfloat16": true,
+      "size_requirements": {
+        "minimum": 0,
+        "multiple_of": 1,
+        "square": false
+      },
+      "tiling": "ModelTiling.SUPPORTED",
+      "scale": 4
+    }
+  },
+  "1x-ReFocus-V3": {
+    "name": "ReFocus V3",
+    "description": "x1 Upscaling for DeBlur, ReFocus, Sharpen Real life style images, but will work on Anime images too.",
+    "scale": 1,
+    "variable_scale": false,
+    "architecture": "ESRGAN",
+    "file_pattern": "1x-ReFocus-V3.pth",
+    "is_spandrel": true,
+    "spandrel_info": {
+      "input_channels": 3,
+      "output_channels": 3,
+      "supports_half": true,
+      "supports_bfloat16": true,
+      "size_requirements": {
+        "minimum": 2,
+        "multiple_of": 1,
+        "square": false
+      },
+      "tiling": "ModelTiling.SUPPORTED",
+      "scale": 1
+    }
+  }
+}

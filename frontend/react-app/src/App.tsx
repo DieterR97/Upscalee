@@ -11,6 +11,19 @@ interface ModelInfo {
   description: string;  // Description of the upscaling model
   scale: number;        // Default scale factor for the model
   variable_scale: boolean;  // Whether the model supports different scale factors
+  is_spandrel?: boolean;   // Whether this is a Spandrel model (optional)
+  spandrel_info?: {        // Spandrel-specific information (optional)
+    input_channels: number;
+    output_channels: number;
+    supports_half: boolean;
+    supports_bfloat16: boolean;
+    size_requirements: any;
+    tiling: string;
+    scale: number;
+  };
+  name?: string;           // Display name for the model (optional)
+  architecture?: string;   // Model architecture (optional)
+  file_pattern?: string;   // File pattern for custom models (optional)
 }
 
 interface ModelOptions {
@@ -208,11 +221,17 @@ const ImageUpscaler: React.FC = () => {
     // Clear the upscaled image before starting the new upscale
     setUpscaledImage(null);
 
-    // Check if model is downloaded
-    const isModelDownloaded = await checkModelStatus(selectedModel);
-    if (!isModelDownloaded) {
-      setModelDownloading(true);
-      setDownloadProgress('Downloading model weights... This may take a few minutes. This is a one-time download for future use.');
+    // Check if the selected model is a Spandrel model
+    const isSpandrelModel = selectedModel in models && models[selectedModel].is_spandrel;
+
+    // Only check model download status for non-Spandrel models
+    if (!isSpandrelModel) {
+        // Check if model is downloaded
+        const isModelDownloaded = await checkModelStatus(selectedModel);
+        if (!isModelDownloaded) {
+            setModelDownloading(true);
+            setDownloadProgress('Downloading model weights... This may take a few minutes. This is a one-time download for future use.');
+        }
     }
 
     const formData = new FormData();

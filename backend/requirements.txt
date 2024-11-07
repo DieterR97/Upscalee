@@ -12,3 +12,4 @@ torchaudio==2.4.1+cu118     # PyTorch's audio processing library, providing func
 torchvision==0.19.1         # PyTorch's computer vision library, providing datasets, model architectures, and image transformations.
 requests
 tqdm
+spandrel

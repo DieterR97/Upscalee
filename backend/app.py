@@ -21,6 +21,7 @@ from functools import lru_cache
 import sys
 from threading import Lock
 import re
+from spandrel_inference import SpandrelUpscaler
 
 app = Flask(__name__)
 CORS(app, resources={
@@ -119,20 +120,40 @@ def upscale_image():
 
     # Prepare filename and model information for output
     filename = image_file.filename
-    # strip extension from filename
     filename_no_ext = filename.rsplit(".", 1)[0]
 
     # Get the selected model and scale from the request
     selected_model = request.form.get("model", "RealESRGAN_x4plus_anime_6B")
-    selected_scale = int(request.form.get("scale", AVAILABLE_MODELS[selected_model]["scale"]))
     
-    # Initialize the model with the selected type and scale
-    model = UpscaleModel(
-        model_path="",
-        model_name=selected_model,
-        scale=selected_scale,
-        gpu_id=0,
-    )
+    # Check if this is a custom model that should use Spandrel
+    registered_models = load_registered_models()
+    is_spandrel_model = selected_model in registered_models
+    
+    # Get the default scale based on whether it's a built-in or custom model
+    if is_spandrel_model:
+        default_scale = registered_models[selected_model].get("scale", 4)
+    else:
+        default_scale = AVAILABLE_MODELS[selected_model]["scale"]
+    
+    # Get the selected scale from the request, or use the default
+    selected_scale = int(request.form.get("scale", default_scale))
+    
+    # Initialize the appropriate model
+    if is_spandrel_model:
+        config = load_config()
+        model = SpandrelUpscaler(
+            model_path=config["modelPath"],
+            model_name=selected_model,
+            scale=selected_scale,
+            gpu_id=0,
+        )
+    else:
+        model = UpscaleModel(
+            model_path="",
+            model_name=selected_model,
+            scale=selected_scale,
+            gpu_id=0,
+        )
 
     # Define arguments for the upscaling process
     args = {
@@ -198,6 +219,13 @@ MODEL_WEIGHTS_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "we
 @app.route("/model-status/<model_name>", methods=["GET"])
 def check_model_status(model_name):
     """Check if a model's weights are already downloaded."""
+    # First check if this is a custom (Spandrel) model
+    registered_models = load_registered_models()
+    if model_name in registered_models and registered_models[model_name].get("is_spandrel", False):
+        # Spandrel models are already downloaded in the custom directory
+        return jsonify({"downloaded": True})
+    
+    # For RealESRGAN models, check the weights directory
     model_path = Path(MODEL_WEIGHTS_DIR) / f"{model_name}.pth"
     return jsonify({"downloaded": model_path.exists()})
 
@@ -700,15 +728,32 @@ def register_model():
         model_info = request.json
         registered_models = load_registered_models()
         
-        # Add the new model to registered models
-        registered_models[model_info["name"]] = {
+        # Get the full path to the model file
+        config = load_config()
+        model_path = str(Path(config["modelPath"]) / model_info["file_pattern"])
+        
+        # Try to get Spandrel-specific information
+        spandrel_info = SpandrelUpscaler.get_model_info(model_path)
+        
+        # Create the model registration info
+        model_registration = {
             "name": model_info["display_name"],
             "description": model_info["description"],
             "scale": model_info["scale"],
             "variable_scale": model_info["variable_scale"],
             "architecture": model_info["architecture"],
-            "file_pattern": model_info["file_pattern"]
+            "file_pattern": model_info["file_pattern"],
+            "is_spandrel": True  # Flag to indicate this is a Spandrel model
         }
+        
+        # Add Spandrel-specific info if available
+        if spandrel_info:
+            model_registration.update({
+                "spandrel_info": spandrel_info
+            })
+        
+        # Add the new model to registered models
+        registered_models[model_info["name"]] = model_registration
         
         save_registered_models(registered_models)
         return jsonify({"success": True, "message": "Model registered successfully"})
