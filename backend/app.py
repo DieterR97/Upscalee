@@ -91,12 +91,54 @@ AVAILABLE_METRICS = pyiqa.list_models()
 
 # Define supported models with their capabilities and characteristics
 AVAILABLE_MODELS = {
-    "RealESRGAN_x4plus": {"description": "General purpose x4 upscaling", "scale": 4, "variable_scale": False},
-    "RealESRGAN_x2plus": {"description": "General purpose x2 upscaling", "scale": 2, "variable_scale": False},
-    "RealESRNet_x4plus": {"description": "General purpose x4 upscaling with MSE loss (over-smooth effects)", "scale": 4, "variable_scale": False},
-    "realesr-general-x4v3": {"description": "General purpose x4 (can also be used for x1, x2, x3) upscaling, a tiny small model (consume much fewer GPU memory and time); not too strong deblur and denoise capacity", "scale": 4, "variable_scale": True},
-    "RealESRGAN_x4plus_anime_6B": {"description": "Optimized for anime/artwork/illustrations x4 upscaling", "scale": 4, "variable_scale": False},
-    "realesr-animevideov3": {"description": "Optimized for anime video x4 (can also be used for x1, x2, x3) upscaling", "scale": 4, "variable_scale": True}
+    "RealESRGAN_x4plus": {
+        "name": "RealESRGAN x4+ (General)",
+        "description": "General purpose x4 upscaling",
+        "scale": 4,
+        "variable_scale": False,
+        "architecture": "Real-ESRGAN",
+        "source_url": "https://github.com/xinntao/Real-ESRGAN"
+    },
+    "RealESRGAN_x2plus": {
+        "name": "RealESRGAN x2+ (General)",
+        "description": "General purpose x2 upscaling",
+        "scale": 2,
+        "variable_scale": False,
+        "architecture": "Real-ESRGAN",
+        "source_url": "https://github.com/xinntao/Real-ESRGAN"
+    },
+    "RealESRNet_x4plus": {
+        "name": "RealESRNet x4+ (Smooth)",
+        "description": "General purpose x4 upscaling with MSE loss (over-smooth effects)",
+        "scale": 4,
+        "variable_scale": False,
+        "architecture": "Real-ESRGAN",
+        "source_url": "https://github.com/xinntao/Real-ESRGAN"
+    },
+    "realesr-general-x4v3": {
+        "name": "RealESR General v3 (Fast)",
+        "description": "General purpose x4 (can also be used for x1, x2, x3) upscaling, a tiny small model (consume much fewer GPU memory and time); not too strong deblur and denoise capacity",
+        "scale": 4,
+        "variable_scale": True,
+        "architecture": "Real-ESRGAN",
+        "source_url": "https://github.com/xinntao/Real-ESRGAN"
+    },
+    "RealESRGAN_x4plus_anime_6B": {
+        "name": "RealESRGAN x4+ Anime 6B",
+        "description": "Optimized for anime/artwork/illustrations x4 upscaling",
+        "scale": 4,
+        "variable_scale": False,
+        "architecture": "Real-ESRGAN",
+        "source_url": "https://github.com/xinntao/Real-ESRGAN"
+    },
+    "realesr-animevideov3": {
+        "name": "RealESR AnimeVideo v3",
+        "description": "Optimized for anime video x4 (can also be used for x1, x2, x3) upscaling",
+        "scale": 4,
+        "variable_scale": True,
+        "architecture": "Real-ESRGAN",
+        "source_url": "https://github.com/xinntao/Real-ESRGAN"
+    }
 }
 
 # Add this new route
@@ -142,7 +184,9 @@ def upscale_image():
     filename_no_ext = filename.rsplit(".", 1)[0]
 
     # Get the selected model and scale from the request
-    selected_model = request.form.get("model", "RealESRGAN_x4plus_anime_6B")
+    selected_model = request.form.get("model")
+    if not selected_model:
+        return jsonify({"error": "No model selected"}), 400
     
     # Check if this is a custom model that should use Spandrel
     registered_models = load_registered_models()
@@ -761,8 +805,9 @@ def register_model():
             "scale": model_info["scale"],
             "variable_scale": model_info["variable_scale"],
             "architecture": model_info["architecture"],
+            "source_url": model_info.get("source_url", ""),  # Add this field
             "file_pattern": model_info["file_pattern"],
-            "is_spandrel": True  # Flag to indicate this is a Spandrel model
+            "is_spandrel": True
         }
         
         # Add Spandrel-specific info if available

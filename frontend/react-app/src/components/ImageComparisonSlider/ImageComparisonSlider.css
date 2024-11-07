@@ -213,6 +213,7 @@ button:disabled {
     justify-content: center;
     align-items: center;
     color: var(--ctp-mocha-text);
+    margin-bottom: 60px;
 }
 
 .spinner {

@@ -6,6 +6,7 @@
     "variable_scale": false,
     "architecture": "ESRGAN",
     "file_pattern": "4xNomos2_otf_esrgan.pth",
+    "source_url": "https://openmodeldb.info/models/4x-Nomos2-otf-esrgan",
     "is_spandrel": true,
     "spandrel_info": {
       "input_channels": 3,
@@ -28,6 +29,7 @@
     "variable_scale": false,
     "architecture": "RealPLKSR",
     "file_pattern": "2x_Text2HD_v.1-RealPLKSR.pth",
+    "source_url": "https://openmodeldb.info/models/2x-Text2HD-v-1",
     "is_spandrel": true,
     "spandrel_info": {
       "input_channels": 3,
@@ -50,6 +52,7 @@
     "variable_scale": false,
     "architecture": "SPAN",
     "file_pattern": "4x-ClearRealityV1.pth",
+    "source_url": "https://openmodeldb.info/models/4x-ClearRealityV1",
     "is_spandrel": true,
     "spandrel_info": {
       "input_channels": 3,
@@ -72,6 +75,7 @@
     "variable_scale": false,
     "architecture": "ESRGAN",
     "file_pattern": "1x-ReFocus-V3.pth",
+    "source_url": "https://openmodeldb.info/models/1x-ReFocus-V3",
     "is_spandrel": true,
     "spandrel_info": {
       "input_channels": 3,
