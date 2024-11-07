@@ -67,6 +67,11 @@ interface ModelScanResult {
   removed?: string[];
 }
 
+// Add this interface at the top of your file
+interface Window {
+  showDirectoryPicker(): Promise<any>;
+}
+
 /**
  * Tab component for navigation between different sections of the application
  * Handles visual styling and click events for tab selection
@@ -119,6 +124,9 @@ const ImageUpscaler: React.FC = () => {
   const [unregisteredModels, setUnregisteredModels] = useState<UnregisteredModel[]>([]);
   const [showRegisterModal, setShowRegisterModal] = useState(false);
   const [selectedUnregisteredModel, setSelectedUnregisteredModel] = useState<UnregisteredModel | null>(null);
+
+  // Add this state near your other state declarations
+  const [showWelcomeModal, setShowWelcomeModal] = useState(true);
 
   /**
    * Fetches available upscaling models from the backend when component mounts
@@ -484,8 +492,15 @@ const ImageUpscaler: React.FC = () => {
       }
     };
 
+    // Add click outside handler
+    const handleClickOutside = (e: React.MouseEvent<HTMLDivElement>) => {
+      if (e.target === e.currentTarget) {
+        onClose();
+      }
+    };
+
     return (
-      <div className="modal">
+      <div className="modal" onClick={handleClickOutside}>
         <div className="modal-content">
           <h2>Register New Model</h2>
           <form onSubmit={handleSubmit}>
@@ -542,13 +557,14 @@ const ImageUpscaler: React.FC = () => {
               <input
                 type="url"
                 value={formData.source_url}
+                className="input-url"
                 onChange={e => setFormData(prev => ({ ...prev, source_url: e.target.value }))}
                 placeholder="e.g., https://github.com/username/repo"
               />
             </div>
-            <div className="button-group">
+            <div className="button-group register-model-buttons">
+              <button type="button" onClick={onClose} className='reset-button'>Cancel</button>
               <button type="submit">Register Model</button>
-              <button type="button" onClick={onClose}>Cancel</button>
             </div>
           </form>
         </div>
@@ -562,8 +578,36 @@ const ImageUpscaler: React.FC = () => {
     setUpscaledImage(null);
   };
 
+  // Add this component inside your App.tsx but before the main component
+  const WelcomeModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
+    return (
+      <div className="modal welcome-modal">
+        <div className="modal-content welcome-content">
+          <h2>Welcome! 👋</h2>
+          <p>
+            This application features helpful tooltips throughout the interface.
+            If you're unsure about any feature or want to learn more, simply
+            hover your mouse over the element to see a detailed explanation.
+          </p>
+          <div className="tooltip-example">
+            <span className="example-element" data-tooltip="Like this!">Hover over me</span>
+          </div>
+          <button
+            className="close-welcome-button"
+            onClick={onClose}
+          >
+            Got it!
+          </button>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div className="Root">
+      {showWelcomeModal && (
+        <WelcomeModal onClose={() => setShowWelcomeModal(false)} />
+      )}
       <ToastContainer
         position="top-center"
         autoClose={3000}
@@ -615,10 +659,25 @@ const ImageUpscaler: React.FC = () => {
           <>
             <div className="model-selection">
               <div className="model-selection-label">
-                <label htmlFor="model-select" className="model-selection-label-text">Select Model: </label>
+                {/* <label 
+                  htmlFor="model-select" 
+                  className="model-selection-label-text"
+                  data-tooltip="Hover over model names to see their purpose"
+                >
+                  Select Model: 
+                </label> */}
+                <label
+                  htmlFor="model-select"
+                  className="model-selection-label-text"
+                >
+                  Select Model:
+                </label>
               </div>
               <div className="model-selection-dropdown">
-                <div className="custom-select">
+                <div
+                  className="custom-select"
+                  data-tooltip="Hover over model names to see their purpose"
+                >
                   <select
                     id="model-select"
                     value={selectedModel}
@@ -636,9 +695,9 @@ const ImageUpscaler: React.FC = () => {
                       </option>
                     ))}
                   </select>
-                  <div className="model-description-tooltip" data-tooltip={models[selectedModel]?.description}>
-                    ⓘ
-                  </div>
+                </div>
+                <div className="model-description-tooltip" data-tooltip={models[selectedModel]?.description}>
+                  ⓘ
                 </div>
               </div>
             </div>
@@ -747,8 +806,8 @@ const ImageUpscaler: React.FC = () => {
             <h3>Click on a model card to upscale with it</h3>
             <div className="model-cards-container">
               {Object.entries(models).map(([key, model]) => (
-                <div 
-                  key={key} 
+                <div
+                  key={key}
                   className="model-card"
                   onClick={() => {
                     setSelectedModel(key);
@@ -785,9 +844,9 @@ const ImageUpscaler: React.FC = () => {
                         <div className="spec-item">
                           <span className="spec-label">Source:</span>
                           <span className="spec-value">
-                            <a 
-                              href={model.source_url} 
-                              target="_blank" 
+                            <a
+                              href={model.source_url}
+                              target="_blank"
                               rel="noopener noreferrer"
                               onClick={(e) => e.stopPropagation()} // Prevent card click when clicking link
                               className="source-link"
@@ -918,54 +977,6 @@ const ImageUpscaler: React.FC = () => {
           <div className="config-tab">
             <h2>Configuration</h2>
 
-            {/* Configuration Options */}
-            <div className="config-section">
-              <h3>General Settings</h3>
-              <div className="config-options">
-                <div className="config-option">
-                  <label className='config-option-label'>Maximum Image Dimension:</label>
-                  <input
-                    type="number"
-                    className='fill_w'
-                    value={config.maxImageDimension}
-                    onChange={(e) => {
-                      setConfig(prev => ({
-                        ...prev,
-                        maxImageDimension: parseInt(e.target.value)
-                      }));
-                      setIsConfigChanged(true);
-                    }}
-                    min={256}
-                    max={4096}
-                    title="Maximum allowed dimension for input images"
-                  />
-                </div>
-                <div className="config-option">
-                  <label className='config-option-label'>Model Path:</label>
-                  <input
-                    type="text"
-                    className='fill_w'
-                    value={config.modelPath}
-                    onChange={(e) => {
-                      setConfig(prev => ({
-                        ...prev,
-                        modelPath: e.target.value
-                      }));
-                      setIsConfigChanged(true);
-                    }}
-                    title="Path to custom model weights"
-                  />
-                </div>
-                <button
-                  className="save-config-button"
-                  onClick={handleSaveConfig}
-                  disabled={!isConfigChanged}
-                >
-                  Save Configuration
-                </button>
-              </div>
-            </div>
-
             {/* Unregistered Models Section */}
             {unregisteredModels.length > 0 && (
               <div className="config-section">
@@ -996,6 +1007,77 @@ const ImageUpscaler: React.FC = () => {
                 </div>
               </div>
             )}
+
+            {/* Configuration Options */}
+            <div className="config-section">
+              <h3>General Settings</h3>
+              <div className="config-options">
+                <div className="config-option">
+                  <label className='config-option-label'>Maximum Image Dimension:</label>
+                  <input
+                    type="number"
+                    className='fill_w'
+                    value={config.maxImageDimension}
+                    onChange={(e) => {
+                      setConfig(prev => ({
+                        ...prev,
+                        maxImageDimension: parseInt(e.target.value)
+                      }));
+                      setIsConfigChanged(true);
+                    }}
+                    min={256}
+                    max={4096}
+                    title="Maximum allowed dimension for input images"
+                  />
+                </div>
+                <div className="config-option lp">
+                  <label className='config-option-label'>Model Path:</label>
+                  <div className="directory-picker">
+                    <input
+                      type="text"
+                      className='fill_w fix_h'
+                      value={config.modelPath}
+                      onChange={(e) => {
+                        setConfig(prev => ({
+                          ...prev,
+                          modelPath: e.target.value
+                        }));
+                        setIsConfigChanged(true);
+                      }}
+                      title="Path to custom model weights"
+                      readOnly
+                    />
+                    <button
+                      onClick={async () => {
+                        try {
+                          const dirHandle = await (window as any).showDirectoryPicker();
+                          const dirPath = dirHandle.name;
+                          setConfig(prev => ({
+                            ...prev,
+                            modelPath: dirPath
+                          }));
+                          setIsConfigChanged(true);
+                        } catch (err) {
+                          console.error('Error selecting directory:', err);
+                        }
+                      }}
+                      className="directory-picker-button"
+                      type="button"
+                      title="Browse for folder"
+                    >
+                      Browse
+                    </button>
+                  </div>
+                </div>
+                <button
+                  className="save-config-button"
+                  onClick={handleSaveConfig}
+                  disabled={!isConfigChanged}
+                >
+                  Save Configuration
+                </button>
+              </div>
+            </div>
 
             {/* Registration Modal */}
             {showRegisterModal && selectedUnregisteredModel && (
