@@ -1,7 +1,7 @@
 .model-registration {
   margin: 20px 0;
   padding: 20px;
-  background-color: #f5f5f5;
+  background-color: var(--ctp-mocha-surface0);
   border-radius: 8px;
 }
 
@@ -12,10 +12,10 @@
 }
 
 .unregistered-model-card {
-  background: white;
+  background: var(--ctp-mocha-surface1);
   padding: 15px;
   border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 4px var(--ctp-mocha-crust);
 }
 
 .registration-form {
@@ -28,8 +28,10 @@
 .registration-form textarea,
 .registration-form select {
   padding: 8px;
-  border: 1px solid #ddd;
+  border: 1px solid var(--ctp-mocha-overlay0);
   border-radius: 4px;
+  background-color: var(--ctp-mocha-surface0);
+  color: var(--ctp-mocha-text);
 }
 
 .registration-form textarea {
@@ -38,14 +40,19 @@
 
 .registration-form button {
   padding: 10px;
-  background-color: #4CAF50;
-  color: white;
+  background-color: var(--ctp-mocha-blue);
+  color: var(--ctp-mocha-base);
   border: none;
   border-radius: 4px;
   cursor: pointer;
 }
 
+.registration-form button:hover {
+  background-color: var(--ctp-mocha-sapphire);
+}
+
 .registration-form button:disabled {
-  background-color: #cccccc;
+  background-color: var(--ctp-mocha-surface1);
+  color: var(--ctp-mocha-overlay2);
   cursor: not-allowed;
 }

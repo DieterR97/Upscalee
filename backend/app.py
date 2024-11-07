@@ -37,10 +37,29 @@ UPLOAD_FOLDER = 'temp_uploads'  # Stores uploaded images temporarily
 TEMP_RESULTS_DIR = 'pre_swapped_channels_results'  # Intermediate processing results
 FINAL_RESULTS_DIR = 'final_results'  # Final processed images
 
-# Create all necessary directories
-for directory in [UPLOAD_FOLDER, TEMP_RESULTS_DIR, FINAL_RESULTS_DIR]:
-    if not os.path.exists(directory):
-        os.makedirs(directory)
+def cleanup_temp_directories():
+    """Clean up temporary directories on startup."""
+    directories = [UPLOAD_FOLDER, TEMP_RESULTS_DIR, FINAL_RESULTS_DIR]
+    for directory in directories:
+        if os.path.exists(directory):
+            # Remove all files in the directory
+            for filename in os.listdir(directory):
+                file_path = os.path.join(directory, filename)
+                try:
+                    if os.path.isfile(file_path):
+                        os.unlink(file_path)
+                except Exception as e:
+                    print(f"Error deleting {file_path}: {e}")
+        else:
+            os.makedirs(directory)
+
+# Clean up directories on startup
+cleanup_temp_directories()
+
+# Create all necessary directories (you can remove this since cleanup_temp_directories handles creation)
+# for directory in [UPLOAD_FOLDER, TEMP_RESULTS_DIR, FINAL_RESULTS_DIR]:
+#     if not os.path.exists(directory):
+#         os.makedirs(directory)
 
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 

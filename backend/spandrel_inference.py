@@ -82,6 +82,10 @@ class SpandrelUpscaler:
 
     def _prepare_input(self, pil_image):
         """Convert PIL image to tensor in the correct format."""
+        # Convert to RGB if image has alpha channel
+        if pil_image.mode == 'RGBA':
+            pil_image = pil_image.convert('RGB')
+        
         # Convert PIL image to tensor (assuming RGB input)
         tensor = torch.from_numpy(np.array(pil_image)).float()
         

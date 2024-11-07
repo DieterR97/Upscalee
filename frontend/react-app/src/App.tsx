@@ -5,6 +5,7 @@ import ImageQualityAssessment from './components/ImageQualityAssessment/ImageQua
 import ImageQueue from './components/ImageQueue/ImageQueue';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import DropZone from './components/DropZone/DropZone';
 
 // Define interfaces for type safety and better code documentation
 interface ModelInfo {
@@ -543,6 +544,12 @@ const ImageUpscaler: React.FC = () => {
     );
   };
 
+  const handleFileSelect = (file: File) => {
+    setSelectedImage(file);
+    setImagePreview(URL.createObjectURL(file));
+    setUpscaledImage(null);
+  };
+
   return (
     <div className="Root">
       <ToastContainer 
@@ -612,15 +619,8 @@ const ImageUpscaler: React.FC = () => {
 
             {showScaleSelector()}
 
-            <input
-              className="file-input"
-              type="file"
-              accept="image/*"
-              onChange={handleImageChange}
-              ref={fileInputRef}
-              disabled={loading}
-            />
-            <br />
+            <DropZone onFileSelect={handleFileSelect} />
+
             <div className="button-container">
               <button 
                 onClick={upscaleImage} 
@@ -700,30 +700,20 @@ const ImageUpscaler: React.FC = () => {
         {activeTab === 'info' && (
           <div className="info-tab">
             <h2>Image Information</h2>
+            
+            <DropZone onFileSelect={handleFileSelect} />
+
             <div className="button-container">
-              <input
-                className="file-input"
-                type="file"
-                accept="image/*"
-                onChange={handleImageChange}
-                ref={fileInputRef}
-                disabled={loading}
-              />
               <button 
                 onClick={() => selectedImage && fetchImageInfo(selectedImage)} 
                 disabled={!selectedImage || loading}
+                className="tooltip-button"
+                data-tooltip="Analyze the selected image to view detailed information"
               >
                 Get Image Info
               </button>
             </div>
             
-            {/* Add image preview */}
-            {imagePreview && (
-              <div className="info-image-preview">
-                <img src={imagePreview} alt="Selected image preview" />
-              </div>
-            )}
-
             {imageInfo ? (
               <div className="image-info">
                 {/* Basic Info Section */}
@@ -811,7 +801,7 @@ const ImageUpscaler: React.FC = () => {
                 )}
               </div>
             ) : (
-              <p>Select an image and click "Get Image Info" to view its information.</p>
+              <p>Drop an image or click to select, then click "Get Image Info" to view its information.</p>
             )}
           </div>
         )}
