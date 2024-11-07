@@ -592,3 +592,230 @@ html {
   background-color: #cccccc;
   cursor: not-allowed;
 }
+
+.unregistered-models-warning {
+  background-color: var(--ctp-mocha-surface0);
+  border: 1px solid var(--ctp-mocha-overlay0);
+  border-radius: 4px;
+  padding: 15px;
+  margin: 15px 0;
+  max-width: 600px;
+}
+
+.unregistered-models-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.unregistered-model-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px;
+  background-color: var(--ctp-mocha-surface1);
+  border-radius: 4px;
+}
+
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background-color: var(--ctp-mocha-base);
+  padding: 20px;
+  border-radius: 8px;
+  max-width: 500px;
+  width: 100%;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 5px;
+  color: var(--ctp-mocha-text);
+}
+
+.form-group input[type="text"],
+.form-group input[type="number"],
+.form-group select,
+.form-group textarea {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid var(--ctp-mocha-overlay0);
+  border-radius: 4px;
+  background-color: var(--ctp-mocha-surface0);
+  color: var(--ctp-mocha-text);
+}
+
+.button-group {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  margin-top: 20px;
+}
+
+.config-section {
+  background-color: var(--ctp-mocha-surface0);
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.config-section h3 {
+  margin-top: 0;
+  margin-bottom: 15px;
+  color: var(--ctp-mocha-text);
+}
+
+.section-description {
+  color: var(--ctp-mocha-subtext0);
+  margin-bottom: 20px;
+}
+
+.unregistered-model-card {
+  background-color: var(--ctp-mocha-surface1);
+  border-radius: 6px;
+  padding: 15px;
+  margin-bottom: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+}
+
+.model-info {
+  flex-grow: 1;
+}
+
+.model-info h4 {
+  margin: 0 0 8px 0;
+  color: var(--ctp-mocha-text);
+}
+
+.model-info p {
+  margin: 4px 0;
+  color: var(--ctp-mocha-subtext1);
+}
+
+.file-path {
+  font-family: monospace;
+  font-size: 0.9em;
+  color: var(--ctp-mocha-subtext0);
+  word-break: break-all;
+}
+
+.register-button {
+  background-color: var(--ctp-mocha-green);
+  color: var(--ctp-mocha-base);
+  border: none;
+  border-radius: 4px;
+  padding: 8px 16px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background-color 0.2s;
+}
+
+.register-button:hover {
+  background-color: var(--ctp-mocha-teal);
+}
+
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background-color: var(--ctp-mocha-base);
+  border-radius: 8px;
+  padding: 20px;
+  max-width: 500px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.modal-content h2 {
+  margin-top: 0;
+  color: var(--ctp-mocha-text);
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 5px;
+  color: var(--ctp-mocha-text);
+}
+
+.form-group input[type="text"],
+.form-group input[type="number"],
+.form-group select,
+.form-group textarea {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid var(--ctp-mocha-overlay0);
+  border-radius: 4px;
+  background-color: var(--ctp-mocha-surface0);
+  color: var(--ctp-mocha-text);
+}
+
+.form-group textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+.button-group {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  margin-top: 20px;
+}
+
+.button-group button {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.button-group button[type="submit"] {
+  background-color: var(--ctp-mocha-green);
+  color: var(--ctp-mocha-base);
+}
+
+.button-group button[type="button"] {
+  background-color: var(--ctp-mocha-surface2);
+  color: var(--ctp-mocha-text);
+}
+
+.fill_w {
+  width: 100% !important;
+}
+
+.config-option-label {
+  color: var(--ctp-mocha-text) !important;
+}

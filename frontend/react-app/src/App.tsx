@@ -30,6 +30,27 @@ interface TabProps {
   onClick: () => void;
 }
 
+// Add these interfaces near the top
+interface Config {
+  maxImageDimension: number;
+  modelPath: string;
+}
+
+// Add these interfaces
+interface UnregisteredModel {
+  name: string;
+  file_pattern: string;
+  scale: number | null;
+  path: string;
+}
+
+interface ModelScanResult {
+  registered: ModelOptions;
+  unregistered: UnregisteredModel[];
+  message?: string;
+  removed?: string[];
+}
+
 /**
  * Tab component for navigation between different sections of the application
  * Handles visual styling and click events for tab selection
@@ -71,23 +92,62 @@ const ImageUpscaler: React.FC = () => {
   const [modelDownloading, setModelDownloading] = useState<boolean>(false);
   const [downloadProgress, setDownloadProgress] = useState<string>('');
 
+  // Add these state variables in the ImageUpscaler component
+  const [config, setConfig] = useState<Config>({
+    maxImageDimension: 1024,
+    modelPath: ''
+  });
+  const [isConfigChanged, setIsConfigChanged] = useState(false);
+
+  // Add these states to the ImageUpscaler component
+  const [unregisteredModels, setUnregisteredModels] = useState<UnregisteredModel[]>([]);
+  const [showRegisterModal, setShowRegisterModal] = useState(false);
+  const [selectedUnregisteredModel, setSelectedUnregisteredModel] = useState<UnregisteredModel | null>(null);
+
   /**
    * Fetches available upscaling models from the backend when component mounts
    * Updates the models state with retrieved data
    */
-  useEffect(() => {
-    const fetchModels = async () => {
-      try {
-        const response = await fetch('http://localhost:5000/models');
-        if (response.ok) {
-          const modelData = await response.json();
-          setModels(modelData);
+  const fetchModels = async () => {
+    try {
+      const response = await fetch('http://localhost:5000/models');
+      if (response.ok) {
+        const modelData: ModelScanResult = await response.json();
+        setModels(modelData.registered);
+        setUnregisteredModels(modelData.unregistered);
+        
+        // Show notification for removed models if any
+        if (modelData.message) {
+          toast.warning(modelData.message, {
+            position: "top-center",
+            autoClose: 5000,
+            toastId: 'removed-models',
+          });
         }
-      } catch (error) {
-        console.error('Error fetching models:', error);
+        
+        // Show notification for unregistered models if any
+        if (modelData.unregistered.length > 0) {
+          const count = modelData.unregistered.length;
+          toast.info(
+            <>
+              Found {count} unregistered model{count > 1 ? 's' : ''}. 
+              Go to the Configuration tab to register {count > 1 ? 'them' : 'it'}.
+            </>, 
+            {
+              position: "top-center",
+              autoClose: 5000,
+              toastId: 'unregistered-models',
+            }
+          );
+        }
       }
-    };
+    } catch (error) {
+      console.error('Error fetching models:', error);
+      toast.error('Failed to fetch models');
+    }
+  };
 
+  useEffect(() => {
     fetchModels();
   }, []);
 
@@ -317,6 +377,151 @@ const ImageUpscaler: React.FC = () => {
       });
       console.error('Error fetching image info:', error);
     }
+  };
+
+  // Add this effect to load the initial configuration
+  useEffect(() => {
+    const fetchConfig = async () => {
+      try {
+        const response = await fetch('http://localhost:5000/config');
+        if (response.ok) {
+          const configData = await response.json();
+          setConfig(configData);
+        }
+      } catch (error) {
+        console.error('Error fetching configuration:', error);
+        toast.error('Failed to load configuration');
+      }
+    };
+
+    fetchConfig();
+  }, []);
+
+  // Add this function to handle configuration updates
+  const handleSaveConfig = async () => {
+    try {
+      const response = await fetch('http://localhost:5000/config', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(config),
+      });
+
+      if (response.ok) {
+        setIsConfigChanged(false);
+        toast.success('Configuration saved successfully');
+      } else {
+        toast.error('Failed to save configuration');
+      }
+    } catch (error) {
+      console.error('Error saving configuration:', error);
+      toast.error('Error saving configuration');
+    }
+  };
+
+  // Add the ModelRegistrationForm component
+  const ModelRegistrationForm: React.FC<{
+    model: UnregisteredModel;
+    onClose: () => void;
+    onRegister: () => void;
+  }> = ({ model, onClose, onRegister }) => {
+    const [formData, setFormData] = useState({
+      name: model.name,
+      display_name: model.name,
+      description: "",
+      scale: model.scale || 4,
+      variable_scale: false,
+      architecture: "",
+      file_pattern: model.file_pattern
+    });
+
+    const handleSubmit = async (e: React.FormEvent) => {
+      e.preventDefault();
+      try {
+        const response = await fetch('http://localhost:5000/register-model', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(formData)
+        });
+
+        if (response.ok) {
+          toast.success('Model registered successfully');
+          onRegister();
+          onClose();
+        } else {
+          const error = await response.json();
+          toast.error(`Failed to register model: ${error.error}`);
+        }
+      } catch (error) {
+        toast.error('Failed to register model');
+        console.error('Error registering model:', error);
+      }
+    };
+
+    return (
+      <div className="modal">
+        <div className="modal-content">
+          <h2>Register New Model</h2>
+          <form onSubmit={handleSubmit}>
+            <div className="form-group">
+              <label>Display Name:</label>
+              <input
+                type="text"
+                value={formData.display_name}
+                onChange={e => setFormData(prev => ({...prev, display_name: e.target.value}))}
+                required
+              />
+            </div>
+            <div className="form-group">
+              <label>Description:</label>
+              <textarea
+                value={formData.description}
+                onChange={e => setFormData(prev => ({...prev, description: e.target.value}))}
+                required
+              />
+            </div>
+            <div className="form-group">
+              <label>Scale:</label>
+              <input
+                type="number"
+                value={formData.scale}
+                onChange={e => setFormData(prev => ({...prev, scale: parseInt(e.target.value)}))}
+                required
+                min={1}
+                max={8}
+              />
+            </div>
+            <div className="form-group">
+              <label>
+                <input
+                  type="checkbox"
+                  checked={formData.variable_scale}
+                  onChange={e => setFormData(prev => ({...prev, variable_scale: e.target.checked}))}
+                />
+                Variable Scale
+              </label>
+            </div>
+            <div className="form-group">
+              <label>Architecture:</label>
+              <input
+                type="text"
+                value={formData.architecture}
+                onChange={e => setFormData(prev => ({...prev, architecture: e.target.value}))}
+                required
+                placeholder="e.g., Real-ESRGAN"
+              />
+            </div>
+            <div className="button-group">
+              <button type="submit">Register Model</button>
+              <button type="button" onClick={onClose}>Cancel</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    );
   };
 
   return (
@@ -595,18 +800,100 @@ const ImageUpscaler: React.FC = () => {
         {activeTab === 'config' && (
           <div className="config-tab">
             <h2>Configuration</h2>
-            <div className="config-options">
-              <div className="config-option">
-                <label>Maximum Image Dimension:</label>
-                <input 
-                  type="number" 
-                  value={1024} 
-                  disabled 
-                  title="Maximum allowed dimension for input images"
-                />
+            
+            {/* Configuration Options */}
+            <div className="config-section">
+              <h3>General Settings</h3>
+              <div className="config-options">
+                <div className="config-option">
+                  <label className='config-option-label'>Maximum Image Dimension:</label>
+                  <input 
+                    type="number" 
+                    className='fill_w'
+                    value={config.maxImageDimension} 
+                    onChange={(e) => {
+                      setConfig(prev => ({
+                        ...prev,
+                        maxImageDimension: parseInt(e.target.value)
+                      }));
+                      setIsConfigChanged(true);
+                    }}
+                    min={256}
+                    max={4096}
+                    title="Maximum allowed dimension for input images"
+                  />
+                </div>
+                <div className="config-option">
+                  <label className='config-option-label'>Model Path:</label>
+                  <input 
+                    type="text" 
+                    className='fill_w'
+                    value={config.modelPath} 
+                    onChange={(e) => {
+                      setConfig(prev => ({
+                        ...prev,
+                        modelPath: e.target.value
+                      }));
+                      setIsConfigChanged(true);
+                    }}
+                    title="Path to custom model weights"
+                  />
+                </div>
+                <button 
+                  className="save-config-button"
+                  onClick={handleSaveConfig}
+                  disabled={!isConfigChanged}
+                >
+                  Save Configuration
+                </button>
               </div>
-              {/* Add more configuration options as needed */}
             </div>
+
+            {/* Unregistered Models Section */}
+            {unregisteredModels.length > 0 && (
+              <div className="config-section">
+                <h3>Unregistered Models</h3>
+                <p className="section-description">
+                  The following models were found in your model directory but are not yet registered.
+                  Register them to make them available for use.
+                </p>
+                <div className="unregistered-models-list">
+                  {unregisteredModels.map(model => (
+                    <div key={model.name} className="unregistered-model-card">
+                      <div className="model-info">
+                        <h4>{model.name}</h4>
+                        <p>Scale: {model.scale || 'Unknown'}</p>
+                        <p className="file-path">Path: {model.path}</p>
+                      </div>
+                      <button 
+                        className="register-button"
+                        onClick={() => {
+                          setSelectedUnregisteredModel(model);
+                          setShowRegisterModal(true);
+                        }}
+                      >
+                        Register Model
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Registration Modal */}
+            {showRegisterModal && selectedUnregisteredModel && (
+              <ModelRegistrationForm
+                model={selectedUnregisteredModel}
+                onClose={() => {
+                  setShowRegisterModal(false);
+                  setSelectedUnregisteredModel(null);
+                }}
+                onRegister={() => {
+                  // Now fetchModels is accessible here
+                  fetchModels();
+                }}
+              />
+            )}
           </div>
         )}
         

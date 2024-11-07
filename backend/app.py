@@ -20,6 +20,7 @@ from get_image_info import get_image_info
 from functools import lru_cache
 import sys
 from threading import Lock
+import re
 
 app = Flask(__name__)
 CORS(app, resources={
@@ -81,7 +82,25 @@ AVAILABLE_MODELS = {
 # Add this new route
 @app.route("/models", methods=["GET"])
 def get_models():
-    return jsonify(AVAILABLE_MODELS)
+    """Get all models and handle notifications about removed models."""
+    scan_result = scan_model_directory()
+    
+    if "error" in scan_result:
+        return jsonify(scan_result), 404
+    
+    # Merge default models with registered custom models
+    all_models = AVAILABLE_MODELS.copy()  # Start with default models
+    all_models.update(scan_result["registered"])  # Add custom registered models
+    
+    # Update the scan result with merged models
+    scan_result["registered"] = all_models
+        
+    # If any models were removed, include this in the response
+    if scan_result["removed"]:
+        removed_models = scan_result["removed"]
+        scan_result["message"] = f"Removed {len(removed_models)} model(s) that no longer exist: {', '.join(removed_models)}"
+    
+    return jsonify(scan_result)
 
 @app.route("/upscale", methods=["POST"])
 def upscale_image():
@@ -293,6 +312,19 @@ def get_cached_metric(metric_name):
     Uses LRU cache to store metrics in memory after first load.
     """
     return pyiqa.create_metric(metric_name, device=device)
+
+@contextmanager
+def temporary_torch_home():
+    """Temporarily set TORCH_HOME to our metric weights directory."""
+    original_torch_home = os.environ.get('TORCH_HOME')
+    os.environ['TORCH_HOME'] = METRIC_WEIGHTS_DIR
+    try:
+        yield
+    finally:
+        if original_torch_home:
+            os.environ['TORCH_HOME'] = original_torch_home
+        else:
+            del os.environ['TORCH_HOME']
 
 def check_metric_weights_available(metric_name):
     """Check if metric weights are available."""
@@ -536,6 +568,152 @@ def get_image_details():
         return jsonify(info)
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
+# Add these near the top of the file
+CONFIG_FILE = Path(__file__).parent / 'config.json'
+
+def load_config():
+    """Load configuration from JSON file."""
+    try:
+        with open(CONFIG_FILE, 'r') as f:
+            return json.load(f)
+    except FileNotFoundError:
+        # Default configuration
+        default_config = {
+            "maxImageDimension": 1024,
+            "modelPath": os.path.join(os.path.dirname(os.path.abspath(__file__)), "weights")
+        }
+        save_config(default_config)
+        return default_config
+
+def save_config(config):
+    """Save configuration to JSON file."""
+    with open(CONFIG_FILE, 'w') as f:
+        json.dump(config, f, indent=2)
+
+# Add this new route
+@app.route("/config", methods=["GET", "POST"])
+def handle_config():
+    if request.method == "GET":
+        return jsonify(load_config())
+    elif request.method == "POST":
+        new_config = request.json
+        save_config(new_config)
+        return jsonify({"message": "Configuration saved successfully"})
+
+# Update the resize_image function to use the config
+def resize_image(image, max_size=None):
+    """Resize the input image if it exceeds the maximum dimension while maintaining aspect ratio."""
+    if max_size is None:
+        config = load_config()
+        max_size = config["maxImageDimension"]
+    width, height = image.size
+
+    # Check if resizing is necessary
+    if width <= max_size and height <= max_size:
+        # Return the original image if it's smaller than the max size
+        return image
+
+    # Calculate the aspect ratio
+    aspect_ratio = width / height
+
+    # Resize based on the maximum size while maintaining aspect ratio
+    if width > height:
+        new_width = max_size
+        new_height = int(max_size / aspect_ratio)
+    else:
+        new_height = max_size
+        new_width = int(max_size * aspect_ratio)
+
+    # Resize the image
+    resized_image = image.resize((new_width, new_height), Image.ANTIALIAS)
+    return resized_image
+
+def load_registered_models():
+    """Load registered models from JSON file."""
+    try:
+        with open('registered_models.json', 'r') as f:
+            return json.load(f)
+    except FileNotFoundError:
+        return {}
+
+def save_registered_models(models):
+    """Save registered models to JSON file."""
+    with open('registered_models.json', 'w') as f:
+        json.dump(models, f, indent=2)
+
+def scan_model_directory():
+    """Scan custom model directory for .pth files and validate registered models."""
+    config = load_config()
+    model_dir = Path(config["modelPath"])
+    registered_models = load_registered_models()
+    
+    unregistered_models = []
+    models_to_remove = []
+    
+    if not model_dir.exists():
+        return {"error": f"Model directory not found: {model_dir}"}
+    
+    # Get all .pth files in the directory
+    existing_model_files = {f.stem: f for f in model_dir.glob("*.pth")}
+    
+    # First, validate registered models
+    for model_name, model_info in list(registered_models.items()):
+        # Check if the model file still exists
+        if model_name not in existing_model_files:
+            # Model is registered but file is missing
+            models_to_remove.append(model_name)
+            continue
+    
+    # Remove models that no longer exist
+    for model_name in models_to_remove:
+        del registered_models[model_name]
+    
+    # If any models were removed, save the updated registered models
+    if models_to_remove:
+        save_registered_models(registered_models)
+    
+    # Find unregistered models
+    for model_name, model_file in existing_model_files.items():
+        if model_name not in registered_models:
+            # Try to determine scale from filename
+            scale_match = re.search(r'x(\d+)', model_name.lower())
+            scale = int(scale_match.group(1)) if scale_match else None
+            
+            unregistered_models.append({
+                "name": model_name,
+                "file_pattern": model_file.name,
+                "scale": scale,
+                "path": str(model_file)
+            })
+    
+    return {
+        "registered": registered_models,
+        "unregistered": unregistered_models,
+        "removed": models_to_remove  # Include information about removed models
+    }
+
+@app.route("/register-model", methods=["POST"])
+def register_model():
+    """Register a new model with provided information."""
+    try:
+        model_info = request.json
+        registered_models = load_registered_models()
+        
+        # Add the new model to registered models
+        registered_models[model_info["name"]] = {
+            "name": model_info["display_name"],
+            "description": model_info["description"],
+            "scale": model_info["scale"],
+            "variable_scale": model_info["variable_scale"],
+            "architecture": model_info["architecture"],
+            "file_pattern": model_info["file_pattern"]
+        }
+        
+        save_registered_models(registered_models)
+        return jsonify({"success": True, "message": "Model registered successfully"})
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 400
 
 if __name__ == "__main__":
     app.run(debug=True, port=5000, extra_files=[

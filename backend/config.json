@@ -1,1 +1,4 @@
-{"maxImageDimension": 1024, "modelPath": "D:\\upscalee_custom_models"}
+{
+  "maxImageDimension": 1024,
+  "modelPath": "D:\\upscalee_custom_models"
+}
