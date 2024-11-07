@@ -30,10 +30,10 @@ CORS(app, resources={
     }
 })  # Enable CORS for all routes
 
-# Define all directory constants
-UPLOAD_FOLDER = 'temp_uploads'
-TEMP_RESULTS_DIR = 'pre_swapped_channels_results'
-FINAL_RESULTS_DIR = 'final_results'
+# Directory structure for handling image processing pipeline
+UPLOAD_FOLDER = 'temp_uploads'  # Stores uploaded images temporarily
+TEMP_RESULTS_DIR = 'pre_swapped_channels_results'  # Intermediate processing results
+FINAL_RESULTS_DIR = 'final_results'  # Final processed images
 
 # Create all necessary directories
 for directory in [UPLOAD_FOLDER, TEMP_RESULTS_DIR, FINAL_RESULTS_DIR]:
@@ -68,7 +68,7 @@ device = torch.device("cuda")
 # Get available metrics directly from pyiqa
 AVAILABLE_METRICS = pyiqa.list_models()
 
-# Add this near the top of the file
+# Define supported models with their capabilities and characteristics
 AVAILABLE_MODELS = {
     "RealESRGAN_x4plus": {"description": "General purpose x4 upscaling", "scale": 4, "variable_scale": False},
     "RealESRGAN_x2plus": {"description": "General purpose x2 upscaling", "scale": 2, "variable_scale": False},
@@ -202,7 +202,7 @@ def get_metric_info():
 METRIC_WEIGHTS_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "metric_weights")
 os.makedirs(METRIC_WEIGHTS_DIR, exist_ok=True)
 
-# Define supported metrics with their metadata
+# Define supported quality metrics with detailed metadata
 SUPPORTED_METRICS = {
     'musiq': {
         'name': 'Multi-scale Image Quality Transformer (musiq)',
@@ -280,36 +280,18 @@ SUPPORTED_METRICS = {
 def get_available_metrics():
     return jsonify(SUPPORTED_METRICS)
 
-# Force PyTorch to use our directory
+# Configure environment for metric weights storage and management
 os.environ['TORCH_HOME'] = METRIC_WEIGHTS_DIR
 os.environ['TORCH_HUB_DIR'] = METRIC_WEIGHTS_DIR
 torch.hub.set_dir(METRIC_WEIGHTS_DIR)
 
-# Update the temporary_torch_home context manager
-@contextmanager
-def temporary_torch_home():
-    """Temporarily set torch home and hub dir to our metric weights directory."""
-    original_torch_home = os.environ.get('TORCH_HOME', None)
-    original_hub_dir = os.environ.get('TORCH_HUB_DIR', None)
-    original_cache_dir = torch.hub.get_dir()
-    
-    os.environ['TORCH_HOME'] = METRIC_WEIGHTS_DIR
-    os.environ['TORCH_HUB_DIR'] = METRIC_WEIGHTS_DIR
-    torch.hub.set_dir(METRIC_WEIGHTS_DIR)
-    
-    try:
-        yield
-    finally:
-        if original_torch_home:
-            os.environ['TORCH_HOME'] = original_torch_home
-        if original_hub_dir:
-            os.environ['TORCH_HUB_DIR'] = original_hub_dir
-        torch.hub.set_dir(original_cache_dir)
-
 # Add this cache for loaded metrics
 @lru_cache(maxsize=None)
 def get_cached_metric(metric_name):
-    """Cache the loaded metric to prevent reloading."""
+    """
+    Cache loaded metrics to improve performance by preventing unnecessary reloading.
+    Uses LRU cache to store metrics in memory after first load.
+    """
     return pyiqa.create_metric(metric_name, device=device)
 
 def check_metric_weights_available(metric_name):
@@ -403,6 +385,10 @@ download_lock = Lock()
 
 # Define exception class at module level
 class DownloadStartedException(Exception):
+    """
+    Custom exception to handle metric weight download detection.
+    Raised when a new metric download is initiated.
+    """
     def __init__(self, metric_name):
         self.metric_name = metric_name
 
@@ -437,6 +423,18 @@ def get_cached_metric_with_download_check(metric_name):
     
 @app.route('/evaluate-quality', methods=['POST'])
 def evaluate_quality():
+    """
+    Comprehensive image quality evaluation endpoint.
+    Supports both full-reference (FR) and no-reference (NR) metrics:
+    - FR metrics compare original and upscaled images
+    - NR metrics evaluate single images independently
+    
+    Features:
+    - Automatic metric weight downloading
+    - Download status tracking
+    - Concurrent request handling
+    - Error handling and reporting
+    """
     global download_in_progress
     
     try:

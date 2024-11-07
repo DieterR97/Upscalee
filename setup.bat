@@ -29,12 +29,15 @@ call venv\Scripts\activate
 REM Upgrade pip first
 python -m pip install --upgrade pip
 
-REM Install both CPU and CUDA versions of PyTorch
-echo Installing CPU version of PyTorch...
-pip install --timeout 1000 --retries 5 torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu
-
-echo Installing CUDA version of PyTorch...
-pip install --timeout 1000 --retries 5 torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
+REM Check for CUDA availability
+nvidia-smi >nul 2>&1
+if %errorlevel% equ 0 (
+    echo CUDA GPU detected, installing PyTorch with CUDA support...
+    pip install --timeout 1000 --retries 5 torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
+) else (
+    echo No CUDA GPU detected, installing CPU version of PyTorch...
+    pip install --timeout 1000 --retries 5 torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu
+)
 
 REM Install core dependencies
 pip install --timeout 1000 --retries 5 flask flask-cors Pillow numpy opencv-python
@@ -61,6 +64,21 @@ echo Setting up frontend...
 cd frontend/react-app
 call npm install
 cd ../..
+
+echo.
+echo Patching/Updating package files...
+REM Check for CUDA availability
+nvidia-smi >nul 2>&1
+if %errorlevel% equ 0 (
+    echo "CUDA GPU detected, hard coding gpu_id to 0 and device to cuda in package files..."
+    python package_modifications/update_package.py
+    python package_modifications/update_package_cuda/update_package_cuda.py
+) else (
+    echo No CUDA GPU detected, falling back to cpu...
+    python package_modifications/update_package.py
+)
+echo Package files patched/updated successfully!
+echo.
 
 echo.
 echo Setup complete!

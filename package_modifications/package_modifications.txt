@@ -3,6 +3,8 @@
 Go to:
 ...\Lib\site-packages\basicsr\data\degradations.py
 
+venv\Lib\site-packages\basicsr\data\degradations.py
+
 change line 8 from:
     from torchvision.transforms.functional_tensor import rgb_to_grayscale
 to:
@@ -16,6 +18,8 @@ to avoid the following error:
 Go to:
 ...\Lib\site-packages\realesrgan\utils.py
 
+venv\Lib\site-packages\realesrgan\utils.py
+
 change line 63 from:
     loadnet = torch.load(model_path, map_location=torch.device('cpu'))
 to:
@@ -27,6 +31,8 @@ to:
 
 Go to:
 ...\Lib\site-packages\realesrgan\utils.py
+
+venv\Lib\site-packages\realesrgan\utils.py
 
 To hard-code realesrgan to use gpu and use gpu_id=0 do the following:
 

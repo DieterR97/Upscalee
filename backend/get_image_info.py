@@ -10,7 +10,13 @@ def get_image_info(image):
     Get detailed information about an image.
     
     :param image: PIL Image object
-    :return: Dictionary containing image information
+    :return: Dictionary containing image information including:
+            - Basic format and mode info
+            - Dimensions and aspect ratio
+            - Color information and channels
+            - File and compression details
+            - EXIF metadata (if available)
+            - Statistical analysis of color channels
     """
     # Calculate aspect ratio
     aspect_ratio = image.width / image.height
@@ -101,7 +107,10 @@ def get_image_info(image):
     return info
 
 def get_color_space_info(mode):
-    """Get detailed information about the color space."""
+    """
+    Get detailed information about the color space.
+    Translates PIL image modes into human-readable color space descriptions.
+    """
     color_spaces = {
         '1': "Binary (Black and White)",
         'L': "Grayscale",
@@ -155,7 +164,10 @@ def get_orientation(image):
         return "Portrait"
 
 def get_resolution_category(width, height):
-    """Categorize image resolution."""
+    """
+    Categorize image resolution based on total pixel count.
+    Returns the highest matching category (4K, Full HD, HD, SD, or Low Resolution).
+    """
     pixels = width * height
     categories = [
         (8294400, "4K (3840×2160 or higher)"),
@@ -195,7 +207,11 @@ def get_compression_info(image):
     return "Unknown compression"
 
 def get_format_specific_info(image):
-    """Get format-specific details."""
+    """
+    Get format-specific details that only apply to certain image types.
+    JPEG: subsampling and progressive encoding info
+    PNG: interlace and optimization settings
+    """
     info = {}
     if image.format == 'JPEG':
         info['subsampling'] = image.info.get('subsampling', 'Unknown')
@@ -206,7 +222,12 @@ def get_format_specific_info(image):
     return info
 
 def get_image_statistics(image):
-    """Calculate basic image statistics."""
+    """
+    Calculate basic image statistics for each color channel.
+    For RGB images: calculates min, max, and mean values for each channel.
+    For Grayscale images: calculates min, max, and mean values.
+    Returns empty dict if calculations fail or for unsupported modes.
+    """
     try:
         if image.mode == 'RGB':
             r, g, b = image.split()

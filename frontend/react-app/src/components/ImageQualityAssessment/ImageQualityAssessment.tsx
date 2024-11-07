@@ -33,18 +33,20 @@ interface LoadingState {
 }
 
 const ImageQualityAssessment: React.FC<IQAProps> = ({ originalImage, upscaledImage }) => {
+    // State for storing metrics and results
     const [availableMetrics, setAvailableMetrics] = useState<Record<string, MetricInfo>>({});
     const [selectedMetrics, setSelectedMetrics] = useState<string[]>([]);
     const [results, setResults] = useState<Results | null>(null);
     const [loading, setLoading] = useState<LoadingState>({ isLoading: false, message: '' });
 
+    // Fetch available metrics on component mount
     useEffect(() => {
-        // Fetch available metrics when component mounts
         fetch('http://localhost:5000/available-metrics')
             .then(response => response.json())
             .then(data => setAvailableMetrics(data));
     }, []);
 
+    // Toggle metric selection in the checkboxes
     const handleMetricChange = (metric: string) => {
         setSelectedMetrics(prev =>
             prev.includes(metric)
@@ -54,6 +56,7 @@ const ImageQualityAssessment: React.FC<IQAProps> = ({ originalImage, upscaledIma
     };
 
     const evaluateQuality = async () => {
+        // Validate required inputs
         if (!originalImage || !upscaledImage || selectedMetrics.length === 0) return;
 
         // Clear previous results before starting new evaluation
@@ -73,21 +76,23 @@ const ImageQualityAssessment: React.FC<IQAProps> = ({ originalImage, upscaledIma
             formData.append('upscaled_image', upscaledBlob, 'upscaled.png');
             formData.append('metrics', JSON.stringify(selectedMetrics));
 
+            // Implement retry logic for handling metric weight downloads
             let isDownloading = true;
             let retryCount = 0;
             const MAX_RETRIES = 30;
-            const INITIAL_DELAY = 5000;  // 5 seconds for first retry to allow download to complete
-            const RETRY_DELAY = 2000;    // 2 seconds for subsequent retries
+            const INITIAL_DELAY = 5000;  // Longer initial delay for first download attempt
+            const RETRY_DELAY = 2000;    // Shorter delay for subsequent retries
 
             while (isDownloading && retryCount < MAX_RETRIES) {
                 try {
-                    // Add longer delay for first retry to allow download to complete
+                    // Add delay based on retry attempt number
                     if (retryCount === 1) {
                         await new Promise(resolve => setTimeout(resolve, INITIAL_DELAY));
                     } else if (retryCount > 1) {
                         await new Promise(resolve => setTimeout(resolve, RETRY_DELAY));
                     }
 
+                    // Make API request to evaluate image quality
                     const response = await fetch('http://localhost:5000/evaluate-quality', {
                         method: 'POST',
                         body: formData,
@@ -104,8 +109,8 @@ const ImageQualityAssessment: React.FC<IQAProps> = ({ originalImage, upscaledIma
                         throw new Error(data.error);
                     }
 
+                    // Check if still downloading weights
                     if (data.downloading?.status) {
-                        // Update loading message with download information
                         setLoading({ 
                             isLoading: true, 
                             message: data.downloading.message

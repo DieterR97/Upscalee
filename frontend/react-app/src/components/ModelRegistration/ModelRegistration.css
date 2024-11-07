@@ -1,0 +1,51 @@
+.model-registration {
+  margin: 20px 0;
+  padding: 20px;
+  background-color: #f5f5f5;
+  border-radius: 8px;
+}
+
+.unregistered-models-list {
+  display: grid;
+  gap: 20px;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+}
+
+.unregistered-model-card {
+  background: white;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.registration-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.registration-form input,
+.registration-form textarea,
+.registration-form select {
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.registration-form textarea {
+  min-height: 80px;
+}
+
+.registration-form button {
+  padding: 10px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.registration-form button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}

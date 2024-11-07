@@ -62,15 +62,14 @@ const ImageComparisonSlider: React.FC<ImageComparisonSliderProps> = ({ leftImage
             const containerRect = containerRef.current.getBoundingClientRect();
             const imageRect = imageWrapperRef.current.getBoundingClientRect();
 
-            // Calculate the slider position relative to the image
+            // Calculate relative slider position accounting for image pan and zoom
             const sliderPositionX = (sliderPosition / 100) * containerRect.width;
             const imageOffsetX = (imageRect.width - containerRect.width) / 2 - panX;
             const relativeSliderPosition = (sliderPositionX + imageOffsetX) / imageRect.width;
 
-            // Ensure the clip value is between 0 and 1
+            // Clip the right image to create the sliding effect
             const clipValue = Math.max(0, Math.min(1, relativeSliderPosition)) * 100;
-
-            rightImageRef.current.style.transition = 'clip-path 0.1s ease-out'; // Add transition
+            rightImageRef.current.style.transition = 'clip-path 0.1s ease-out';
             rightImageRef.current.style.clipPath = `inset(0 0 0 ${clipValue}%)`;
         }
     }, [sliderPosition, panX, scale]);
@@ -168,8 +167,10 @@ const ImageComparisonSlider: React.FC<ImageComparisonSliderProps> = ({ leftImage
         event.preventDefault();
         const delta = Math.sign(event.deltaY);
         const oldScale = scale;
+        // Limit zoom between 1x and 25x
         setScale(prev => Math.max(1, Math.min(prev - delta * 0.1, 25)));
 
+        // Adjust pan position to keep zoom centered on mouse position
         if (containerRef.current) {
             const rect = containerRef.current.getBoundingClientRect();
             const mouseX = event.clientX - rect.left;

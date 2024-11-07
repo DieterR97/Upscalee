@@ -6,10 +6,11 @@ import ImageQueue from './components/ImageQueue/ImageQueue';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
+// Define interfaces for type safety and better code documentation
 interface ModelInfo {
-  description: string;
-  scale: number;
-  variable_scale: boolean;
+  description: string;  // Description of the upscaling model
+  scale: number;        // Default scale factor for the model
+  variable_scale: boolean;  // Whether the model supports different scale factors
 }
 
 interface ModelOptions {
@@ -29,6 +30,10 @@ interface TabProps {
   onClick: () => void;
 }
 
+/**
+ * Tab component for navigation between different sections of the application
+ * Handles visual styling and click events for tab selection
+ */
 const Tab: React.FC<TabProps> = ({ label, isActive, onClick }) => (
   <button 
     className={`tab ${isActive ? 'active' : ''}`}
@@ -38,24 +43,38 @@ const Tab: React.FC<TabProps> = ({ label, isActive, onClick }) => (
   </button>
 );
 
+/**
+ * Main component for the image upscaling application
+ * Manages image processing, model selection, and UI state
+ */
 const ImageUpscaler: React.FC = () => {
-  // State variables
+  // State Management Section
+  // Core image processing states
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [upscaledImage, setUpscaledImage] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+
+  // Model and configuration state
   const [models, setModels] = useState<ModelOptions>({});
   const [selectedModel, setSelectedModel] = useState<string>('RealESRGAN_x4plus_anime_6B');
-  const [modelDownloading, setModelDownloading] = useState<boolean>(false);
-  const [downloadProgress, setDownloadProgress] = useState<string>('');
   const [selectedScale, setSelectedScale] = useState<number>(4);
+
+  // UI state management
   const [showQueue, setShowQueue] = useState(false);
   const [queuedImages, setQueuedImages] = useState<QueuedImageInfo[]>([]);
   const [activeTab, setActiveTab] = useState<'upscale' | 'info' | 'config'>('upscale');
   const [imageInfo, setImageInfo] = useState<any>(null);
 
-  // Fetch available models when component mounts
+  // Download progress tracking
+  const [modelDownloading, setModelDownloading] = useState<boolean>(false);
+  const [downloadProgress, setDownloadProgress] = useState<string>('');
+
+  /**
+   * Fetches available upscaling models from the backend when component mounts
+   * Updates the models state with retrieved data
+   */
   useEffect(() => {
     const fetchModels = async () => {
       try {
@@ -72,9 +91,13 @@ const ImageUpscaler: React.FC = () => {
     fetchModels();
   }, []);
 
-  // Add effect to clear image info and preview when switching tabs
+  /**
+   * Handles cleanup and state reset when switching between tabs
+   * Ensures proper UI state management during tab navigation
+   */
   useEffect(() => {
     if (activeTab === 'info') {
+      // Clear all image-related state when switching to info tab
       setImageInfo(null);
       setSelectedImage(null);
       setImagePreview(null);
@@ -82,6 +105,7 @@ const ImageUpscaler: React.FC = () => {
         fileInputRef.current.value = ''; // Reset file input
       }
     } else if (activeTab === 'upscale') {
+      // Clear queue-related state when switching to upscale tab
       setShowQueue(false);
       setQueuedImages([]);
       setImagePreview(null);
@@ -113,7 +137,11 @@ const ImageUpscaler: React.FC = () => {
     }
   };
 
-  // Upscale the selected image
+  /**
+   * Processes the image upscaling request
+   * Handles model downloading, image processing, and error states
+   * Updates UI with progress and results
+   */
   const upscaleImage = async () => {
     if (!selectedImage) return;
 
@@ -187,6 +215,10 @@ const ImageUpscaler: React.FC = () => {
     }
   };
 
+  /**
+   * Manages the scale selector UI element
+   * Only displays for models that support variable scaling
+   */
   const showScaleSelector = () => {
     if (!models[selectedModel]?.variable_scale) return null;
 
@@ -214,6 +246,10 @@ const ImageUpscaler: React.FC = () => {
     }
   }, [selectedModel, models]);
 
+  /**
+   * Adds the current image comparison to the queue
+   * Displays notification and updates queue state
+   */
   const handleQueue = () => {
     if (upscaledImage && imagePreview) {
       const newQueuedImage: QueuedImageInfo = {
@@ -240,7 +276,10 @@ const ImageUpscaler: React.FC = () => {
     }
   };
 
-  // Modify fetchImageInfo to only be called on button click
+  /**
+   * Retrieves detailed information about the selected image
+   * Updates UI with image metadata and properties
+   */
   const fetchImageInfo = async (file: File) => {
     const formData = new FormData();
     formData.append('image', file);
