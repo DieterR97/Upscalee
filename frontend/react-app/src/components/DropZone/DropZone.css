@@ -9,6 +9,9 @@
   cursor: pointer;
   background-color: var(--ctp-mocha-surface0);
   color: var(--ctp-mocha-text);
+  /* width: 100%;
+  max-width: 800px;
+  margin: 0 auto; */
 }
 
 .drop-zone:hover {
@@ -32,4 +35,9 @@
   max-width: 100%;
   max-height: 200px;
   object-fit: contain;
+}
+
+.dropzone_text p {
+  color: var(--ctp-mocha-subtext0);
+  font-size: 1.1rem;
 }

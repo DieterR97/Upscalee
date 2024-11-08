@@ -1,8 +1,7 @@
 .model-registration {
-  margin: 20px 0;
-  padding: 20px;
-  background-color: var(--ctp-mocha-surface0);
-  border-radius: 8px;
+  position: relative;
+  z-index: 1000;
+  overflow: visible;
 }
 
 .unregistered-models-list {
@@ -16,12 +15,15 @@
   padding: 15px;
   border-radius: 8px;
   box-shadow: 0 2px 4px var(--ctp-mocha-crust);
+  overflow: visible;
 }
 
 .registration-form {
   display: flex;
   flex-direction: column;
   gap: 10px;
+  position: relative;
+  overflow: visible;
 }
 
 .registration-form input,
@@ -55,4 +57,27 @@
   background-color: var(--ctp-mocha-surface1);
   color: var(--ctp-mocha-overlay2);
   cursor: not-allowed;
+}
+
+/* Remove all existing tooltip styles and replace with just these basic ones */
+[data-tooltip] {
+  position: relative;
+}
+
+[data-tooltip]::before {
+  content: attr(data-tooltip);
+  position: absolute;
+  top: -40px;
+  left: 0;
+  background: black;
+  color: white;
+  padding: 5px;
+  border-radius: 5px;
+  font-size: 14px;
+  white-space: nowrap;
+  z-index: 99999;
+}
+
+.unregistered-model-card {
+  overflow: visible;
 }

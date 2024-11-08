@@ -61,10 +61,10 @@ const DropZone: React.FC<DropZoneProps> = ({ onFileSelect, previewUrl }) => {
           className="drop-zone-preview"
         />
       ) : (
-        <>
+        <div className="dropzone_text">
           <p>Drop an image here or click to select</p>
           <p className="supported-formats">Supported formats: PNG, JPG, JPEG, WebP</p>
-        </>
+        </div>
       )}
     </div>
   );

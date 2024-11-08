@@ -285,7 +285,7 @@ const ImageUpscaler: React.FC = () => {
         toast.success(
           <div>
             <p>Image successfully upscaled using {selectedModel} ({selectedScale}x)</p>
-            <button 
+            <button
               onClick={() => {
                 const qualitySection = document.querySelector('.iqa-container');
                 if (qualitySection) {
@@ -364,7 +364,7 @@ const ImageUpscaler: React.FC = () => {
       <div className="scale-selection">
         <label htmlFor="scale-select">Select Scale: </label>
         <select
-          id="scale-select"
+          id="model-select"
           value={selectedScale}
           onChange={(e) => setSelectedScale(Number(e.target.value))}
           disabled={loading}
@@ -670,8 +670,8 @@ const ImageUpscaler: React.FC = () => {
       <div className="centerContent">
         {/* <h1>Image Upscaler</h1> */}
         <div className="logo-container">
-        <img src={logo2} alt="Logo" className="logo2" />
-        <img src={logo} alt="Logo" className="logo" />
+          <img src={logo2} alt="Logo" className="logo2" />
+          <img src={logo} alt="Logo" className="logo" />
         </div>
 
         {/* Add the tab navigation */}
@@ -761,7 +761,7 @@ const ImageUpscaler: React.FC = () => {
                 <li>Click "Upscale Image" to process your image</li>
                 <li>Use the comparison slider to view the results and save your upscaled image</li>
               </ol>
-              <button 
+              <button
                 className="start-upscaling-btn"
                 onClick={() => {
                   document.body.scrollTop = 0;
@@ -776,7 +776,7 @@ const ImageUpscaler: React.FC = () => {
             <div className="tabs-explanation">
               <h2>Navigation Guide</h2>
               <div className="tabs-grid">
-                <div 
+                <div
                   className="tab-explanation-card"
                   onClick={() => {
                     document.body.scrollTop = 0; // For Safari
@@ -789,7 +789,7 @@ const ImageUpscaler: React.FC = () => {
                   <p>The main workspace where you can enhance your images. Select AI models, upload images, and control upscaling settings for optimal results.</p>
                 </div>
 
-                <div 
+                <div
                   className="tab-explanation-card"
                   onClick={() => {
                     document.body.scrollTop = 0;
@@ -802,7 +802,7 @@ const ImageUpscaler: React.FC = () => {
                   <p>Browse and select from available AI models. Each model is optimized for different types of images and upscaling scenarios.</p>
                 </div>
 
-                <div 
+                <div
                   className="tab-explanation-card"
                   onClick={() => {
                     document.body.scrollTop = 0;
@@ -815,7 +815,7 @@ const ImageUpscaler: React.FC = () => {
                   <p>Analyze detailed information about your images including dimensions, format, and metadata. Compare original and upscaled image properties.</p>
                 </div>
 
-                <div 
+                <div
                   className="tab-explanation-card"
                   onClick={() => {
                     document.body.scrollTop = 0;
@@ -857,52 +857,44 @@ const ImageUpscaler: React.FC = () => {
 
         {activeTab === 'upscale' && (
           <>
-            <div className="model-selection">
-              <div className="model-selection-label">
-                {/* <label 
-                  htmlFor="model-select" 
-                  className="model-selection-label-text"
-                  data-tooltip="Hover over model names to see their purpose"
-                >
-                  Select Model: 
-                </label> */}
-                <label
-                  htmlFor="model-select"
-                  className="model-selection-label-text"
-                >
-                  Select Model:
-                </label>
-              </div>
-              <div className="model-selection-dropdown">
-                <div
-                  className="custom-select"
-                  data-tooltip="Hover over model names to see their purpose"
-                >
-                  <select
-                    id="model-select"
-                    value={selectedModel}
-                    onChange={(e) => setSelectedModel(e.target.value)}
-                    disabled={loading}
+            <div className="info-tab">
+              <div className="model-selection">
+                <div className="model-selection-label">
+                  <h2 className='titleSizeColour'>
+                    Select Model:
+                  </h2>
+                </div>
+                <div className="model-selection-container">
+                  <div
+                    className="custom-select"
+                    data-tooltip="Hover over model names to see their purpose"
                   >
-                    <option value="" disabled>Select a model...</option>
-                    {Object.entries(models).map(([key, info]) => (
-                      <option
-                        key={key}
-                        value={key}
-                        title={info.description}
-                      >
-                        {info.name || key}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div className="model-description-tooltip" data-tooltip={models[selectedModel]?.description}>
-                  ⓘ
+                    <select
+                      id="model-select"
+                      value={selectedModel}
+                      onChange={(e) => setSelectedModel(e.target.value)}
+                      disabled={loading}
+                    >
+                      <option value="" disabled>Select a model...</option>
+                      {Object.entries(models).map(([key, info]) => (
+                        <option
+                          key={key}
+                          value={key}
+                          title={info.description}
+                        >
+                          {info.name || key}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="model-description-tooltip" data-tooltip={models[selectedModel]?.description}>
+                    ⓘ
+                  </div>
+                  {showScaleSelector()}
                 </div>
               </div>
-            </div>
 
-            {/* Add this new section to display model details
+              {/* Add this new section to display model details
             {selectedModel && models[selectedModel] && (
               <div className="model-info-panel">
                 <h3>{models[selectedModel].name}</h3>
@@ -917,82 +909,92 @@ const ImageUpscaler: React.FC = () => {
               </div>
             )} */}
 
-            {showScaleSelector()}
+              <div>
+                <DropZone
+                  onFileSelect={handleFileSelect}
+                  previewUrl={imagePreview}
+                />
 
-            <div>
-              <DropZone 
-                onFileSelect={handleFileSelect} 
-                previewUrl={imagePreview}
-              />
-
-              <div className="button-container">
-                <button
-                  onClick={resetInput}
-                  disabled={loading}
-                  className="tooltip-button reset-button"
-                  data-tooltip="Clear the current image and all results to start over"
-                >
-                  Reset Input
-                </button>
-                <button
-                  onClick={upscaleImage}
-                  disabled={!selectedImage || loading}
-                  className="tooltip-button"
-                  data-tooltip="Process the selected image with the chosen model and scale settings"
-                >
-                  Upscale Image
-                </button>
-              </div>
-            </div>
-
-
-            {modelDownloading && (
-              <div className="model-download-status">
-                <div className="loading-spinner"></div>
-                <p>{downloadProgress}</p>
-              </div>
-            )}
-
-            <div className="App">
-              <h1>Image Comparison</h1>
-              {imagePreview && upscaledImage ? (
-                <>
-                  <ImageComparisonSlider
-                    leftImage={imagePreview}
-                    rightImage={upscaledImage}
-                    showQueueButton={true}
-                    onQueue={handleQueue}
-                    leftLabel="Original"
-                    rightLabel={`${selectedModel} (${selectedScale}x)`}
-                    modelName={selectedModel}
-                    scale={selectedScale}
-                    originalFilename={selectedImage?.name}
-                  />
-                </>
-              ) : imagePreview && loading ? (
-                <div className="placeholder-container loading-indicators-center-column">
-                  <div className="spinner"></div>
-                  <br />
-                  <p className="loading-text">Upscaling image with {selectedModel} at {selectedScale}x scale...</p>
+                <div className="button-container">
+                  <button
+                    onClick={resetInput}
+                    disabled={loading}
+                    className="tooltip-button reset-button"
+                    data-tooltip="Clear the current image and all results to start over"
+                  >
+                    Reset Input
+                  </button>
+                  <button
+                    onClick={upscaleImage}
+                    disabled={!selectedImage || loading}
+                    className="tooltip-button"
+                    data-tooltip="Process the selected image with the chosen model and scale settings"
+                  >
+                    Upscale Image
+                  </button>
                 </div>
-              ) : imagePreview ? (
-                <div className="placeholder-container">
-                  <p>Click "Upscale Image" to start processing</p>
+              </div>
+
+
+              {modelDownloading && (
+                <div className="model-download-status">
+                  <div className="loading-spinner"></div>
+                  <p>{downloadProgress}</p>
                 </div>
-              ) : (
-                <p>Select and upscale an image to use the comparison slider.</p>
               )}
-            </div>
 
-            {showQueue && (
-              <ImageQueue
-                queuedImages={queuedImages}
-                onClearQueue={() => {
-                  setShowQueue(false);
-                  setQueuedImages([]);
-                }}
-              />
-            )}
+              <div className="App">
+                {imagePreview && upscaledImage ? (
+                  <div>
+                    <h2 className='image-comparison-header'>Image Comparison</h2>
+                    <ImageComparisonSlider
+                      leftImage={imagePreview}
+                      rightImage={upscaledImage}
+                      showQueueButton={true}
+                      onQueue={handleQueue}
+                      leftLabel="Original"
+                      rightLabel={`${selectedModel} (${selectedScale}x)`}
+                      modelName={selectedModel}
+                      scale={selectedScale}
+                      originalFilename={selectedImage?.name}
+                    />
+                  </div>
+                ) : imagePreview && loading ? (
+                  <div>
+                    <h2 className="image-comparison-header">Image Comparison</h2>
+                    <div className="placeholder-container loading-indicators-center-column">
+
+                      <div className="spinner"></div>
+                      <br />
+                      <p className="loading-text">Upscaling image with {selectedModel} at {selectedScale}x scale...</p>
+                    </div>
+                  </div>
+                ) : imagePreview ? (
+                  <div>
+                    <h2 className="image-comparison-header">Image Comparison</h2>
+                    <div className="placeholder-container">
+
+                      <p>Click "Upscale Image" to start processing</p>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="placeholder-message">
+                    <p>Select and upscale an image to use the comparison slider</p>
+                  </div>
+                )}
+              </div>
+
+              {showQueue && (
+                <ImageQueue
+                  queuedImages={queuedImages}
+                  onClearQueue={() => {
+                    setShowQueue(false);
+                    setQueuedImages([]);
+                  }}
+                />
+              )}
+
+            </div>
 
             {imagePreview && upscaledImage && (
               <ImageQualityAssessment
@@ -1000,13 +1002,12 @@ const ImageUpscaler: React.FC = () => {
                 upscaledImage={upscaledImage}
               />
             )}
-
           </>
         )}
 
         {activeTab === 'model-info' && (
           <div className="model-info-tab">
-            <h2>Available Models:</h2>
+            <h2 className='titleSizeColour'>Available Models:</h2>
             <h3>Click on a model card to upscale with it</h3>
             <div className="model-cards-container">
               {Object.entries(models).map(([key, model]) => (
@@ -1070,10 +1071,10 @@ const ImageUpscaler: React.FC = () => {
 
         {activeTab === 'info' && (
           <div className="info-tab">
-            <h2>Image Information</h2>
+            <h2 className="info-tab-header titleSizeColour">Image Information</h2>
 
-            <DropZone 
-              onFileSelect={handleFileSelect} 
+            <DropZone
+              onFileSelect={handleFileSelect}
               previewUrl={imagePreview}
             />
 
@@ -1175,30 +1176,48 @@ const ImageUpscaler: React.FC = () => {
                 )}
               </div>
             ) : (
-              <p>Drop an image or click to select, then click "Get Image Info" to view its information.</p>
+              <div className="placeholder-message">
+                <p>Drop an image or click to select one, then click "Get Image Info" to view its information.</p>
+              </div>
             )}
           </div>
         )}
 
         {activeTab === 'config' && (
           <div className="config-tab">
-            <h2>Configuration</h2>
+            <h2 className='titleSizeColour'>Configuration</h2>
 
             {/* Unregistered Models Section */}
             {unregisteredModels.length > 0 && (
               <div className="config-section">
                 <h3>Unregistered Models</h3>
-                <p className="section-description">
+                <p
+                  className="section-description"
+                // data-tooltip="Models found in your model directory that haven't been configured for use. Registration allows you to set custom names, descriptions, and other metadata"
+                >
                   The following models were found in your model directory but are not yet registered.
                   Register them to make them available for use.
                 </p>
                 <div className="unregistered-models-list">
                   {unregisteredModels.map(model => (
-                    <div key={model.name} className="unregistered-model-card">
+                    <div
+                      key={model.name}
+                      className="unregistered-model-card"
+                    // data-tooltip="Click 'Register Model' to configure this model's settings and make it available for use"
+                    >
                       <div className="model-info">
                         <h4>{model.name}</h4>
-                        <p>Scale: {model.scale || 'Unknown'}</p>
-                        <p className="file-path">Path: {model.path}</p>
+                        <p
+                        // data-tooltip="The upscaling factor this model was trained for"
+                        >
+                          Scale: {model.scale || 'Unknown'}
+                        </p>
+                        <p
+                          className="file-path"
+                        // data-tooltip="Location of the model weights file in your model directory"
+                        >
+                          Path: {model.path}
+                        </p>
                       </div>
                       <button
                         className="register-button"
@@ -1206,6 +1225,7 @@ const ImageUpscaler: React.FC = () => {
                           setSelectedUnregisteredModel(model);
                           setShowRegisterModal(true);
                         }}
+                        data-tooltip="Open the registration form to configure this model's settings"
                       >
                         Register Model
                       </button>
@@ -1215,12 +1235,32 @@ const ImageUpscaler: React.FC = () => {
               </div>
             )}
 
+            {/* Registration Modal */}
+            {showRegisterModal && selectedUnregisteredModel && (
+              <ModelRegistrationForm
+                model={selectedUnregisteredModel}
+                onClose={() => {
+                  setShowRegisterModal(false);
+                  setSelectedUnregisteredModel(null);
+                }}
+                onRegister={() => {
+                  // Now fetchModels is accessible here
+                  fetchModels();
+                }}
+              />
+            )}
+
             {/* Configuration Options */}
             <div className="config-section">
               <h3>General Settings</h3>
               <div className="config-options">
                 <div className="config-option">
-                  <label className='config-option-label'>Maximum Image Dimension:</label>
+                  <label
+                    className='config-option-label'
+                    data-tooltip="Sets the maximum allowed dimension (width or height) for input images. Larger images will be automatically resized"
+                  >
+                    Maximum Image Dimension:
+                  </label>
                   <input
                     type="number"
                     className='fill_w'
@@ -1234,11 +1274,16 @@ const ImageUpscaler: React.FC = () => {
                     }}
                     min={256}
                     max={4096}
-                    title="Maximum allowed dimension for input images"
+                    data-tooltip="Enter a value between 256 and 4096 pixels. Higher values require more memory"
                   />
                 </div>
                 <div className="config-option lp">
-                  <label className='config-option-label'>Model Path:</label>
+                  <label
+                    className='config-option-label'
+                    data-tooltip="Directory where custom model weights are stored. Models placed here will be detected automatically"
+                  >
+                    Model Path:
+                  </label>
                   <div className="directory-picker">
                     <input
                       type="text"
@@ -1251,7 +1296,7 @@ const ImageUpscaler: React.FC = () => {
                         }));
                         setIsConfigChanged(true);
                       }}
-                      title="Path to custom model weights"
+                      data-tooltip="Current path to model weights directory"
                       readOnly
                     />
                     <button
@@ -1270,7 +1315,7 @@ const ImageUpscaler: React.FC = () => {
                       }}
                       className="directory-picker-button"
                       type="button"
-                      title="Browse for folder"
+                      data-tooltip="Select a folder containing your custom model weights"
                     >
                       Browse
                     </button>
@@ -1280,26 +1325,13 @@ const ImageUpscaler: React.FC = () => {
                   className="save-config-button"
                   onClick={handleSaveConfig}
                   disabled={!isConfigChanged}
+                  data-tooltip="Save your configuration changes. Button is disabled when no changes have been made"
                 >
                   Save Configuration
                 </button>
               </div>
             </div>
 
-            {/* Registration Modal */}
-            {showRegisterModal && selectedUnregisteredModel && (
-              <ModelRegistrationForm
-                model={selectedUnregisteredModel}
-                onClose={() => {
-                  setShowRegisterModal(false);
-                  setSelectedUnregisteredModel(null);
-                }}
-                onRegister={() => {
-                  // Now fetchModels is accessible here
-                  fetchModels();
-                }}
-              />
-            )}
           </div>
         )}
 

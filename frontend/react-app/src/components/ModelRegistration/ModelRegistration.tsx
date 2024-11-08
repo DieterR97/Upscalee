@@ -60,6 +60,7 @@ export const ModelRegistration: React.FC<Props> = ({ unregisteredModels, onModel
               <input
                 type="text"
                 placeholder="Display Name"
+                data-tooltip="A user-friendly name for the model that will be shown in the interface"
                 onChange={(e) => setRegistrationData(prev => ({
                   ...prev,
                   [model.file_name]: {
@@ -70,6 +71,7 @@ export const ModelRegistration: React.FC<Props> = ({ unregisteredModels, onModel
               />
               <textarea
                 placeholder="Description"
+                data-tooltip="Describe what the model does best (e.g., 'Specialized for anime-style images' or 'Best for photo restoration')"
                 onChange={(e) => setRegistrationData(prev => ({
                   ...prev,
                   [model.file_name]: {
@@ -81,6 +83,7 @@ export const ModelRegistration: React.FC<Props> = ({ unregisteredModels, onModel
               <input
                 type="text"
                 placeholder="Architecture (e.g., ESRGAN, SwinIR, HAT)"
+                data-tooltip="The neural network architecture used by this model (e.g., ESRGAN, SwinIR, HAT, SPAN)"
                 onChange={(e) => setRegistrationData(prev => ({
                   ...prev,
                   [model.file_name]: {
@@ -92,6 +95,7 @@ export const ModelRegistration: React.FC<Props> = ({ unregisteredModels, onModel
               <input
                 type="number"
                 placeholder="Scale (e.g., 4)"
+                data-tooltip="The upscaling factor this model was trained for (e.g., 2 for 2x, 4 for 4x upscaling)"
                 onChange={(e) => setRegistrationData(prev => ({
                   ...prev,
                   [model.file_name]: {
@@ -100,20 +104,23 @@ export const ModelRegistration: React.FC<Props> = ({ unregisteredModels, onModel
                   }
                 }))}
               />
-              <label>
-                <input
-                  type="checkbox"
-                  onChange={(e) => setRegistrationData(prev => ({
-                    ...prev,
-                    [model.file_name]: {
-                      ...prev[model.file_name],
-                      variableScale: e.target.checked
-                    }
-                  }))}
-                />
-                Variable Scale
-              </label>
+              <div className="checkbox-container">
+                <label data-tooltip="Enable if the model supports variable upscaling factors. Most models are trained for a fixed scale">
+                  <input
+                    type="checkbox"
+                    onChange={(e) => setRegistrationData(prev => ({
+                      ...prev,
+                      [model.file_name]: {
+                        ...prev[model.file_name],
+                        variableScale: e.target.checked
+                      }
+                    }))}
+                  />
+                  Variable Scale
+                </label>
+              </div>
               <select
+                data-tooltip="The type of images this model works best with"
                 onChange={(e) => setRegistrationData(prev => ({
                   ...prev,
                   [model.file_name]: {
@@ -135,6 +142,7 @@ export const ModelRegistration: React.FC<Props> = ({ unregisteredModels, onModel
                   !registrationData[model.file_name].architecture ||
                   !registrationData[model.file_name].scale ||
                   !registrationData[model.file_name].type}
+                data-tooltip="Register this model with the provided information. All fields must be filled out"
               >
                 Register Model
               </button>

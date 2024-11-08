@@ -3,8 +3,8 @@
 /* Main container for the image comparison slider */
 .image-comparison-container {
     position: relative;
-    width: 80vw;
     height: calc(80vw * (3 / 4));
+    /* width: 80vw; */
     max-width: 60vw;
     max-height: 60vh;
     overflow: hidden;
