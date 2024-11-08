@@ -234,6 +234,15 @@ const ImageUpscaler: React.FC = () => {
     // Clear the upscaled image before starting the new upscale
     setUpscaledImage(null);
 
+    // Scroll to the placeholder container immediately after clicking
+    const placeholderContainer = document.querySelector('.placeholder-container');
+    if (placeholderContainer) {
+      placeholderContainer.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center'
+      });
+    }
+
     // Check if the selected model is a Spandrel model
     const isSpandrelModel = selectedModel in models && models[selectedModel].is_spandrel;
 
@@ -267,16 +276,48 @@ const ImageUpscaler: React.FC = () => {
         setLoading(false); // Set loading to false after the process is done
         setUpscaledImage(upscaledImageURL);
 
-        // Add toast notification for successful upscale
-        toast.success(`Image successfully upscaled using ${selectedModel} (${selectedScale}x)`, {
-          position: "top-center",
-          autoClose: 3000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-        });
+        // Add success toast with quality assessment button
+        toast.success(
+          <div>
+            <p>Image successfully upscaled using {selectedModel} ({selectedScale}x)</p>
+            <button 
+              onClick={() => {
+                const qualitySection = document.querySelector('.iqa-container');
+                if (qualitySection) {
+                  qualitySection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+              }}
+              style={{
+                background: 'white',
+                color: '#333',
+                border: '1px solid #ccc',
+                padding: '5px 10px',
+                borderRadius: '4px',
+                marginTop: '8px',
+                cursor: 'pointer',
+                width: '100%'
+              }}
+            >
+              View Quality Assessment ↓
+            </button>
+          </div>,
+          {
+            position: "top-center",
+            autoClose: 5000,
+          }
+        );
+
+        // Add small delay to ensure components are rendered
+        setTimeout(() => {
+          const comparisonTitle = document.querySelector('.App h1');
+          if (comparisonTitle) {
+            comparisonTitle.scrollIntoView({
+              behavior: 'smooth',
+              block: 'start'
+            });
+          }
+        }, 100);
+
       } else {
         toast.error('Failed to upscale image. Please try again.', {
           position: "top-center",
@@ -790,13 +831,6 @@ const ImageUpscaler: React.FC = () => {
               )}
             </div>
 
-            {imagePreview && upscaledImage && (
-              <ImageQualityAssessment
-                originalImage={imagePreview}
-                upscaledImage={upscaledImage}
-              />
-            )}
-
             {showQueue && (
               <ImageQueue
                 queuedImages={queuedImages}
@@ -806,6 +840,14 @@ const ImageUpscaler: React.FC = () => {
                 }}
               />
             )}
+
+            {imagePreview && upscaledImage && (
+              <ImageQualityAssessment
+                originalImage={imagePreview}
+                upscaledImage={upscaledImage}
+              />
+            )}
+
           </>
         )}
 

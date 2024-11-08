@@ -12,9 +12,10 @@ interface ImageComparisonSliderProps {
     modelName?: string;
     scale: number;
     originalFilename?: string;
+    onCompareClick?: () => void;
 }
 
-const ImageComparisonSlider: React.FC<ImageComparisonSliderProps> = ({ leftImage, rightImage, onQueue, showQueueButton = false, leftLabel, rightLabel, modelName = 'unknown', scale: initialScale = 0, originalFilename }) => {
+const ImageComparisonSlider: React.FC<ImageComparisonSliderProps> = ({ leftImage, rightImage, onQueue, showQueueButton = false, leftLabel, rightLabel, modelName = 'unknown', scale: initialScale = 0, originalFilename, onCompareClick }) => {
     // Refs for DOM elements
     const containerRef = useRef<HTMLDivElement>(null);
     const sliderRef = useRef<HTMLInputElement>(null);
@@ -286,6 +287,24 @@ const ImageComparisonSlider: React.FC<ImageComparisonSliderProps> = ({ leftImage
         document.body.removeChild(link);
     };
 
+    // Modify the Queue button click handler
+    const handleCompareClick = () => {
+        if (onQueue) {
+            onQueue();
+        }
+        
+        // Add scrolling behavior
+        setTimeout(() => {
+            const imageQueue = document.querySelector('.image-queue');
+            if (imageQueue) {
+                imageQueue.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'center'
+                });
+            }
+        }, 100);
+    };
+
     // Render component
     return (
         <>
@@ -326,14 +345,14 @@ const ImageComparisonSlider: React.FC<ImageComparisonSliderProps> = ({ leftImage
                     className="tooltip-button"
                     data-tooltip="Enter fullscreen mode for a larger view. Press ESC or click again to exit"
                 >
-                    FULLSCREEN (Exit with ESC)
+                    FULLSCREEN <span className="smaller-text">(Exit with ESC)</span>
                 </button>
                 <button 
                     onClick={resetZoom}
                     className="tooltip-button"
                     data-tooltip="Reset all image adjustments: zoom level, pan position, and slider position"
                 >
-                    RESET (Pan, Zoom and Slider)
+                    RESET <span className="smaller-text">(Pan, Zoom and Slider)</span>
                 </button>
                 <button 
                     onClick={handleDownload}
@@ -344,11 +363,11 @@ const ImageComparisonSlider: React.FC<ImageComparisonSliderProps> = ({ leftImage
                 </button>
                 {showQueueButton && onQueue && (
                     <button 
-                        onClick={onQueue}
+                        onClick={handleCompareClick}
                         className="queue-button tooltip-button"
-                        data-tooltip="Add this upscaled image to the queue for comparison with other model outputs"
+                        data-tooltip="Save this result to compare with outputs from different AI models"
                     >
-                        QUEUE
+                        COMPARE MODELS
                     </button>
                 )}
             </div>

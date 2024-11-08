@@ -10,10 +10,16 @@
 }
 
 .queue-list {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    /* display: grid; */
+    /* grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); */
+    /* grid-template-rows: repeat(auto-fill, minmax(250px, 1fr)); */
     gap: 20px;
     margin: 20px 0;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 20px;
 }
 
 .queue-item {
