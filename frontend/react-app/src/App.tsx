@@ -8,6 +8,11 @@ import 'react-toastify/dist/ReactToastify.css';
 import DropZone from './components/DropZone/DropZone';
 import logo from './assets/upscalee.png';
 import logo2 from './assets/Upscalee_logo.png';
+import { Tabs, Box } from '@mui/material';
+import reactLogo from './assets/react.svg';
+import pythonLogo from './assets/python.svg';
+import pytorchLogo from './assets/pytorch.svg';
+import flaskLogo from './assets/flask.svg';
 
 // Define interfaces for type safety and better code documentation
 interface ModelInfo {
@@ -108,7 +113,7 @@ const ImageUpscaler: React.FC = () => {
   // UI state management
   const [showQueue, setShowQueue] = useState(false);
   const [queuedImages, setQueuedImages] = useState<QueuedImageInfo[]>([]);
-  const [activeTab, setActiveTab] = useState<'upscale' | 'model-info' | 'info' | 'config'>('upscale');
+  const [activeTab, setActiveTab] = useState<'about' | 'upscale' | 'model-info' | 'info' | 'config'>('about');
   const [imageInfo, setImageInfo] = useState<any>(null);
 
   // Download progress tracking
@@ -672,6 +677,13 @@ const ImageUpscaler: React.FC = () => {
         {/* Add the tab navigation */}
         <div className="tabs">
           <button
+            className={`tab ${activeTab === 'about' ? 'active' : ''}`}
+            onClick={() => setActiveTab('about')}
+            data-tooltip="Learn about the application and its features"
+          >
+            About
+          </button>
+          <button
             className={`tab ${activeTab === 'upscale' ? 'active' : ''}`}
             onClick={() => setActiveTab('upscale')}
             data-tooltip="Upscale your images using AI models"
@@ -702,6 +714,147 @@ const ImageUpscaler: React.FC = () => {
         </div>
 
         {/* Wrap the content in conditional rendering based on active tab */}
+        {activeTab === 'about' && (
+          <div className="about-container">
+            <div className="about-header">
+              <h2>Welcome to Upscalee</h2>
+              <p>Your AI-powered image upscaling solution</p>
+            </div>
+
+            <div className="features-grid">
+              <div className="feature-card">
+                <h3>
+                  <span role="img" aria-label="ai">🤖</span>
+                  AI-Powered Upscaling
+                </h3>
+                <p>Transform your images to higher resolutions using state-of-the-art AI models. Support for multiple architectures including Real-ESRGAN and more.</p>
+              </div>
+              <div className="feature-card">
+                <h3>
+                  <span role="img" aria-label="models">🎯</span>
+                  Multiple Models
+                </h3>
+                <p>Choose from various pre-trained models or add your own custom models. Each model is optimized for different types of images and use cases.</p>
+              </div>
+              <div className="feature-card">
+                <h3>
+                  <span role="img" aria-label="comparison">⚖️</span>
+                  Real-time Comparison
+                </h3>
+                <p>Compare original and upscaled images side by side with an interactive slider. Instantly see the improvements in image quality.</p>
+              </div>
+              <div className="feature-card">
+                <h3>
+                  <span role="img" aria-label="quality">📊</span>
+                  Quality Assessment
+                </h3>
+                <p>Analyze the quality of upscaled images with built-in assessment tools. Make informed decisions about your upscaling results.</p>
+              </div>
+            </div>
+
+            <div className="getting-started">
+              <h2>Getting Started</h2>
+              <ol>
+                <li>Select an AI model from the available options in the dropdown menu</li>
+                <li>Upload your image using the drag-and-drop interface or file picker</li>
+                <li>Choose your desired upscaling settings (if available for the selected model)</li>
+                <li>Click "Upscale Image" to process your image</li>
+                <li>Use the comparison slider to view the results and save your upscaled image</li>
+              </ol>
+              <button 
+                className="start-upscaling-btn"
+                onClick={() => {
+                  document.body.scrollTop = 0;
+                  document.documentElement.scrollTop = 0;
+                  setActiveTab('upscale');
+                }}
+              >
+                Start Upscaling! 🚀
+              </button>
+            </div>
+
+            <div className="tabs-explanation">
+              <h2>Navigation Guide</h2>
+              <div className="tabs-grid">
+                <div 
+                  className="tab-explanation-card"
+                  onClick={() => {
+                    document.body.scrollTop = 0; // For Safari
+                    document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
+                    setActiveTab('upscale');
+                  }}
+                >
+                  <div className="tab-icon">🔍</div>
+                  <h3>Upscale</h3>
+                  <p>The main workspace where you can enhance your images. Select AI models, upload images, and control upscaling settings for optimal results.</p>
+                </div>
+
+                <div 
+                  className="tab-explanation-card"
+                  onClick={() => {
+                    document.body.scrollTop = 0;
+                    document.documentElement.scrollTop = 0;
+                    setActiveTab('model-info');
+                  }}
+                >
+                  <div className="tab-icon">🤖</div>
+                  <h3>Models</h3>
+                  <p>Browse and select from available AI models. Each model is optimized for different types of images and upscaling scenarios.</p>
+                </div>
+
+                <div 
+                  className="tab-explanation-card"
+                  onClick={() => {
+                    document.body.scrollTop = 0;
+                    document.documentElement.scrollTop = 0;
+                    setActiveTab('info');
+                  }}
+                >
+                  <div className="tab-icon">📊</div>
+                  <h3>Image Info</h3>
+                  <p>Analyze detailed information about your images including dimensions, format, and metadata. Compare original and upscaled image properties.</p>
+                </div>
+
+                <div 
+                  className="tab-explanation-card"
+                  onClick={() => {
+                    document.body.scrollTop = 0;
+                    document.documentElement.scrollTop = 0;
+                    setActiveTab('config');
+                  }}
+                >
+                  <div className="tab-icon">⚙️</div>
+                  <h3>Config</h3>
+                  <p>Customize application settings, manage custom models, and configure advanced options for optimal performance.</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="tech-stack">
+              <h2>Technology Stack</h2>
+              <div className="tech-grid">
+                <div className="tech-item">
+                  <img src={reactLogo} alt="React" className="tech-icon" />
+                  <p>React</p>
+                </div>
+                <div className="tech-item">
+                  <img src={pythonLogo} alt="Python" className="tech-icon" />
+                  <p>Python</p>
+                </div>
+                <div className="tech-item">
+                  <img src={pytorchLogo} alt="PyTorch" className="tech-icon" />
+                  <p>PyTorch</p>
+                </div>
+                <div className="tech-item">
+                  <img src={flaskLogo} alt="Flask" className="tech-icon" />
+                  <p>Flask</p>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        )}
+
         {activeTab === 'upscale' && (
           <>
             <div className="model-selection">
