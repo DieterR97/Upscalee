@@ -895,17 +895,18 @@ html {
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   padding: 1.5rem;
-  transition: transform 0.2s, box-shadow 0.2s, background-color 0.2s;
+  transition: transform 0.2s, box-shadow 0.2s;
   display: flex;
   flex-direction: column;
   min-height: 330px !important;
   cursor: pointer;
+  position: relative;
+  overflow: hidden;
 }
 
 .model-card:hover {
-  transform: translateY(-6px);
+  transform: translateY(-22px);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-  background-color: var(--ctp-mocha-surface1);
 }
 
 .model-card:active {
@@ -998,7 +999,7 @@ html {
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   padding: 1.5rem;
-  transition: transform 0.2s, box-shadow 0.2s, background-color 0.2s;
+  transition: transform 0.2s, box-shadow 0.2s;
   display: flex;
   flex-direction: column;
   min-height: 250px;
@@ -1128,7 +1129,6 @@ html {
 }
 
 .close-welcome-button {
-  background-color: var(--ctp-mocha-green);
   color: var(--ctp-mocha-base);
   border: none;
   padding: 0.75rem 2rem;
@@ -1351,9 +1351,22 @@ html {
   text-align: center;
   margin-bottom: 0.5rem;
   padding: 0.5rem;
-  background: linear-gradient(145deg, rgba(33, 150, 243, 0.1), rgba(156, 39, 176, 0.1));
+  background: linear-gradient(
+    145deg,
+    rgba(33, 150, 243, 0.1),
+    rgba(156, 39, 176, 0.1),
+    rgba(33, 150, 243, 0.1)
+  );
+  background-size: 200% 200%;
+  animation: gradientAnimation 5s ease infinite;
   border-radius: 20px;
   backdrop-filter: blur(10px);
+}
+
+@keyframes gradientAnimation {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
 }
 
 .about-header h2 {
@@ -1661,3 +1674,36 @@ html {
   margin-left: 20px;
 }
 
+.model-card:hover::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    45deg,
+    rgba(137, 180, 250, 0.2),  /* mocha blue */
+    rgba(203, 166, 247, 0.2),  /* mocha mauve */
+    rgba(245, 194, 231, 0.2),  /* mocha pink */
+    rgba(250, 179, 135, 0.2),  /* mocha peach */
+    rgba(166, 227, 161, 0.2),  /* mocha green */
+    rgba(137, 180, 250, 0.2)   /* mocha blue */
+  );
+  background-size: 200% 200%;
+  animation: cardGradient 3s linear infinite;
+  pointer-events: none;
+  z-index: 1;
+}
+
+@keyframes cardGradient {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.model-card-header,
+.model-card-body {
+  position: relative;
+  z-index: 2;
+}

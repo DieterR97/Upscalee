@@ -716,6 +716,7 @@ const ImageUpscaler: React.FC = () => {
         {/* Wrap the content in conditional rendering based on active tab */}
         {activeTab === 'about' && (
           <div className="about-container">
+
             <div className="about-header">
               <h2>Welcome to Upscalee</h2>
               <p>Your AI-powered image upscaling solution</p>
@@ -919,7 +920,7 @@ const ImageUpscaler: React.FC = () => {
                   <button
                     onClick={resetInput}
                     disabled={loading}
-                    className="tooltip-button reset-button"
+                    className="reset-button"
                     data-tooltip="Clear the current image and all results to start over"
                   >
                     Reset Input
@@ -927,7 +928,6 @@ const ImageUpscaler: React.FC = () => {
                   <button
                     onClick={upscaleImage}
                     disabled={!selectedImage || loading}
-                    className="tooltip-button"
                     data-tooltip="Process the selected image with the chosen model and scale settings"
                   >
                     Upscale Image
@@ -1082,7 +1082,6 @@ const ImageUpscaler: React.FC = () => {
               <button
                 onClick={() => selectedImage && fetchImageInfo(selectedImage)}
                 disabled={!selectedImage || loading}
-                className="tooltip-button"
                 data-tooltip="Analyze the selected image to view detailed information"
               >
                 Get Image Info
