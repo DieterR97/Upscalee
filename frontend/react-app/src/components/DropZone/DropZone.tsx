@@ -1,12 +1,24 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import './DropZone.css';
 
 interface DropZoneProps {
   onFileSelect: (file: File) => void;
+  previewUrl?: string | null;
 }
 
-const DropZone: React.FC<DropZoneProps> = ({ onFileSelect }) => {
+const DropZone: React.FC<DropZoneProps> = ({ onFileSelect, previewUrl }) => {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const [isDragging, setIsDragging] = useState(false);
+
+  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    setIsDragging(false);
+  };
 
   const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
@@ -23,21 +35,37 @@ const DropZone: React.FC<DropZoneProps> = ({ onFileSelect }) => {
     }
   };
 
+  const handleClick = () => {
+    fileInputRef.current?.click();
+  };
+
   return (
     <div
-      className="drop-zone"
+      className={`drop-zone ${isDragging ? 'dragging' : ''}`}
+      onDragOver={handleDragOver}
+      onDragLeave={handleDragLeave}
       onDrop={handleDrop}
-      onDragOver={(e) => e.preventDefault()}
-      onClick={() => fileInputRef.current?.click()}
+      onClick={handleClick}
     >
       <input
         type="file"
         ref={fileInputRef}
-        className="hidden"
         onChange={handleFileSelect}
         accept="image/*"
+        style={{ display: 'none' }}
       />
-      <p className="text-gray-500">Drop image here or click to select</p>
+      {previewUrl ? (
+        <img 
+          src={previewUrl} 
+          alt="Selected" 
+          className="drop-zone-preview"
+        />
+      ) : (
+        <>
+          <p>Drop an image here or click to select</p>
+          <p className="supported-formats">Supported formats: PNG, JPG, JPEG, WebP</p>
+        </>
+      )}
     </div>
   );
 };

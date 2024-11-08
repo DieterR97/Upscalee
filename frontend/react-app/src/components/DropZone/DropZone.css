@@ -27,3 +27,9 @@
   border: 1px solid var(--ctp-mocha-overlay0);
   border-radius: 4px;
 }
+
+.drop-zone-preview {
+  max-width: 100%;
+  max-height: 200px;
+  object-fit: contain;
+}

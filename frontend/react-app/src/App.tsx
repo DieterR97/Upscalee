@@ -720,7 +720,10 @@ const ImageUpscaler: React.FC = () => {
             {showScaleSelector()}
 
             <div>
-              <DropZone onFileSelect={handleFileSelect} />
+              <DropZone 
+                onFileSelect={handleFileSelect} 
+                previewUrl={imagePreview}
+              />
 
               <div className="button-container">
                 <button
@@ -868,7 +871,10 @@ const ImageUpscaler: React.FC = () => {
           <div className="info-tab">
             <h2>Image Information</h2>
 
-            <DropZone onFileSelect={handleFileSelect} />
+            <DropZone 
+              onFileSelect={handleFileSelect} 
+              previewUrl={imagePreview}
+            />
 
             <div className="button-container">
               <button
