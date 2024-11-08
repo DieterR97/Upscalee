@@ -1334,3 +1334,14 @@ html {
   width: 100%;
 }
 
+.logo-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 30px;
+  margin-top: 5px;
+}
+
+.logo2 {
+  height: 60px;
+}

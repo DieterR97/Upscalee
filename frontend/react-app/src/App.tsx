@@ -6,6 +6,8 @@ import ImageQueue from './components/ImageQueue/ImageQueue';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import DropZone from './components/DropZone/DropZone';
+import logo from './assets/upscalee.png';
+import logo2 from './assets/Upscalee_logo.png';
 
 // Define interfaces for type safety and better code documentation
 interface ModelInfo {
@@ -620,7 +622,11 @@ const ImageUpscaler: React.FC = () => {
         pauseOnHover
       />
       <div className="centerContent">
-        <h1>Image Upscaler</h1>
+        {/* <h1>Image Upscaler</h1> */}
+        <div className="logo-container">
+        <img src={logo2} alt="Logo" className="logo2" />
+        <img src={logo} alt="Logo" className="logo" />
+        </div>
 
         {/* Add the tab navigation */}
         <div className="tabs">
