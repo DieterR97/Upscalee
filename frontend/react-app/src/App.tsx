@@ -14,6 +14,10 @@ import pythonLogo from './assets/python.svg';
 import pytorchLogo from './assets/pytorch.svg';
 import flaskLogo from './assets/flask.png';
 import cat from './assets/cat.png';
+import IQA_PyTorch from './assets/pyiqa.png';
+import OpenCV from './assets/opencv.svg';
+import ee from './assets/ee.png';
+import catppuccin from './assets/catppuccin.png';
 
 // Define interfaces for type safety and better code documentation
 interface ModelInfo {
@@ -669,11 +673,13 @@ const ImageUpscaler: React.FC = () => {
         draggable
         pauseOnHover
       />
-      <div className="centerContent">
+
+      <div className='nav-container'>
+
         {/* <h1>Image Upscaler</h1> */}
         <div className="logo-container">
-          <img src={logo2} alt="Logo" className="logo2" />
-          <img src={logo} alt="Logo" className="logo" />
+          <img src={logo2} alt="Logo" className="logo" />
+          <img src={logo} alt="Logo" className="logoName" />
         </div>
 
         {/* Add the tab navigation */}
@@ -715,7 +721,11 @@ const ImageUpscaler: React.FC = () => {
           </button>
         </div>
 
+      </div>
 
+      <div className='seperator'></div>
+
+        <div className="centerContent">
 
         {/* Wrap the content in conditional rendering based on active tab */}
         {activeTab === 'about' && (
@@ -761,7 +771,7 @@ const ImageUpscaler: React.FC = () => {
             </div>
 
             <div className="getting-started">
-              
+
               <h2>Getting Started</h2>
               <ol>
                 <li>Select an AI model from the available options in the dropdown menu</li>
@@ -869,10 +879,11 @@ const ImageUpscaler: React.FC = () => {
                   </div>
                 </a>
               </div>
+              
               <div className="tech-grid">
                 <a href="https://github.com/xinntao/Real-ESRGAN" target="_blank" rel="noopener noreferrer">
                   <div className="tech-item">
-                    <img src={"https://github.com/xinntao/Real-ESRGAN/raw/master/assets/realesrgan_logo.png"} alt="Real-ESRGAN" className="tech-icon" />
+                    <img src={"https://github.com/xinntao/Real-ESRGAN/raw/master/assets/realesrgan_logo.png"} alt="Real-ESRGAN" className="tech-icon imgBigger" />
                     <p>Real-ESRGAN</p>
                   </div>
                 </a>
@@ -892,6 +903,33 @@ const ImageUpscaler: React.FC = () => {
                   <div className="tech-item">
                     <img src={"https://avatars.githubusercontent.com/u/111189700"} alt="Spandrel" className="tech-icon" />
                     <p>Spandrel</p>
+                  </div>
+                </a>
+              </div>
+
+              <div className="tech-grid">
+                <a href="https://github.com/chaofengc/IQA-PyTorch" target="_blank" rel="noopener noreferrer">
+                  <div className="tech-item">
+                    <img src={IQA_PyTorch} alt="IQA-PyTorch" className="tech-icon imgBigger" />
+                    <p>IQA-PyTorch</p>
+                  </div>
+                </a>
+                <a href="https://opencv.org/" target="_blank" rel="noopener noreferrer">
+                  <div className="tech-item">
+                    <img src={OpenCV} alt="OpenCV" className="tech-icon" />
+                    <p>OpenCV</p>
+                  </div>
+                </a>
+                <a href="" target="_blank" rel="noopener noreferrer">
+                  <div className="tech-item">
+                    <img src={ee} alt="EnhanceEverything" className="tech-icon" />
+                    <p>EnhanceEverything</p>
+                  </div>
+                </a>
+                <a href="https://catppuccin.com/palette" target="_blank" rel="noopener noreferrer">
+                  <div className="tech-item">
+                    <img src={catppuccin} alt="Catppuccin" className="tech-icon" />
+                    <p>Catppuccin</p>
                   </div>
                 </a>
               </div>
@@ -1059,6 +1097,7 @@ const ImageUpscaler: React.FC = () => {
           <div className="model-info-tab">
             <h2 className='titleSizeColour'>Available Models:</h2>
             <h3>Click on a model card to upscale with it</h3>
+            <h3>Click <a href="https://openmodeldb.info/" target="_blank" rel="noopener noreferrer">here</a> to go download some more models</h3>
             <div className="model-cards-container">
               {Object.entries(models).map(([key, model]) => (
                 <div

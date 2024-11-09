@@ -4,6 +4,78 @@
   margin: auto;
 }
 
+.nav-container {
+  display: flex;
+  flex-direction: row;
+  width: 80vw;
+  margin: 10px 60px;
+}
+
+.logo-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 30px;
+  width: 100%;
+  margin-top: 10px;
+}
+
+.logo {
+  height: 80px;
+}
+
+.logoName {
+  height: 60px;
+}
+
+.tabs {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+}
+
+.tab {
+  padding: 10px 20px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-size: 1.3rem;
+  font-weight: 400;
+  position: relative;
+  color: var(--ctp-mocha-subtext);
+  transition: color 0.3s;
+}
+
+.tab.active {
+  color: var(--ctp-mocha-mauve);
+  font-weight: bold;
+}
+
+.tab.active::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background-color: var(--ctp-mocha-mauve);
+}
+
+.tab:hover {
+  color: var(--ctp-mocha-blue);
+  background-color: transparent !important;
+}
+
+.seperator {
+  width: 90%;
+  border-bottom: 2px solid var(--ctp-mocha-blue);
+  margin: auto;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+
 .model-selection {
   display: flex;
   justify-content: space-between !important;
@@ -232,46 +304,6 @@
   justify-content: center;
   gap: 10px;
   margin-bottom: 1.4rem;
-}
-
-.tabs {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 20px;
-  border-bottom: 1px solid #ccc;
-  width: 100%;
-  justify-content: center;
-}
-
-.tab {
-  padding: 10px 20px;
-  border: none;
-  background: none;
-  cursor: pointer;
-  font-size: 16px;
-  position: relative;
-  color: var(--ctp-mocha-subtext0);
-  transition: color 0.3s;
-}
-
-.tab.active {
-  color: var(--ctp-mocha-mauve);
-  font-weight: bold;
-}
-
-.tab.active::after {
-  content: '';
-  position: absolute;
-  bottom: -1px;
-  left: 0;
-  width: 100%;
-  height: 2px;
-  background-color: var(--ctp-mocha-mauve);
-}
-
-.tab:hover {
-  color: var(--ctp-mocha-blue);
-  background-color: transparent !important;
 }
 
 .image-info {
@@ -981,12 +1013,12 @@ html {
 }
 
 .reset-button {
-  background-color: var(--ctp-mocha-red) !important;
+  background-color: var(--ctp-mocha-maroon) !important;
   color: var(--ctp-mocha-crust) !important;
 }
 
 .reset-button:hover:not(:disabled) {
-  background-color: var(--ctp-mocha-maroon) !important;
+  background-color: var(--ctp-mocha-peach) !important;
 }
 
 .reset-button:disabled {
@@ -1325,18 +1357,6 @@ html {
 
 .select-wrapper select {
   width: 100%;
-}
-
-.logo-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 30px;
-  margin-top: 5px;
-}
-
-.logo2 {
-  height: 60px;
 }
 
 /* About Page Styles */
@@ -1790,4 +1810,8 @@ var(--ctp-mocha-blue)
 
 .tech-item:hover {
   animation: shake 0.15s ease-in-out 3;
+}
+
+.imgBigger {
+  width: 170px !important;
 }
