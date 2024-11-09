@@ -1351,22 +1351,35 @@ html {
   text-align: center;
   margin-bottom: 0.5rem;
   padding: 0.5rem;
-  background: linear-gradient(
-    145deg,
-    rgba(33, 150, 243, 0.1),
-    rgba(156, 39, 176, 0.1),
-    rgba(33, 150, 243, 0.1)
-  );
+  background: linear-gradient(145deg,
+      rgba(33, 150, 243, 0.1),
+      rgba(156, 39, 176, 0.1),
+      rgba(33, 150, 243, 0.1));
   background-size: 200% 200%;
   animation: gradientAnimation 5s ease infinite;
   border-radius: 20px;
   backdrop-filter: blur(10px);
 }
 
+.about-header-sub {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
 @keyframes gradientAnimation {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
+  0% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+
+  100% {
+    background-position: 0% 50%;
+  }
 }
 
 .about-header h2 {
@@ -1436,6 +1449,7 @@ html {
   padding: 2.5rem;
   /* margin: 4rem 0; */
   border: 1px solid rgba(255, 255, 255, 0.1);
+  position: relative;
 }
 
 .getting-started h2 {
@@ -1472,8 +1486,29 @@ html {
   display: flex;
   align-items: center;
   justify-content: center;
-  color: white;
+  color: var(--ctp-mocha-rosewater);
+  color: var(--ctp-mocha-base);
   font-weight: bold;
+}
+
+.getting-started li:nth-child(1)::before {
+  background: var(--ctp-mocha-lavender);
+}
+
+.getting-started li:nth-child(2)::before {
+  background: var(--ctp-mocha-mauve);
+}
+
+.getting-started li:nth-child(3)::before {
+  background: var(--ctp-mocha-maroon);
+}
+
+.getting-started li:nth-child(4)::before {
+  background: var(--ctp-mocha-green);
+}
+
+.getting-started li:nth-child(5)::before {
+  background: var(--ctp-mocha-sapphire);
 }
 
 .tech-stack {
@@ -1612,6 +1647,20 @@ html {
   transform: scale(0.98) translateY(-5px);
 }
 
+/*
+
+var(--ctp-mocha-red)
+var(--ctp-mocha-mauve)
+var(--ctp-mocha-lavender)
+var(--ctp-mocha-maroon)
+
+var(--ctp-mocha-teal)
+var(--ctp-mocha-sky)
+var(--ctp-mocha-sapphire)
+var(--ctp-mocha-blue)
+
+*/
+
 .start-upscaling-btn {
   display: block;
   margin: 2.5rem 0.1rem 0;
@@ -1620,6 +1669,7 @@ html {
   font-weight: 600;
   color: white;
   background: linear-gradient(45deg, #2196f3, #9c27b0);
+  /* background: linear-gradient(45deg, var(--ctp-mocha-blue), var(--ctp-mocha-red)); */
   border: none;
   border-radius: 50px;
   cursor: pointer;
@@ -1681,15 +1731,20 @@ html {
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(
-    45deg,
-    rgba(137, 180, 250, 0.2),  /* mocha blue */
-    rgba(203, 166, 247, 0.2),  /* mocha mauve */
-    rgba(245, 194, 231, 0.2),  /* mocha pink */
-    rgba(250, 179, 135, 0.2),  /* mocha peach */
-    rgba(166, 227, 161, 0.2),  /* mocha green */
-    rgba(137, 180, 250, 0.2)   /* mocha blue */
-  );
+  background: linear-gradient(45deg,
+      rgba(137, 180, 250, 0.2),
+      /* mocha blue */
+      rgba(203, 166, 247, 0.2),
+      /* mocha mauve */
+      rgba(245, 194, 231, 0.2),
+      /* mocha pink */
+      rgba(250, 179, 135, 0.2),
+      /* mocha peach */
+      rgba(166, 227, 161, 0.2),
+      /* mocha green */
+      rgba(137, 180, 250, 0.2)
+      /* mocha blue */
+    );
   background-size: 200% 200%;
   animation: cardGradient 3s linear infinite;
   pointer-events: none;
@@ -1697,13 +1752,42 @@ html {
 }
 
 @keyframes cardGradient {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
+  0% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+
+  100% {
+    background-position: 0% 50%;
+  }
 }
 
 .model-card-header,
 .model-card-body {
   position: relative;
   z-index: 2;
+}
+
+.cat {
+  position: absolute;
+  bottom: -20px;
+}
+
+@keyframes shake {
+  0% { transform: rotate(0deg); }
+  25% { transform: rotate(-3deg); }
+  50% { transform: rotate(0deg); }
+  75% { transform: rotate(3deg); }
+  100% { transform: rotate(0deg); }
+}
+
+.tech-item {
+  transition: transform 0.2s;
+}
+
+.tech-item:hover {
+  animation: shake 0.15s ease-in-out 3;
 }

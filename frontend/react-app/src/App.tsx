@@ -12,7 +12,8 @@ import { Tabs, Box } from '@mui/material';
 import reactLogo from './assets/react.svg';
 import pythonLogo from './assets/python.svg';
 import pytorchLogo from './assets/pytorch.svg';
-import flaskLogo from './assets/flask.svg';
+import flaskLogo from './assets/flask.png';
+import cat from './assets/cat.png';
 
 // Define interfaces for type safety and better code documentation
 interface ModelInfo {
@@ -653,6 +654,7 @@ const ImageUpscaler: React.FC = () => {
 
   return (
     <div className="Root">
+
       {showWelcomeModal && (
         <WelcomeModal onClose={() => setShowWelcomeModal(false)} />
       )}
@@ -713,12 +715,17 @@ const ImageUpscaler: React.FC = () => {
           </button>
         </div>
 
+
+
         {/* Wrap the content in conditional rendering based on active tab */}
         {activeTab === 'about' && (
           <div className="about-container">
 
             <div className="about-header">
-              <h2>Welcome to Upscalee</h2>
+              <div className="about-header-sub">
+                <h2>Welcome to Upscalee</h2>
+                <img src={"https://cdnl.iconscout.com/lottie/premium/thumb/flying-rocket-7551854-6158886.gif"} alt="Logo" className="logoo" height={'80rem'}></img>
+              </div>
               <p>Your AI-powered image upscaling solution</p>
             </div>
 
@@ -754,6 +761,7 @@ const ImageUpscaler: React.FC = () => {
             </div>
 
             <div className="getting-started">
+              
               <h2>Getting Started</h2>
               <ol>
                 <li>Select an AI model from the available options in the dropdown menu</li>
@@ -772,6 +780,7 @@ const ImageUpscaler: React.FC = () => {
               >
                 Start Upscaling! 🚀
               </button>
+              <img src={cat} alt="cat" className='cat'></img>
             </div>
 
             <div className="tabs-explanation">
@@ -833,25 +842,66 @@ const ImageUpscaler: React.FC = () => {
 
             <div className="tech-stack">
               <h2>Technology Stack</h2>
+
               <div className="tech-grid">
-                <div className="tech-item">
-                  <img src={reactLogo} alt="React" className="tech-icon" />
-                  <p>React</p>
-                </div>
-                <div className="tech-item">
-                  <img src={pythonLogo} alt="Python" className="tech-icon" />
-                  <p>Python</p>
-                </div>
-                <div className="tech-item">
-                  <img src={pytorchLogo} alt="PyTorch" className="tech-icon" />
-                  <p>PyTorch</p>
-                </div>
-                <div className="tech-item">
-                  <img src={flaskLogo} alt="Flask" className="tech-icon" />
-                  <p>Flask</p>
-                </div>
+                <a href="https://create-react-app.dev/" target="_blank" rel="noopener noreferrer">
+                  <div className="tech-item">
+                    <img src={reactLogo} alt="Create React App" className="tech-icon" />
+                    <p>Create React App</p>
+                  </div>
+                </a>
+                <a href="https://www.python.org/" target="_blank" rel="noopener noreferrer">
+                  <div className="tech-item">
+                    <img src={pythonLogo} alt="Python" className="tech-icon" />
+                    <p>Python</p>
+                  </div>
+                </a>
+                <a href="https://pytorch.org/" target="_blank" rel="noopener noreferrer">
+                  <div className="tech-item">
+                    <img src={pytorchLogo} alt="PyTorch" className="tech-icon" />
+                    <p>PyTorch</p>
+                  </div>
+                </a>
+                <a href="https://flask.palletsprojects.com/en/stable/" target="_blank" rel="noopener noreferrer">
+                  <div className="tech-item">
+                    <img src={flaskLogo} alt="Flask" className="tech-icon" />
+                    <p>Flask</p>
+                  </div>
+                </a>
               </div>
+              <div className="tech-grid">
+                <a href="https://github.com/xinntao/Real-ESRGAN" target="_blank" rel="noopener noreferrer">
+                  <div className="tech-item">
+                    <img src={"https://github.com/xinntao/Real-ESRGAN/raw/master/assets/realesrgan_logo.png"} alt="Real-ESRGAN" className="tech-icon" />
+                    <p>Real-ESRGAN</p>
+                  </div>
+                </a>
+                <a href="https://openmodeldb.info/" target="_blank" rel="noopener noreferrer">
+                  <div className="tech-item">
+                    <img src={"https://avatars.githubusercontent.com/u/123817276"} alt="OpenModelDB" className="tech-icon" />
+                    <p>OpenModelDB</p>
+                  </div>
+                </a>
+                <a href="https://developer.nvidia.com/cuda-toolkit" target="_blank" rel="noopener noreferrer">
+                  <div className="tech-item">
+                    <img src={"https://cdn.iconscout.com/icon/premium/png-256-thumb/cuda-11796839-9633028.png?f=webp"} alt="CUDA" className="tech-icon" />
+                    <p>CUDA</p>
+                  </div>
+                </a>
+                <a href="https://github.com/chaiNNer-org/spandrel" target="_blank" rel="noopener noreferrer">
+                  <div className="tech-item">
+                    <img src={"https://avatars.githubusercontent.com/u/111189700"} alt="Spandrel" className="tech-icon" />
+                    <p>Spandrel</p>
+                  </div>
+                </a>
+              </div>
+
             </div>
+
+            <img src={"https://raw.githubusercontent.com/catppuccin/catppuccin/main/assets/palette/macchiato.png"}
+              width={'100%'}
+            >
+            </img>
 
           </div>
         )}
@@ -1070,6 +1120,7 @@ const ImageUpscaler: React.FC = () => {
         )}
 
         {activeTab === 'info' && (
+
           <div className="info-tab">
             <h2 className="info-tab-header titleSizeColour">Image Information</h2>
 
