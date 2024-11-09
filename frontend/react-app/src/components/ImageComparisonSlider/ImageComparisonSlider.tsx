@@ -342,21 +342,18 @@ const ImageComparisonSlider: React.FC<ImageComparisonSliderProps> = ({ leftImage
             <div className="button-container">
                 <button 
                     onClick={toggleFullscreen}
-                    className="tooltip-button"
                     data-tooltip="Enter fullscreen mode for a larger view. Press ESC or click again to exit"
                 >
                     FULLSCREEN <span className="smaller-text">(Exit with ESC)</span>
                 </button>
                 <button 
                     onClick={resetZoom}
-                    className="tooltip-button"
                     data-tooltip="Reset all image adjustments: zoom level, pan position, and slider position"
                 >
                     RESET <span className="smaller-text">(Pan, Zoom and Slider)</span>
                 </button>
                 <button 
                     onClick={handleDownload}
-                    className="tooltip-button"
                     data-tooltip="Download the upscaled image to your device"
                 >
                     DOWNLOAD
@@ -364,7 +361,7 @@ const ImageComparisonSlider: React.FC<ImageComparisonSliderProps> = ({ leftImage
                 {showQueueButton && onQueue && (
                     <button 
                         onClick={handleCompareClick}
-                        className="queue-button tooltip-button"
+                        className="queue-button"
                         data-tooltip="Save this result to compare with outputs from different AI models"
                     >
                         COMPARE MODELS
