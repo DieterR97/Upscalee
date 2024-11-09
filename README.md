@@ -10,7 +10,7 @@
   ![GitHub language count](https://img.shields.io/github/languages/count/DieterR97/Upscalee?color=000000)
   ![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/DieterR97/Upscalee?color=000000)
 
-  [View Demo](#) · [Report Bug](https://github.com/DieterR97/Upscalee/issues) · [Request Feature](https://github.com/DieterR97/Upscalee/issues)
+  [View Demo](https://drive.google.com/file/d/1PzRON9xGYR936UD0QqtBk7SQOIciFbPg/view?usp=sharing) · [Report Bug](https://github.com/DieterR97/Upscalee/issues) · [Request Feature](https://github.com/DieterR97/Upscalee/issues)
 
   # 
 
@@ -289,7 +289,7 @@ The concept for Upscalee emerged from several key observations and needs in the 
 ### Video Demonstration
 <!-- Add a link to your demo video if available -->
 
-[View Demonstration](#)
+[View Demonstration](https://drive.google.com/file/d/1PzRON9xGYR936UD0QqtBk7SQOIciFbPg/view?usp=sharing)
 
 ## Conclusion
 Upscalee represents a significant step forward in making professional-grade image upscaling accessible to everyone. By combining state-of-the-art AI models with an intuitive interface and comprehensive quality assessment tools, I've created a solution that bridges the gap between complex professional software and simple online tools.
