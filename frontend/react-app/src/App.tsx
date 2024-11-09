@@ -741,28 +741,28 @@ const ImageUpscaler: React.FC = () => {
 
             <div className="features-grid">
               <div className="feature-card">
-                <h3>
+                <h3 className='feature-title'>
                   <span role="img" aria-label="ai">🤖</span>
                   AI-Powered Upscaling
                 </h3>
                 <p>Transform your images to higher resolutions using state-of-the-art AI models. Support for multiple architectures including Real-ESRGAN and more.</p>
               </div>
               <div className="feature-card">
-                <h3>
+                <h3 className='feature-title'>
                   <span role="img" aria-label="models">🎯</span>
                   Multiple Models
                 </h3>
                 <p>Choose from various pre-trained models or add your own custom models. Each model is optimized for different types of images and use cases.</p>
               </div>
               <div className="feature-card">
-                <h3>
+                <h3 className='feature-title'>
                   <span role="img" aria-label="comparison">⚖️</span>
                   Real-time Comparison
                 </h3>
                 <p>Compare original and upscaled images side by side with an interactive slider. Instantly see the improvements in image quality.</p>
               </div>
               <div className="feature-card">
-                <h3>
+                <h3 className='feature-title'>
                   <span role="img" aria-label="quality">📊</span>
                   Quality Assessment
                 </h3>
@@ -772,7 +772,7 @@ const ImageUpscaler: React.FC = () => {
 
             <div className="getting-started">
 
-              <h2>Getting Started</h2>
+              <h2 className='feature-title'>Getting Started</h2>
               <ol>
                 <li>Select an AI model from the available options in the dropdown menu</li>
                 <li>Upload your image using the drag-and-drop interface or file picker</li>
@@ -794,7 +794,7 @@ const ImageUpscaler: React.FC = () => {
             </div>
 
             <div className="tabs-explanation">
-              <h2>Navigation Guide</h2>
+              <h2 className='feature-title'>Navigation Guide</h2>
               <div className="tabs-grid">
                 <div
                   className="tab-explanation-card"
@@ -805,7 +805,7 @@ const ImageUpscaler: React.FC = () => {
                   }}
                 >
                   <div className="tab-icon">🔍</div>
-                  <h3>Upscale</h3>
+                  <h3 className='feature-title'>Upscale</h3>
                   <p>The main workspace where you can enhance your images. Select AI models, upload images, and control upscaling settings for optimal results.</p>
                 </div>
 
@@ -818,7 +818,7 @@ const ImageUpscaler: React.FC = () => {
                   }}
                 >
                   <div className="tab-icon">🤖</div>
-                  <h3>Models</h3>
+                  <h3 className='feature-title'>Models</h3>
                   <p>Browse and select from available AI models. Each model is optimized for different types of images and upscaling scenarios.</p>
                 </div>
 
@@ -831,7 +831,7 @@ const ImageUpscaler: React.FC = () => {
                   }}
                 >
                   <div className="tab-icon">📊</div>
-                  <h3>Image Info</h3>
+                  <h3 className='feature-title'>Image Info</h3>
                   <p>Analyze detailed information about your images including dimensions, format, and metadata. Compare original and upscaled image properties.</p>
                 </div>
 
@@ -844,92 +844,92 @@ const ImageUpscaler: React.FC = () => {
                   }}
                 >
                   <div className="tab-icon">⚙️</div>
-                  <h3>Config</h3>
+                  <h3 className='feature-title'>Config</h3>
                   <p>Customize application settings, manage custom models, and configure advanced options for optimal performance.</p>
                 </div>
               </div>
             </div>
 
             <div className="tech-stack">
-              <h2>Technology Stack</h2>
+              <h2 className='feature-title'>Technology Stack</h2>
 
               <div className="tech-grid">
-                <a href="https://create-react-app.dev/" target="_blank" rel="noopener noreferrer">
+                <a href="https://create-react-app.dev/" target="_blank" rel="noopener noreferrer" className='no-decoration'>
                   <div className="tech-item">
                     <img src={reactLogo} alt="Create React App" className="tech-icon" />
-                    <p>Create React App</p>
+                    <p className='textColour'>Create React App</p>
                   </div>
                 </a>
-                <a href="https://www.python.org/" target="_blank" rel="noopener noreferrer">
+                <a href="https://www.python.org/" target="_blank" rel="noopener noreferrer" className='no-decoration'>
                   <div className="tech-item">
                     <img src={pythonLogo} alt="Python" className="tech-icon" />
-                    <p>Python</p>
+                    <p className='textColour'>Python</p>
                   </div>
                 </a>
-                <a href="https://pytorch.org/" target="_blank" rel="noopener noreferrer">
+                <a href="https://pytorch.org/" target="_blank" rel="noopener noreferrer" className='no-decoration'>
                   <div className="tech-item">
                     <img src={pytorchLogo} alt="PyTorch" className="tech-icon" />
-                    <p>PyTorch</p>
+                    <p className='textColour'>PyTorch</p>
                   </div>
                 </a>
-                <a href="https://flask.palletsprojects.com/en/stable/" target="_blank" rel="noopener noreferrer">
+                <a href="https://flask.palletsprojects.com/en/stable/" target="_blank" rel="noopener noreferrer" className='no-decoration'>
                   <div className="tech-item">
                     <img src={flaskLogo} alt="Flask" className="tech-icon" />
-                    <p>Flask</p>
+                    <p className='textColour'>Flask</p>
                   </div>
                 </a>
               </div>
               
               <div className="tech-grid">
-                <a href="https://github.com/xinntao/Real-ESRGAN" target="_blank" rel="noopener noreferrer">
+                <a href="https://github.com/xinntao/Real-ESRGAN" target="_blank" rel="noopener noreferrer" className='no-decoration'>
                   <div className="tech-item">
                     <img src={"https://github.com/xinntao/Real-ESRGAN/raw/master/assets/realesrgan_logo.png"} alt="Real-ESRGAN" className="tech-icon imgBigger" />
-                    <p>Real-ESRGAN</p>
+                    <p className='textColour'>Real-ESRGAN</p>
                   </div>
                 </a>
-                <a href="https://openmodeldb.info/" target="_blank" rel="noopener noreferrer">
+                <a href="https://openmodeldb.info/" target="_blank" rel="noopener noreferrer" className='no-decoration'>
                   <div className="tech-item">
                     <img src={"https://avatars.githubusercontent.com/u/123817276"} alt="OpenModelDB" className="tech-icon" />
-                    <p>OpenModelDB</p>
+                    <p className='textColour'>OpenModelDB</p>
                   </div>
                 </a>
-                <a href="https://developer.nvidia.com/cuda-toolkit" target="_blank" rel="noopener noreferrer">
+                <a href="https://developer.nvidia.com/cuda-toolkit" target="_blank" rel="noopener noreferrer" className='no-decoration'>
                   <div className="tech-item">
                     <img src={"https://cdn.iconscout.com/icon/premium/png-256-thumb/cuda-11796839-9633028.png?f=webp"} alt="CUDA" className="tech-icon" />
-                    <p>CUDA</p>
+                    <p className='textColour'>CUDA</p>
                   </div>
                 </a>
-                <a href="https://github.com/chaiNNer-org/spandrel" target="_blank" rel="noopener noreferrer">
+                <a href="https://github.com/chaiNNer-org/spandrel" target="_blank" rel="noopener noreferrer" className='no-decoration'>
                   <div className="tech-item">
                     <img src={"https://avatars.githubusercontent.com/u/111189700"} alt="Spandrel" className="tech-icon" />
-                    <p>Spandrel</p>
+                    <p className='textColour'>Spandrel</p>
                   </div>
                 </a>
               </div>
 
               <div className="tech-grid">
-                <a href="https://github.com/chaofengc/IQA-PyTorch" target="_blank" rel="noopener noreferrer">
+                <a href="https://github.com/chaofengc/IQA-PyTorch" target="_blank" rel="noopener noreferrer" className='no-decoration'>
                   <div className="tech-item">
                     <img src={IQA_PyTorch} alt="IQA-PyTorch" className="tech-icon imgBigger" />
-                    <p>IQA-PyTorch</p>
+                    <p className='textColour'>IQA-PyTorch</p>
                   </div>
                 </a>
-                <a href="https://opencv.org/" target="_blank" rel="noopener noreferrer">
+                <a href="https://opencv.org/" target="_blank" rel="noopener noreferrer" className='no-decoration'>
                   <div className="tech-item">
                     <img src={OpenCV} alt="OpenCV" className="tech-icon" />
-                    <p>OpenCV</p>
+                    <p className='textColour'>OpenCV</p>
                   </div>
                 </a>
-                <a href="" target="_blank" rel="noopener noreferrer">
+                <a href="https://discord.gg/cpAUpDK" target="_blank" rel="noopener noreferrer" className='no-decoration'>
                   <div className="tech-item">
                     <img src={ee} alt="EnhanceEverything" className="tech-icon" />
-                    <p>EnhanceEverything</p>
+                    <p className='textColour'>EnhanceEverything</p>
                   </div>
                 </a>
-                <a href="https://catppuccin.com/palette" target="_blank" rel="noopener noreferrer">
+                <a href="https://catppuccin.com/palette" target="_blank" rel="noopener noreferrer" className='no-decoration'>
                   <div className="tech-item">
                     <img src={catppuccin} alt="Catppuccin" className="tech-icon" />
-                    <p>Catppuccin</p>
+                    <p className='textColour'>Catppuccin</p>
                   </div>
                 </a>
               </div>

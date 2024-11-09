@@ -67,6 +67,10 @@
   background-color: transparent !important;
 }
 
+.no-decoration {
+  text-decoration: none;
+}
+
 .seperator {
   width: 90%;
   border-bottom: 2px solid var(--ctp-mocha-blue);
@@ -75,6 +79,9 @@
   margin-bottom: 20px;
 }
 
+.feature-title {
+  color: var(--ctp-mocha-blue) !important;
+}
 
 .model-selection {
   display: flex;
@@ -1729,6 +1736,7 @@ var(--ctp-mocha-blue)
   border: 1px solid var(--ctp-mocha-overlay0);
   box-shadow: 0 2px 4px var(--ctp-mocha-crust);
   margin: 10px 0;
+  color: var(--ctp-mocha-text);
 }
 
 .placeholder-message p {
@@ -1742,6 +1750,10 @@ var(--ctp-mocha-blue)
   font-size: 1.8rem;
   margin-top: 0;
   margin-left: 20px;
+}
+
+.textColour {
+  color: var(--ctp-mocha-text);
 }
 
 .model-card:hover::before {
