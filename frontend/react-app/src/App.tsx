@@ -65,11 +65,25 @@ interface Config {
 }
 
 // Add these interfaces
+interface SpandrelInfo {
+  architecture: string;
+  is_supported: boolean;
+  input_channels: number;
+  output_channels: number;
+  scale: number;
+  supports_half: boolean;
+  supports_bfloat16: boolean;
+  size_requirements: any;
+  tiling: string;
+}
+
 interface UnregisteredModel {
   name: string;
+  file_name: string;
   file_pattern: string;
   scale: number | null;
   path: string;
+  spandrel_info?: SpandrelInfo;
 }
 
 interface ModelScanResult {
@@ -504,21 +518,35 @@ const ImageUpscaler: React.FC = () => {
   };
 
   // Add the ModelRegistrationForm component
-  const ModelRegistrationForm: React.FC<{
-    model: any;
+  interface RegisterModelModalProps {
+    model: UnregisteredModel;
     onClose: () => void;
     onRegister: () => void;
-  }> = ({ model, onClose, onRegister }) => {
-    const [formData, setFormData] = useState({
-      name: model.name,
-      display_name: model.name,
-      description: "",
-      scale: model.scale || 4,
-      variable_scale: false,
-      architecture: "",
-      source_url: "",
-      file_pattern: model.file_pattern
+  }
+
+  const RegisterModelModal: React.FC<RegisterModelModalProps> = ({ model, onClose, onRegister }) => {
+    console.log('Model data received:', model);
+    console.log('Spandrel info:', model.spandrel_info);
+
+    const [formData, setFormData] = useState(() => {
+      const initialData = {
+        name: model.name,
+        display_name: model.name,
+        description: "",
+        scale: model.spandrel_info?.scale || model.scale || 4,
+        variable_scale: false,
+        architecture: model.spandrel_info?.architecture || "",
+        source_url: "",
+        file_pattern: model.file_pattern
+      };
+      
+      console.log('Initial form data:', initialData);
+      return initialData;
     });
+
+    useEffect(() => {
+      console.log('Form data updated:', formData);
+    }, [formData]);
 
     const handleSubmit = async (e: React.FormEvent) => {
       e.preventDefault();
@@ -556,6 +584,13 @@ const ImageUpscaler: React.FC = () => {
       <div className="modal" onClick={handleClickOutside}>
         <div className="modal-content">
           <h2>Register New Model</h2>
+          {model.spandrel_info && (
+            <div className="spandrel-info">
+              <span className="spandrel-badge">
+                Spandrel {model.spandrel_info.is_supported ? 'Supported' : 'Unsupported'}
+              </span>
+            </div>
+          )}
           <form onSubmit={handleSubmit}>
             <div className="form-group">
               <label>Display Name:</label>
@@ -583,6 +618,8 @@ const ImageUpscaler: React.FC = () => {
                 required
                 min={1}
                 max={8}
+                disabled={!!model.spandrel_info?.scale}  // Disable if Spandrel provides scale
+                data-tooltip={model.spandrel_info?.scale ? "Scale detected by Spandrel" : undefined}
               />
             </div>
             <div className="form-group">
@@ -603,6 +640,7 @@ const ImageUpscaler: React.FC = () => {
                 onChange={e => setFormData(prev => ({ ...prev, architecture: e.target.value }))}
                 required
                 placeholder="e.g., Real-ESRGAN"
+                data-tooltip={model.spandrel_info?.architecture ? "Architecture detected by Spandrel (editable)" : "The neural network architecture used by this model"}
               />
             </div>
             <div className="form-group">
@@ -1326,7 +1364,7 @@ const ImageUpscaler: React.FC = () => {
 
             {/* Registration Modal */}
             {showRegisterModal && selectedUnregisteredModel && (
-              <ModelRegistrationForm
+              <RegisterModelModal
                 model={selectedUnregisteredModel}
                 onClose={() => {
                   setShowRegisterModal(false);

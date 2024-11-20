@@ -750,9 +750,7 @@ def scan_model_directory():
     
     # First, validate registered models
     for model_name, model_info in list(registered_models.items()):
-        # Check if the model file still exists
         if model_name not in existing_model_files:
-            # Model is registered but file is missing
             models_to_remove.append(model_name)
             continue
     
@@ -760,28 +758,35 @@ def scan_model_directory():
     for model_name in models_to_remove:
         del registered_models[model_name]
     
-    # If any models were removed, save the updated registered models
-    if models_to_remove:
-        save_registered_models(registered_models)
+    # Save the updated registered models after removal
+    save_registered_models(registered_models)
     
     # Find unregistered models
     for model_name, model_file in existing_model_files.items():
         if model_name not in registered_models:
-            # Try to determine scale from filename
+            # Try to get Spandrel info
+            spandrel_info = SpandrelUpscaler.get_model_info(str(model_file))
+            print(f"Spandrel info for {model_name}:", spandrel_info)
+            
+            # Try to determine scale from filename if Spandrel info not available
             scale_match = re.search(r'x(\d+)', model_name.lower())
             scale = int(scale_match.group(1)) if scale_match else None
             
-            unregistered_models.append({
+            model_data = {
                 "name": model_name,
+                "file_name": model_file.name,
                 "file_pattern": model_file.name,
-                "scale": scale,
-                "path": str(model_file)
-            })
+                "scale": spandrel_info.get("scale", scale),
+                "path": str(model_file),
+                "spandrel_info": spandrel_info if spandrel_info.get("is_supported") else None
+            }
+            print(f"Model data being sent to frontend:", model_data)
+            unregistered_models.append(model_data)
     
     return {
         "registered": registered_models,
         "unregistered": unregistered_models,
-        "removed": models_to_remove  # Include information about removed models
+        "removed": models_to_remove
     }
 
 @app.route("/register-model", methods=["POST"])

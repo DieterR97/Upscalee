@@ -113,8 +113,13 @@ class SpandrelUpscaler:
             
             if not isinstance(model, ImageModelDescriptor):
                 raise ValueError("Not an image model")
-                
+            
+            # Get the actual model architecture name from the model class
+            architecture = model.model.__class__.__name__
+            
             return {
+                "architecture": architecture,  # This will now be the actual architecture name
+                "is_supported": True,
                 "input_channels": model.input_channels,
                 "output_channels": model.output_channels,
                 "supports_half": model.supports_half,
@@ -124,5 +129,8 @@ class SpandrelUpscaler:
                 "scale": model.scale
             }
         except Exception as e:
-            print(f"Error getting model info: {str(e)}")
-            return None
+            # If loading fails, it likely means the architecture is not supported
+            return {
+                "is_supported": False,
+                "error": str(e)
+            }
