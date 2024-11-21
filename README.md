@@ -21,7 +21,7 @@
 ## Quick Navigation
 <div align="center">
   <a href="#-ai-powered-upscaling">
-    <br />🤖 <h3 style="display: inline;">AI Upscaling</h3>
+    🤖<h3 style="display: inline;"> AI Upscaling</h3>
   </a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
   <a href="#comparison-examples">
     <br />⚖️ <h3 style="display: inline;">Comparison</h3>
