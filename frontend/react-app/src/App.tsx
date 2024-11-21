@@ -152,7 +152,9 @@ const ImageUpscaler: React.FC = () => {
   const [selectedUnregisteredModel, setSelectedUnregisteredModel] = useState<UnregisteredModel | null>(null);
 
   // Add this state near your other state declarations
-  const [showWelcomeModal, setShowWelcomeModal] = useState(true);
+  const [showWelcomeModal, setShowWelcomeModal] = useState(() => {
+    return localStorage.getItem('hideWelcomeModal') !== 'true';
+  });
 
   /**
    * Fetches available upscaling models from the backend when component mounts
@@ -671,6 +673,15 @@ const ImageUpscaler: React.FC = () => {
 
   // Add this component inside your App.tsx but before the main component
   const WelcomeModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
+    const [dontShowAgain, setDontShowAgain] = useState(false);
+
+    const handleClose = () => {
+      if (dontShowAgain) {
+        localStorage.setItem('hideWelcomeModal', 'true');
+      }
+      onClose();
+    };
+
     return (
       <div className="modal welcome-modal">
         <div className="modal-content welcome-content">
@@ -683,12 +694,22 @@ const ImageUpscaler: React.FC = () => {
           <div className="tooltip-example">
             <span className="example-element" data-tooltip="Like this!">Hover over me</span>
           </div>
-          <button
-            className="close-welcome-button"
-            onClick={onClose}
-          >
-            Got it!
-          </button>
+          <div className="modal-footer">
+            <label className="dont-show-again">
+              <input
+                type="checkbox"
+                checked={dontShowAgain}
+                onChange={(e) => setDontShowAgain(e.target.checked)}
+              />
+              Don't show this again
+            </label>
+            <button
+              className="close-welcome-button"
+              onClick={handleClose}
+            >
+              Got it!
+            </button>
+          </div>
         </div>
       </div>
     );
