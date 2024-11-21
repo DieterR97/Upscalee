@@ -1,5 +1,6 @@
 import React, { useRef, useState, useEffect, useCallback } from 'react';
 import './ImageComparisonSlider.css';
+import { toast, ToastContainer } from 'react-toastify';
 
 // Define the props interface for the component
 interface ImageComparisonSliderProps {
@@ -305,6 +306,69 @@ const ImageComparisonSlider: React.FC<ImageComparisonSliderProps> = ({ leftImage
         }, 100);
     };
 
+    // Add this new function to handle snapshot creation
+    const handleSnapshot = () => {
+        if (!containerRef.current || !rightImageRef.current) return;
+
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return;
+
+        // Get the natural dimensions of the images
+        const leftImg = containerRef.current.querySelector('.image-left') as HTMLImageElement;
+        const rightImg = rightImageRef.current;
+        
+        const width = Math.max(leftImg.naturalWidth, rightImg.naturalWidth);
+        const height = Math.max(leftImg.naturalHeight, rightImg.naturalHeight);
+        
+        // Set canvas dimensions to match image size
+        canvas.width = width;
+        canvas.height = height;
+
+        // Draw background
+        ctx.fillStyle = 'var(--ctp-mocha-crust)';
+        ctx.fillRect(0, 0, width, height);
+
+        // Calculate the split position in actual pixels
+        const splitX = Math.floor(width * (sliderPosition / 100));
+        
+        // Draw left image
+        ctx.save();
+        ctx.beginPath();
+        ctx.rect(0, 0, splitX, height);
+        ctx.clip();
+        ctx.drawImage(leftImg, 0, 0, width, height);
+        ctx.restore();
+
+        // Draw right image
+        ctx.save();
+        ctx.beginPath();
+        ctx.rect(splitX, 0, width - splitX, height);
+        ctx.clip();
+        ctx.drawImage(rightImg, 0, 0, width, height);
+        ctx.restore();
+
+        // Draw slider line
+        ctx.fillStyle = 'var(--ctp-mocha-blue)';
+        ctx.fillRect(splitX - 2, 0, 4, height);
+
+        // Create filename using model info if available
+        const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+        const filename = `comparison-${modelName}-${scale}x-${timestamp}.png`;
+
+        // Download the snapshot
+        const link = document.createElement('a');
+        link.download = filename;
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+
+        // Show success toast
+        toast.success('Snapshot saved successfully!', {
+            position: "top-center",
+            autoClose: 3000,
+        });
+    };
+
     // Render component
     return (
         <>
@@ -351,6 +415,12 @@ const ImageComparisonSlider: React.FC<ImageComparisonSliderProps> = ({ leftImage
                     data-tooltip="Reset all image adjustments: zoom level, pan position, and slider position"
                 >
                     RESET <span className="smaller-text">(Pan, Zoom and Slider)</span>
+                </button>
+                <button 
+                    onClick={handleSnapshot}
+                    data-tooltip="Take a snapshot of the current comparison view"
+                >
+                    SNAPSHOT
                 </button>
                 <button 
                     onClick={handleDownload}

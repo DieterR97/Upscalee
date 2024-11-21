@@ -324,3 +324,11 @@ button:disabled {
 .smaller-text {
     font-size: 14px;
 }
+
+.button-container button[data-tooltip="Take a snapshot of the current comparison view"] {
+  background-color: var(--ctp-mocha-green);
+}
+
+.button-container button[data-tooltip="Take a snapshot of the current comparison view"]:hover {
+  background-color: var(--ctp-mocha-teal);
+}
