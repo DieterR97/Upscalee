@@ -67,8 +67,8 @@ const ImageComparisonSlider: React.FC<ImageComparisonSliderProps> = ({ leftImage
     // Function to update the clip path of the right image based on slider position
     const updateClipPath = useCallback(() => {
         if (rightImageRef.current && containerRef.current && imageWrapperRef.current) {
-            // Don't apply clip path in switch mode
-            if (currentMode === 'switch') {
+            // Don't apply clip path in switch or diff mode
+            if (currentMode === 'switch' || currentMode === 'diff') {
                 rightImageRef.current.style.clipPath = 'none';
                 return;
             }
@@ -440,16 +440,20 @@ const ImageComparisonSlider: React.FC<ImageComparisonSliderProps> = ({ leftImage
     const handleModeChange = (newMode: 'slider' | 'switch' | 'diff') => {
         setCurrentMode(newMode);
         
-        if (newMode === 'switch') {
-            setCurrentImage('left');
+        // Remove clip path when switching to switch or diff mode
+        if (newMode === 'switch' || newMode === 'diff') {
             if (rightImageRef.current) {
                 rightImageRef.current.style.clipPath = 'none';
                 rightImageRef.current.style.transition = 'none';
             }
-        } else if (newMode === 'diff') {
-            calculateDifference();
         } else {
             updateSliderPosition(50);
+        }
+
+        if (newMode === 'switch') {
+            setCurrentImage('left');
+        } else if (newMode === 'diff') {
+            calculateDifference();
         }
     };
 
