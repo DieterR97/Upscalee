@@ -18,6 +18,22 @@
 
 # Upscalee
 
+## Quick Navigation
+<div align="center">
+  <a href="#-ai-powered-upscaling">
+    <br />🤖 AI Upscaling
+  </a>&nbsp;&nbsp;&nbsp;&nbsp;
+  <a href="#%EF%B8%8F-real-time-comparison">
+    <br />⚖️ Comparison
+  </a>&nbsp;&nbsp;&nbsp;&nbsp;
+  <a href="#-quality-assessment">
+    <br />📊 Quality Assessment
+  </a>&nbsp;&nbsp;&nbsp;&nbsp;
+  <a href="#%EF%B8%8F-advanced-configuration">
+    <br />⚙️ Configuration
+  </a>
+</div>
+
 ## Table of Contents
 * [About the Project](#about-the-project)
   * [Project Description](#project-description)
@@ -49,6 +65,7 @@
 * [License](#license)
 * [Contact](#contact)
 * [Acknowledgements](#acknowledgements)
+* [FAQ](#faq)
 
 ## About the Project
 
@@ -81,9 +98,21 @@ Upscalee is a powerful image upscaling application that leverages state-of-the-a
 ## Getting Started
 
 ### Prerequisites
-* Python 3.10 or higher
-* Node.js and npm
-* CUDA-capable GPU (optional, but recommended for better performance)
+
+#### System Requirements
+
+| Component | Minimum | Recommended |
+|-----------|---------|-------------|
+| RAM | 8GB | 16GB |
+| GPU | None (CPU only) | NVIDIA GPU with 4GB+ VRAM |
+| Storage | 4GB free | 8GB+ free |
+| CPU | 4 cores | 6+ cores |
+
+#### Software Requirements
+- Python 3.10 or higher
+- Node.js 16+ and npm
+- CUDA Toolkit 11.7+ (for GPU acceleration)
+- Git LFS (for downloading model files)
 
 ### Installation
 
@@ -116,6 +145,26 @@ Or manually:
 - Start backend: `cd backend & python app.py`
 - Start frontend: `cd frontend/react-app & npm start`
 
+### Installation Troubleshooting
+
+Common issues and solutions:
+
+1. **CUDA Installation Fails**
+   - Ensure you have a compatible NVIDIA GPU
+   - Try installing CUDA Toolkit manually from NVIDIA website
+   - Verify GPU drivers are up to date
+
+2. **Package Installation Errors**
+   - You might have to run setup.bat a few times as its process sometimes does stall in the terminal, i.e. you will have to kill the process in the terminal or close the terminal window and run setup.bat again.
+   - Try running: `pip install --upgrade pip`
+   - Install Visual C++ Build Tools if on Windows
+   - Use: `pip install -r requirements.txt --no-cache-dir`
+
+3. **Application Won't Start**
+   - Check if ports 3000 and 5000 are available
+   - Ensure all prerequisites are installed
+   - Check logs in `logs/` directory
+
 ## Features and Functionality
 
 ### 🤖 AI-Powered Upscaling
@@ -123,6 +172,56 @@ Or manually:
 * Support for multiple AI model architectures including Real-ESRGAN and much more
 * Support for various upscaling factors (1x, 2x, 4x) (Depending on the model used)
 * CUDA acceleration for faster processing
+
+<div align="center">
+  <h1>Comparison Examples</h1>
+  <table>
+    <tr>
+      <td colspan="2" align="center"><h3>RealESRGAN_x4plus_anime_6B</h3></td>
+    </tr>
+    <tr>
+      <td><img src="./assets/examples/input.jpg" width="200" alt="Before"/></td>
+      <td><img src="./assets/examples/input_RealESRGAN_x4plus_anime_6B_x4.png" width="200" alt="After"/></td>
+    </tr>
+    <tr>
+      <td align="center">Before</td>
+      <td align="center">After (4x Upscale)</td>
+    </tr>
+    <tr>
+      <td colspan="2" align="center"><h3>4xNomos2_otf_esrgan</h3></td>
+    </tr>
+    <tr>
+      <td><img src="./assets/examples/s0aTG2Vz (Small)-small.png" width="200" alt="Before"/></td>
+      <td><img src="./assets/examples/s0aTG2Vz (Small)-small.png_4xNomos2_otf_esrgan_x4.png" width="200" alt="After"/></td>
+    </tr>
+    <tr>
+      <td align="center">Before</td>
+      <td align="center">After (4x Upscale)</td>
+    </tr>
+    <tr>
+      <td colspan="2" align="center"><h3>2x_Text2HD_v.1-RealPLKSR</h3></td>
+    </tr>
+    <tr>
+      <td><img src="./assets/examples/46f1c843-958d-4310-80d4-9d7767fa42d4.png" width="200" alt="Before"/></td>
+      <td><img src="./assets/examples/46f1c843-958d-4310-80d4-9d7767fa42d4.png_2x_Text2HD_v.1-RealPLKSR_x2.png" width="200" alt="After"/></td>
+    </tr>
+    <tr>
+      <td align="center">Before</td>
+      <td align="center">After (2x Upscale)</td>
+    </tr>
+    <tr>
+      <td colspan="2" align="center"><h3>8x_NMKD-Typescale_175k</h3></td>
+    </tr>
+    <tr>
+      <td><img src="./assets/examples/t4nGiECP_o.png" width="200" alt="Before"/></td>
+      <td><img src="./assets/examples/t4nGiECP_o.png_8x_NMKD-Typescale_175k_x8.png" width="200" alt="After"/></td>
+    </tr>
+    <tr>
+      <td align="center">Before</td>
+      <td align="center">After (8x Upscale)</td>
+    </tr>
+  </table>
+</div>
 
 ### ⚖️ Real-time Comparison
 * Interactive slider comparison for before/after comparison
@@ -324,3 +423,20 @@ Project Link: [https://github.com/DieterR97/Upscalee](https://github.com/DieterR
 * [Catppuccin](https://catppuccin.com/palette)
 * [Flask](https://flask.palletsprojects.com/) 
 * [PyTorch](https://pytorch.org/)
+* [Cursor](https://www.cursor.com/)
+* [claude-3.5-sonnet](https://www.anthropic.com/news/claude-3-5-sonnet) - [2](https://www.anthropic.com/claude/sonnet)
+* [Cartograph CF](https://fonts.adobe.com/fonts/cartograph-cf)
+
+## FAQ
+
+#### Q: Which model should I use for anime/artwork upscaling?
+A: For anime and artwork, we recommend using the Real-ESRGAN-Anime model as it's specifically trained on animated content.
+
+#### Q: Why is the upscaling process slow on my computer?
+A: Processing speed depends primarily on your GPU. Using CPU-only mode will be significantly slower. Enable CUDA if you have a compatible NVIDIA GPU. The processing speed also depends on the initial image dimensions of the image you are upscaling.
+
+#### Q: What's the maximum image size supported?
+A: The maximum input image size depends on your available GPU memory. As a general guide:
+- 4GB VRAM: Up to 2000x2000 pixels
+- 8GB VRAM: Up to 4000x4000 pixels
+- 16GB VRAM: Up to 8000x8000 pixels

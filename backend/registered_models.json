@@ -90,5 +90,30 @@
       "tiling": "ModelTiling.SUPPORTED",
       "scale": 1
     }
+  },
+  "8x_NMKD-Typescale_175k": {
+    "name": "8x_NMKD-Typescale_175k",
+    "description": "Low-resolution text/typography and symbols",
+    "scale": 8,
+    "variable_scale": false,
+    "architecture": "ESRGAN",
+    "source_url": "https://openmodeldb.info/models/8x-NMKD-Typescale",
+    "file_pattern": "8x_NMKD-Typescale_175k.pth",
+    "is_spandrel": true,
+    "spandrel_info": {
+      "architecture": "RRDBNet",
+      "is_supported": true,
+      "input_channels": 3,
+      "output_channels": 3,
+      "supports_half": true,
+      "supports_bfloat16": true,
+      "size_requirements": {
+        "minimum": 2,
+        "multiple_of": 1,
+        "square": false
+      },
+      "tiling": "ModelTiling.SUPPORTED",
+      "scale": 8
+    }
   }
 }
