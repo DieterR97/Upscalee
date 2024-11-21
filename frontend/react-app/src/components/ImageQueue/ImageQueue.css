@@ -42,7 +42,8 @@
 }
 
 .queue-item-info {
-    font-size: 0.9em;
+    font-family: "cartograph-cf", monospace;
+    font-weight: 400;
     color: var(--ctp-mocha-subtext0);
 }
 
@@ -93,6 +94,8 @@
 }
 
 .comparison-view h4 {
+    font-family: "cartograph-cf", monospace;
+    font-weight: 700;
     color: var(--ctp-mocha-subtext0);
     margin-bottom: 15px;
 }

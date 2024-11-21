@@ -1,5 +1,11 @@
 @import url('https://unpkg.com/@catppuccin/palette/css/catppuccin.css');
 
+:root {
+  font-family: "cartograph-cf", monospace;
+  font-weight: 400;
+  font-style: normal;
+}
+
 .loading-overlay {
   position: fixed;
   top: 0;
@@ -86,11 +92,12 @@
   position: relative;
   color: var(--ctp-mocha-subtext);
   transition: color 0.3s;
+  font-family: "cartograph-cf", monospace;
 }
 
 .tab.active {
   color: var(--ctp-mocha-mauve);
-  font-weight: bold;
+  font-weight: 700;
 }
 
 .tab.active::after {
@@ -319,6 +326,7 @@
   font-size: 25px;
   margin: 0px 5px !important;
   font-weight: 600 !important;
+  font-family: "cartograph-cf", monospace;
 }
 
 /* .model-description-tooltip::after {
@@ -437,6 +445,8 @@
   border-bottom: 2px solid var(--ctp-mocha-overlay0);
   padding-bottom: 8px;
   margin-bottom: 16px;
+  font-family: "cartograph-cf", monospace;
+  font-weight: 700;
 }
 
 .info-section p {
@@ -513,6 +523,8 @@
   margin-bottom: 15px;
   border-bottom: 2px solid var(--ctp-mocha-overlay0);
   padding-bottom: 5px;
+  font-family: "cartograph-cf", monospace;
+  font-weight: 700;
 }
 
 .info-section p {
@@ -1465,6 +1477,8 @@ html {
   background-clip: text;
   -webkit-text-fill-color: transparent;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+  font-family: "cartograph-cf", monospace;
+  font-weight: 700;
 }
 
 .about-header p {
@@ -1508,6 +1522,8 @@ html {
   /* justify-content: space-between; */
   /* justify-content: center; */
   gap: 0.6rem;
+  font-family: "cartograph-cf", monospace;
+  font-weight: 700;
 }
 
 .feature-card p {
@@ -1531,6 +1547,8 @@ html {
   font-size: 2rem;
   margin-top: 0;
   margin-bottom: 2rem;
+  font-family: "cartograph-cf", monospace;
+  font-weight: 700;
 }
 
 .getting-started ol {
@@ -1595,6 +1613,8 @@ html {
   font-size: 2rem;
   margin-top: 0;
   margin-bottom: 2rem;
+  font-family: "cartograph-cf", monospace;
+  font-weight: 700;
 }
 
 .tech-grid {
@@ -1648,6 +1668,8 @@ html {
   margin-top: 0;
   margin-bottom: 2rem;
   text-align: center;
+  font-family: "cartograph-cf", monospace;
+  font-weight: 700;
 }
 
 .tabs-grid {
@@ -1686,6 +1708,8 @@ html {
   color: #2196f3;
   font-size: 1.3rem;
   margin: 0.5rem 0;
+  font-family: "cartograph-cf", monospace;
+  font-weight: 700;
 }
 
 .tab-explanation-card p {
@@ -1980,4 +2004,24 @@ a:active {
   display: flex;
   align-items: center;
   gap: 10px;
+}
+
+/* Update headings */
+h1, h2, h3, h4, h5, h6 {
+  font-family: "cartograph-cf", monospace;
+  font-weight: 700;
+}
+
+/* Update tooltips */
+[data-tooltip]::before,
+.model-description-tooltip::after {
+  font-family: "cartograph-cf", monospace;
+  font-weight: 400;
+  font-style: italic;
+}
+
+/* Update buttons */
+button {
+  font-family: "cartograph-cf", monospace;
+  font-weight: 400;
 }

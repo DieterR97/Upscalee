@@ -58,6 +58,8 @@
     color: var(--ctp-mocha-text);
     border-bottom: 2px solid var(--ctp-mocha-overlay0);
     padding-bottom: 5px;
+    font-family: "cartograph-cf", monospace;
+    font-weight: 700;
 }
 
 .metric-item {
@@ -81,6 +83,8 @@
     display: block;
     margin-bottom: 8px;
     color: var(--ctp-mocha-text);
+    font-family: "cartograph-cf", monospace;
+    font-weight: 700;
 }
 
 .metric-info p {
@@ -93,6 +97,9 @@
     font-size: 0.9em;
     color: var(--ctp-mocha-subtext1);
     margin-top: 5px;
+    font-family: "cartograph-cf", monospace;
+    font-weight: 400;
+    font-style: italic;
 }
 
 .metrics-actions {

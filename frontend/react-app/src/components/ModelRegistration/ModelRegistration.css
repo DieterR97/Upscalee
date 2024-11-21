@@ -24,6 +24,8 @@
   gap: 10px;
   position: relative;
   overflow: visible;
+  font-family: "cartograph-cf", monospace;
+  font-weight: 400;
 }
 
 .registration-form input,
@@ -99,9 +101,10 @@
   padding: 4px 8px;
   border-radius: 4px;
   font-size: 12px;
-  font-weight: bold;
+  font-weight: 700;
   background-color: var(--ctp-mocha-blue);
   color: var(--ctp-mocha-base);
+  font-family: "cartograph-cf", monospace;
 }
 
 .spandrel-badge[data-supported="false"] {

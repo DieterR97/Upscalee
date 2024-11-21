@@ -28,6 +28,8 @@
 }
 
 .metric-group h4 {
+    font-family: "cartograph-cf", monospace;
+    font-weight: 700;
     color: var(--ctp-mocha-text);
     margin-bottom: 10px;
 }
@@ -63,6 +65,8 @@
 }
 
 .metric-info strong {
+    font-family: "cartograph-cf", monospace;
+    font-weight: 700;
     display: block;
     margin-bottom: 8px;
     color: var(--ctp-mocha-text);
@@ -75,6 +79,8 @@
 }
 
 .score-range {
+    font-family: "cartograph-cf", monospace;
+    font-weight: 400;
     font-style: italic;
     color: var(--ctp-mocha-subtext1);
 }
@@ -258,4 +264,16 @@
 .metric-info strong .metric-id {
     display: inline-block;
     margin-left: 6px;
+}
+
+.score-range,
+.loading-metrics {
+    font-family: "cartograph-cf", monospace;
+    font-weight: 400;
+    font-style: italic;
+}
+
+.metric-id {
+    font-family: "cartograph-cf", monospace;
+    font-weight: 400;
 }

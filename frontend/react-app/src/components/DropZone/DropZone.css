@@ -40,6 +40,8 @@
 .dropzone_text p {
   color: var(--ctp-mocha-subtext0);
   font-size: 1.1rem;
+  font-family: "cartograph-cf", monospace;
+  font-weight: 400;
 }
 
 /* Add these styles */
@@ -53,6 +55,9 @@
   flex-direction: column;
   align-items: center;
   gap: 1rem;
+  font-family: "cartograph-cf", monospace;
+  font-weight: 400;
+  font-style: italic;
 }
 
 .loading-spinner {
