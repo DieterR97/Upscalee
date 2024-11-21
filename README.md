@@ -22,15 +22,12 @@
 <div align="center">
   <h3 style="display: inline;"><a href="#-ai-powered-upscaling">🤖 AI Upscaling</a></h3>
   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-  <a href="#comparison-examples">
-    <br />⚖️ <h3 style="display: inline;">Comparison</h3>
-  </a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-  <a href="#-image-quality-assessment-iqa">
-    <br />📊 <h3 style="display: inline;">Quality Assessment</h3>
-  </a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-  <a href="#%EF%B8%8F-advanced-configuration">
-    <br />⚙️ <h3 style="display: inline;">Configuration</h3>
-  </a>
+  <br /><h3 style="display: inline;"><a href="#comparison-examples">⚖️ Comparison</a></h3>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  <br /><h3 style="display: inline;"><a href="#-image-quality-assessment-iqa">📊 Quality Assessment</a></h3>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  <br /><h3 style="display: inline;"><a href="#%EF%B8%8F-advanced-configuration">⚙️ Configuration</a></h3>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 </div>
 
 ## Table of Contents
