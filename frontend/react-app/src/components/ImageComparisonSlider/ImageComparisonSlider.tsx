@@ -14,8 +14,8 @@ interface ImageComparisonSliderProps {
     scale: number;
     originalFilename?: string;
     onCompareClick?: () => void;
-    mode?: 'slider' | 'switch';
-    onModeChange?: (mode: 'slider' | 'switch') => void;
+    mode?: 'slider' | 'switch' | 'diff';
+    onModeChange?: (mode: 'slider' | 'switch' | 'diff') => void;
 }
 
 const ImageComparisonSlider: React.FC<ImageComparisonSliderProps> = ({ leftImage, rightImage, onQueue, showQueueButton = false, leftLabel, rightLabel, modelName = 'unknown', scale: initialScale = 0, originalFilename, onCompareClick, mode, onModeChange }) => {
@@ -39,8 +39,9 @@ const ImageComparisonSlider: React.FC<ImageComparisonSliderProps> = ({ leftImage
     const [startLayerX, setStartLayerX] = useState(0);
     const [sliderPosition, setSliderPosition] = useState(50);
 
-    const [currentMode, setCurrentMode] = useState<'slider' | 'switch'>('slider');
+    const [currentMode, setCurrentMode] = useState<'slider' | 'switch' | 'diff'>('slider');
     const [currentImage, setCurrentImage] = useState<'left' | 'right'>('left');
+    const [diffCanvas, setDiffCanvas] = useState<HTMLCanvasElement | null>(null);
 
     // Effect to handle fullscreen changes
     useEffect(() => {
@@ -380,7 +381,63 @@ const ImageComparisonSlider: React.FC<ImageComparisonSliderProps> = ({ leftImage
         });
     };
 
-    const handleModeChange = (newMode: 'slider' | 'switch') => {
+    const calculateDifference = useCallback(() => {
+        if (!leftImage || !rightImage) return;
+
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return;
+
+        const img1 = new Image();
+        const img2 = new Image();
+
+        img1.onload = () => {
+            img2.onload = () => {
+                // Set canvas size to match images
+                canvas.width = img1.width;
+                canvas.height = img1.height;
+
+                // Draw and get data from first image
+                ctx.drawImage(img1, 0, 0);
+                const imageData1 = ctx.getImageData(0, 0, canvas.width, canvas.height);
+
+                // Clear canvas and draw second image
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.drawImage(img2, 0, 0);
+                const imageData2 = ctx.getImageData(0, 0, canvas.width, canvas.height);
+
+                // Calculate differences
+                const diff = ctx.createImageData(canvas.width, canvas.height);
+                for (let i = 0; i < imageData1.data.length; i += 4) {
+                    // Calculate color differences
+                    const diffR = Math.abs(imageData1.data[i] - imageData2.data[i]);
+                    const diffG = Math.abs(imageData1.data[i + 1] - imageData2.data[i + 1]);
+                    const diffB = Math.abs(imageData1.data[i + 2] - imageData2.data[i + 2]);
+
+                    // Calculate average difference
+                    const avgDiff = (diffR + diffG + diffB) / 3;
+
+                    // Apply threshold for better visibility
+                    const threshold = 10; // Adjust this value to control sensitivity
+                    const intensity = avgDiff > threshold ? 255 : 0;
+
+                    // Set difference pixel colors (using red for visibility)
+                    diff.data[i] = intensity;     // Red
+                    diff.data[i + 1] = 0;         // Green
+                    diff.data[i + 2] = 0;         // Blue
+                    diff.data[i + 3] = intensity > 0 ? 128 : 0;  // Alpha (semi-transparent)
+                }
+
+                // Put the difference data back on the canvas
+                ctx.putImageData(diff, 0, 0);
+                setDiffCanvas(canvas);
+            };
+            img2.src = rightImage;
+        };
+        img1.src = leftImage;
+    }, [leftImage, rightImage]);
+
+    const handleModeChange = (newMode: 'slider' | 'switch' | 'diff') => {
         setCurrentMode(newMode);
         
         if (newMode === 'switch') {
@@ -389,10 +446,19 @@ const ImageComparisonSlider: React.FC<ImageComparisonSliderProps> = ({ leftImage
                 rightImageRef.current.style.clipPath = 'none';
                 rightImageRef.current.style.transition = 'none';
             }
+        } else if (newMode === 'diff') {
+            calculateDifference();
         } else {
             updateSliderPosition(50);
         }
     };
+
+    // Add useEffect to recalculate difference when images change
+    useEffect(() => {
+        if (currentMode === 'diff') {
+            calculateDifference();
+        }
+    }, [leftImage, rightImage, currentMode, calculateDifference]);
 
     // Modify the keyboard event listener effect
     useEffect(() => {
@@ -436,15 +502,21 @@ const ImageComparisonSlider: React.FC<ImageComparisonSliderProps> = ({ leftImage
             <div className="mode-selection">
                 <button 
                     className={`mode-button ${currentMode === 'slider' ? 'active' : ''}`}
-                    onClick={() => setCurrentMode('slider')}
+                    onClick={() => handleModeChange('slider')}
                 >
                     Slider Mode
                 </button>
                 <button 
                     className={`mode-button ${currentMode === 'switch' ? 'active' : ''}`}
-                    onClick={() => setCurrentMode('switch')}
+                    onClick={() => handleModeChange('switch')}
                 >
                     Switch Mode
+                </button>
+                <button 
+                    className={`mode-button ${currentMode === 'diff' ? 'active' : ''}`}
+                    onClick={() => handleModeChange('diff')}
+                >
+                    Difference Mode
                 </button>
                 {currentMode === 'switch' && (
                     <span className="mode-hint">Use left/right arrow keys to switch</span>
@@ -463,7 +535,11 @@ const ImageComparisonSlider: React.FC<ImageComparisonSliderProps> = ({ leftImage
                 {rightLabel && <div className="image-label right-label">{rightLabel}</div>}
                 
                 {/* Image wrapper for panning and zooming */}
-                <div ref={imageWrapperRef} className="image-wrapper" style={{transform: `translate(${panX}px, ${panY}px) scale(${scale})`}}>
+                <div 
+                    ref={imageWrapperRef} 
+                    className="image-wrapper" 
+                    style={{transform: `translate(${panX}px, ${panY}px) scale(${scale})`}}
+                >
                     <img 
                         src={leftImage} 
                         alt="Image 1" 
@@ -485,7 +561,24 @@ const ImageComparisonSlider: React.FC<ImageComparisonSliderProps> = ({ leftImage
                                 'block'
                         }}
                     />
+                    {/* Move the difference overlay inside the image-wrapper */}
+                    {currentMode === 'diff' && diffCanvas && (
+                        <img 
+                            src={diffCanvas.toDataURL()}
+                            alt="Difference overlay"
+                            className="difference-overlay active"
+                            style={{
+                                position: 'absolute',
+                                top: 0,
+                                left: 0,
+                                width: '100%',
+                                height: '100%',
+                                objectFit: 'contain'
+                            }}
+                        />
+                    )}
                 </div>
+                
                 {/* Only show slider elements in slider mode */}
                 {currentMode === 'slider' && (
                     <>
