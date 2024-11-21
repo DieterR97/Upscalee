@@ -1,4 +1,4 @@
-@import url('https://unpkg.com/@catppuccin/palette/css/catppuccin.css');
+@import '../../catppuccin.css';
 
 .drop-zone {
   border: 2px dashed var(--ctp-mocha-overlay0);

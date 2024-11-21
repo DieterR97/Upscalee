@@ -1,4 +1,4 @@
-@import url('https://unpkg.com/@catppuccin/palette/css/catppuccin.css');
+@import '../../catppuccin.css';
 
 .image-queue {
     margin: 20px 0;

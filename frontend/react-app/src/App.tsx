@@ -14,6 +14,7 @@ import pythonLogo from './assets/python.svg';
 import pytorchLogo from './assets/pytorch.svg';
 import flaskLogo from './assets/flask.png';
 import cat from './assets/cat.png';
+import cat2 from './assets/cat_left.png';
 import IQA_PyTorch from './assets/pyiqa.png';
 import OpenCV from './assets/opencv.svg';
 import ee from './assets/ee.png';
@@ -896,7 +897,8 @@ const ImageUpscaler: React.FC = () => {
               >
                 Start Upscaling! 🚀
               </button>
-              <img src={cat} alt="cat" className='cat'></img>
+              {/* <img src={cat} alt="cat" className='cat'></img> */}
+              <img src={cat2} alt="cat2" className='cat2' style={{width: '639px'}}></img>
             </div>
 
             <div className="tabs-explanation">

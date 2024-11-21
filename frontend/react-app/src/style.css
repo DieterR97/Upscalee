@@ -1,4 +1,4 @@
-@import url('https://unpkg.com/@catppuccin/palette/css/catppuccin.css');
+@import './catppuccin.css';
 
 :root {
   font-family: "cartograph-cf", monospace;
@@ -12,7 +12,7 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: #1e1e2e; /* Catppuccin Mocha base color */
+  background-color: var(--ctp-mocha-base);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -2118,4 +2118,8 @@ button {
 
 .close-welcome-button:hover {
   background-color: var(--ctp-mocha-sapphire);
+}
+
+.cat2 {
+  margin-bottom: -63px;
 }

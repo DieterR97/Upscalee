@@ -1,4 +1,4 @@
-@import url('https://unpkg.com/@catppuccin/palette/css/catppuccin.css');
+@import '../../catppuccin.css';
 
 /* Main container for the image comparison slider */
 .image-comparison-container {
@@ -421,4 +421,10 @@ button.downloading {
 
 button.downloading:hover {
   background-color: var(--ctp-mocha-blue);
+}
+
+[data-tooltip]::before {
+    background: var(--ctp-mocha-surface0);
+    color: var(--ctp-mocha-text);
+    border: 1px solid var(--ctp-mocha-overlay0);
 }
