@@ -1049,6 +1049,37 @@ const ImageUpscaler: React.FC = () => {
             >
             </img>
 
+            <div className="community-section">
+              <h2 className='feature-title2'>
+                Community & Support
+              </h2>
+              <div className="community-grid">
+                <div className="community-card">
+                  <h3><span role="img" aria-label="github">🐙</span> GitHub</h3>
+                  <p>Contribute, report issues, or explore the source code</p>
+                  <a href="https://github.com/DieterR97/Upscalee" target="_blank" rel="noopener noreferrer">
+                    Visit Repository
+                  </a>
+                </div>
+                <div className="community-card">
+                  <h3><span role="img" aria-label="documentation">📚</span> Documentation</h3>
+                  <p>Learn more about features and implementation details</p>
+                  <a href="https://github.com/DieterR97/Upscalee/wiki" target="_blank" rel="noopener noreferrer">
+                    View Docs
+                  </a>
+                </div>
+                <div className="community-card">
+                  <h3><span role="img" aria-label="feedback">💭</span> Feedback</h3>
+                  <p>Help improve Upscalee by sharing your experience</p>
+                  <a href="https://docs.google.com/forms/d/e/1FAIpQLSeRnh1b1Ao1PxDKM_isHHBxxFwyrUNPUi6LP01HM9fHyt7DGg/viewform" 
+                     target="_blank" 
+                     rel="noopener noreferrer">
+                    Give Feedback
+                  </a>
+                </div>
+              </div>
+            </div>
+
           </div>
         )}
 

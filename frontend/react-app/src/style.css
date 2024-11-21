@@ -136,6 +136,17 @@
   color: var(--ctp-mocha-blue) !important;
 }
 
+.feature-title2 {
+  color: var(--ctp-mocha-blue) !important;
+  color: #2196f3;
+  font-size: 2rem;
+  margin-top: 0;
+  margin-bottom: 2rem;
+  text-align: center;
+  font-family: "cartograph-cf", monospace;
+  font-weight: 700;
+}
+
 .model-selection {
   display: flex;
   justify-content: space-between !important;
@@ -1852,8 +1863,7 @@ var(--ctp-mocha-blue)
       rgba(245, 194, 231, 0.15),
       rgba(250, 179, 135, 0.15),
       rgba(166, 227, 161, 0.15),
-      rgba(137, 180, 250, 0.15)
-    ),
+      rgba(137, 180, 250, 0.15)),
     rgba(30, 30, 46, 0.3);
   background-size: 200% 200%;
   animation: cardGradient 3s linear infinite;
@@ -1888,11 +1898,25 @@ var(--ctp-mocha-blue)
 }
 
 @keyframes shake {
-  0% { transform: rotate(0deg); }
-  25% { transform: rotate(-3deg); }
-  50% { transform: rotate(0deg); }
-  75% { transform: rotate(3deg); }
-  100% { transform: rotate(0deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+
+  25% {
+    transform: rotate(-3deg);
+  }
+
+  50% {
+    transform: rotate(0deg);
+  }
+
+  75% {
+    transform: rotate(3deg);
+  }
+
+  100% {
+    transform: rotate(0deg);
+  }
 }
 
 .tech-item {
@@ -2019,7 +2043,12 @@ a:active {
 }
 
 /* Update headings */
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   font-family: "cartograph-cf", monospace;
   font-weight: 700;
 }
@@ -2122,4 +2151,50 @@ button {
 
 .cat2 {
   margin-bottom: -63px;
+}
+
+.community-section {
+  margin: 2rem 0;
+  padding: 2rem;
+  background: var(--ctp-mocha-surface0);
+  border-radius: 8px;
+}
+
+.community-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+}
+
+.community-card {
+  background: var(--ctp-mocha-mantle);
+  padding: 1.5rem;
+  border-radius: 8px;
+  text-align: center;
+  transition: transform 0.2s;
+}
+
+.community-card:hover {
+  transform: translateY(-5px);
+}
+
+.community-card h3 {
+  color: var(--ctp-mocha-mauve);
+  margin-bottom: 1rem;
+}
+
+.community-card a {
+  display: inline-block;
+  margin-top: 1rem;
+  padding: 0.5rem 1rem;
+  background: var(--ctp-mocha-blue);
+  color: var(--ctp-mocha-base);
+  border-radius: 4px;
+  text-decoration: none;
+  transition: background-color 0.2s;
+}
+
+.community-card a:hover {
+  background: var(--ctp-mocha-sapphire);
 }
