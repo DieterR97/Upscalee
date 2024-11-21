@@ -154,7 +154,9 @@ export const MetricsConfigModal: React.FC<MetricsConfigModalProps> = ({ isOpen, 
                                                 onChange={() => handleMetricToggle(id, 'nr')}
                                             />
                                             <div className="metric-info">
-                                                <strong>{metric.name}</strong>
+                                                <strong>
+                                                    {metric.name} <span className="metric-id">({id})</span>
+                                                </strong>
                                                 <p>{metric.description}</p>
                                                 <span className="metric-details">
                                                     Range: {metric.score_range.join(' - ')}
@@ -179,7 +181,9 @@ export const MetricsConfigModal: React.FC<MetricsConfigModalProps> = ({ isOpen, 
                                                 onChange={() => handleMetricToggle(id, 'fr')}
                                             />
                                             <div className="metric-info">
-                                                <strong>{metric.name}</strong>
+                                                <strong>
+                                                    {metric.name} <span className="metric-id">({id})</span>
+                                                </strong>
                                                 <p>{metric.description}</p>
                                                 <span className="metric-details">
                                                     Range: {metric.score_range.join(' - ')}

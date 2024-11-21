@@ -226,7 +226,7 @@ export const ImageQualityAssessment: React.FC<ImageQualityAssessmentProps> = ({
                           disabled={loading}
                         />
                         <div className="metric-info">
-                          <strong>{info?.name}</strong>
+                          <strong>{info?.name} <span className="metric-id">({metricId})</span></strong>
                           <p>{info?.description}</p>
                           <p className="score-range">
                             Score range: {info?.score_range.join(' to ')}
@@ -257,7 +257,7 @@ export const ImageQualityAssessment: React.FC<ImageQualityAssessmentProps> = ({
                           disabled={loading}
                         />
                         <div className="metric-info">
-                          <strong>{info?.name}</strong>
+                          <strong>{info?.name} <span className="metric-id">({metricId})</span></strong>
                           <p>{info?.description}</p>
                           <p className="score-range">
                             Score range: {info?.score_range.join(' to ')}
@@ -318,7 +318,9 @@ export const ImageQualityAssessment: React.FC<ImageQualityAssessmentProps> = ({
 
                     return (
                       <tr key={metricId}>
-                        <td>{info.name}</td>
+                        <td>
+                          {info.name} <span className="metric-id">({metricId})</span>
+                        </td>
                         <td>{result.type === 'fr' ? 'Full-Reference' : 'No-Reference'}</td>
                         <td>
                           {result.error ? (

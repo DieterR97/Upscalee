@@ -126,3 +126,15 @@
     padding: 20px;
     color: var(--ctp-mocha-text);
 }
+
+.metric-id {
+    font-size: 0.85em;
+    color: var(--ctp-mocha-subtext1);
+    font-weight: normal;
+    font-family: monospace;
+}
+
+.metric-info strong .metric-id {
+    display: inline-block;
+    margin-left: 6px;
+}
