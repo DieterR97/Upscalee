@@ -176,8 +176,8 @@ Common issues and solutions:
       <td colspan="2" align="center"><h3>RealESRGAN_x4plus_anime_6B</h3></td>
     </tr>
     <tr>
-      <td><img src="./assets/examples/input.jpg" width="200" alt="Before"/></td>
-      <td><img src="./assets/examples/input_RealESRGAN_x4plus_anime_6B_x4.png" width="200" alt="After"/></td>
+      <td><img src="./assets/examples/input.jpg" width="400" alt="Before"/></td>
+      <td><img src="./assets/examples/input_RealESRGAN_x4plus_anime_6B_x4.png" width="400" alt="After"/></td>
     </tr>
     <tr>
       <td align="center">Before</td>
@@ -187,8 +187,8 @@ Common issues and solutions:
       <td colspan="2" align="center"><h3>4xNomos2_otf_esrgan</h3></td>
     </tr>
     <tr>
-      <td><img src="./assets/examples/s0aTG2Vz (Small)-small.png" width="200" alt="Before"/></td>
-      <td><img src="./assets/examples/s0aTG2Vz (Small)-small.png_4xNomos2_otf_esrgan_x4.png" width="200" alt="After"/></td>
+      <td><img src="./assets/examples/s0aTG2Vz (Small)-small.png" width="400" alt="Before"/></td>
+      <td><img src="./assets/examples/s0aTG2Vz (Small)-small.png_4xNomos2_otf_esrgan_x4.png" width="400" alt="After"/></td>
     </tr>
     <tr>
       <td align="center">Before</td>
@@ -198,8 +198,8 @@ Common issues and solutions:
       <td colspan="2" align="center"><h3>2x_Text2HD_v.1-RealPLKSR</h3></td>
     </tr>
     <tr>
-      <td><img src="./assets/examples/46f1c843-958d-4310-80d4-9d7767fa42d4.png" width="200" alt="Before"/></td>
-      <td><img src="./assets/examples/46f1c843-958d-4310-80d4-9d7767fa42d4.png_2x_Text2HD_v.1-RealPLKSR_x2.png" width="200" alt="After"/></td>
+      <td><img src="./assets/examples/46f1c843-958d-4310-80d4-9d7767fa42d4.png" width="400" alt="Before"/></td>
+      <td><img src="./assets/examples/46f1c843-958d-4310-80d4-9d7767fa42d4.png_2x_Text2HD_v.1-RealPLKSR_x2.png" width="400" alt="After"/></td>
     </tr>
     <tr>
       <td align="center">Before</td>
@@ -209,8 +209,8 @@ Common issues and solutions:
       <td colspan="2" align="center"><h3>8x_NMKD-Typescale_175k</h3></td>
     </tr>
     <tr>
-      <td><img src="./assets/examples/t4nGiECP_o.png" width="200" alt="Before"/></td>
-      <td><img src="./assets/examples/t4nGiECP_o.png_8x_NMKD-Typescale_175k_x8.png" width="200" alt="After"/></td>
+      <td><img src="./assets/examples/t4nGiECP_o.png" width="400" alt="Before"/></td>
+      <td><img src="./assets/examples/t4nGiECP_o.png_8x_NMKD-Typescale_175k_x8.png" width="400" alt="After"/></td>
     </tr>
     <tr>
       <td align="center">Before</td>
