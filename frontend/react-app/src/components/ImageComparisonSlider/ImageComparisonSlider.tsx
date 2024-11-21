@@ -14,9 +14,11 @@ interface ImageComparisonSliderProps {
     scale: number;
     originalFilename?: string;
     onCompareClick?: () => void;
+    mode?: 'slider' | 'switch';
+    onModeChange?: (mode: 'slider' | 'switch') => void;
 }
 
-const ImageComparisonSlider: React.FC<ImageComparisonSliderProps> = ({ leftImage, rightImage, onQueue, showQueueButton = false, leftLabel, rightLabel, modelName = 'unknown', scale: initialScale = 0, originalFilename, onCompareClick }) => {
+const ImageComparisonSlider: React.FC<ImageComparisonSliderProps> = ({ leftImage, rightImage, onQueue, showQueueButton = false, leftLabel, rightLabel, modelName = 'unknown', scale: initialScale = 0, originalFilename, onCompareClick, mode, onModeChange }) => {
     // Refs for DOM elements
     const containerRef = useRef<HTMLDivElement>(null);
     const sliderRef = useRef<HTMLInputElement>(null);
@@ -36,6 +38,9 @@ const ImageComparisonSlider: React.FC<ImageComparisonSliderProps> = ({ leftImage
     const [startY, setStartY] = useState(0);
     const [startLayerX, setStartLayerX] = useState(0);
     const [sliderPosition, setSliderPosition] = useState(50);
+
+    const [currentMode, setCurrentMode] = useState<'slider' | 'switch'>('slider');
+    const [currentImage, setCurrentImage] = useState<'left' | 'right'>('left');
 
     // Effect to handle fullscreen changes
     useEffect(() => {
@@ -61,6 +66,12 @@ const ImageComparisonSlider: React.FC<ImageComparisonSliderProps> = ({ leftImage
     // Function to update the clip path of the right image based on slider position
     const updateClipPath = useCallback(() => {
         if (rightImageRef.current && containerRef.current && imageWrapperRef.current) {
+            // Don't apply clip path in switch mode
+            if (currentMode === 'switch') {
+                rightImageRef.current.style.clipPath = 'none';
+                return;
+            }
+
             const containerRect = containerRef.current.getBoundingClientRect();
             const imageRect = imageWrapperRef.current.getBoundingClientRect();
 
@@ -74,7 +85,7 @@ const ImageComparisonSlider: React.FC<ImageComparisonSliderProps> = ({ leftImage
             rightImageRef.current.style.transition = 'clip-path 0.1s ease-out';
             rightImageRef.current.style.clipPath = `inset(0 0 0 ${clipValue}%)`;
         }
-    }, [sliderPosition, panX, scale]);
+    }, [sliderPosition, panX, scale, currentMode]);
 
     // Schedule clip path update on next animation frame
     const scheduleUpdate = useCallback(() => {
@@ -369,9 +380,76 @@ const ImageComparisonSlider: React.FC<ImageComparisonSliderProps> = ({ leftImage
         });
     };
 
+    const handleModeChange = (newMode: 'slider' | 'switch') => {
+        setCurrentMode(newMode);
+        
+        if (newMode === 'switch') {
+            setCurrentImage('left');
+            if (rightImageRef.current) {
+                rightImageRef.current.style.clipPath = 'none';
+                rightImageRef.current.style.transition = 'none';
+            }
+        } else {
+            updateSliderPosition(50);
+        }
+    };
+
+    // Modify the keyboard event listener effect
+    useEffect(() => {
+        const handleKeyDown = (e: KeyboardEvent) => {
+            // Only handle arrow keys if we're in switch mode
+            // AND the active element is not a form control
+            if (currentMode === 'switch' && 
+                !(e.target instanceof HTMLSelectElement) && 
+                !(e.target instanceof HTMLInputElement)) {
+                
+                // Prevent default behavior for arrow keys
+                if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+                    e.preventDefault();
+                    
+                    if (e.key === 'ArrowLeft') {
+                        setCurrentImage('left');
+                    } else if (e.key === 'ArrowRight') {
+                        setCurrentImage('right');
+                    }
+                }
+            }
+        };
+
+        document.addEventListener('keydown', handleKeyDown);
+        return () => {
+            document.removeEventListener('keydown', handleKeyDown);
+        };
+    }, [currentMode]);
+
+    // Add an effect to handle mode changes
+    useEffect(() => {
+        if (currentMode === 'switch' && rightImageRef.current) {
+            rightImageRef.current.style.clipPath = 'none';
+            rightImageRef.current.style.transition = 'none';
+        }
+    }, [currentMode]);
+
     // Render component
     return (
         <>
+            <div className="mode-selection">
+                <button 
+                    className={`mode-button ${currentMode === 'slider' ? 'active' : ''}`}
+                    onClick={() => setCurrentMode('slider')}
+                >
+                    Slider Mode
+                </button>
+                <button 
+                    className={`mode-button ${currentMode === 'switch' ? 'active' : ''}`}
+                    onClick={() => setCurrentMode('switch')}
+                >
+                    Switch Mode
+                </button>
+                {currentMode === 'switch' && (
+                    <span className="mode-hint">Use left/right arrow keys to switch</span>
+                )}
+            </div>
             <div
                 ref={containerRef}
                 className={`image-comparison-container ${isFullscreen ? 'fullscreen' : ''}`}
@@ -386,21 +464,43 @@ const ImageComparisonSlider: React.FC<ImageComparisonSliderProps> = ({ leftImage
                 
                 {/* Image wrapper for panning and zooming */}
                 <div ref={imageWrapperRef} className="image-wrapper" style={{transform: `translate(${panX}px, ${panY}px) scale(${scale})`}}>
-                    <img src={leftImage} alt="Image 1" className="image image-left" />
-                    <img ref={rightImageRef} src={rightImage} alt="Image 2" className="image image-right" />
+                    <img 
+                        src={leftImage} 
+                        alt="Image 1" 
+                        className="image image-left" 
+                        style={{
+                            display: currentMode === 'switch' ? 
+                                (currentImage === 'left' ? 'block' : 'none') : 
+                                'block'
+                        }}
+                    />
+                    <img 
+                        ref={rightImageRef} 
+                        src={rightImage} 
+                        alt="Image 2" 
+                        className="image image-right"
+                        style={{
+                            display: currentMode === 'switch' ? 
+                                (currentImage === 'right' ? 'block' : 'none') : 
+                                'block'
+                        }}
+                    />
                 </div>
-                {/* Slider handle */}
-                <div ref={sliderHandleRef} className="slider-handle" style={{left: `${sliderPosition}%`}}></div>
-                {/* Slider input */}
-                <input
-                    ref={sliderRef}
-                    type="range"
-                    min="0"
-                    max="100"
-                    value={sliderPosition}
-                    className="slider"
-                    onChange={handleSliderInput}
-                />
+                {/* Only show slider elements in slider mode */}
+                {currentMode === 'slider' && (
+                    <>
+                        <div ref={sliderHandleRef} className="slider-handle" style={{left: `${sliderPosition}%`}}></div>
+                        <input
+                            ref={sliderRef}
+                            type="range"
+                            min="0"
+                            max="100"
+                            value={sliderPosition}
+                            className="slider"
+                            onChange={handleSliderInput}
+                        />
+                    </>
+                )}
             </div>
             {/* Control buttons */}
             <div className="button-container">
