@@ -19,6 +19,7 @@ import OpenCV from './assets/opencv.svg';
 import ee from './assets/ee.png';
 import catppuccin from './assets/catppuccin.png';
 import { io } from 'socket.io-client';
+import { MetricsConfigModal } from './components/MetricsConfigModal/MetricsConfigModal';
 
 // Define interfaces for type safety and better code documentation
 interface ModelInfo {
@@ -159,6 +160,9 @@ const ImageUpscaler: React.FC = () => {
 
   const [isUploading, setIsUploading] = useState(false);
   const [isDownloading, setIsDownloading] = useState(false);
+
+  // Add state for metrics modal
+  const [isMetricsModalOpen, setIsMetricsModalOpen] = useState(false);
 
   /**
    * Fetches available upscaling models from the backend when component mounts
@@ -1379,6 +1383,31 @@ const ImageUpscaler: React.FC = () => {
         {activeTab === 'config' && (
           <div className="config-tab">
             <h2 className='titleSizeColour'>Configuration</h2>
+
+            {/* Add Metrics Configuration Section before Unregistered Models Section */}
+            <div className="config-section">
+              <h3>Quality Metrics Configuration</h3>
+              <p className="section-description">
+                Configure which image quality assessment metrics are available for comparing upscaled images.
+              </p>
+              <div className="config-options">
+                <div className="config-option">
+                  <button
+                    className="metrics-config-button"
+                    onClick={() => setIsMetricsModalOpen(true)}
+                    data-tooltip="Configure which quality metrics are used for image assessment"
+                  >
+                    Configure Quality Metrics
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Add MetricsConfigModal */}
+            <MetricsConfigModal 
+              isOpen={isMetricsModalOpen}
+              onClose={() => setIsMetricsModalOpen(false)}
+            />
 
             {/* Unregistered Models Section */}
             {unregisteredModels.length > 0 && (

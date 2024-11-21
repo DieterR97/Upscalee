@@ -1,0 +1,128 @@
+.metrics-config-modal {
+    max-width: 800px;
+    width: 90vw;
+}
+
+.metrics-config-content {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    max-height: 70vh;
+    overflow: hidden;
+}
+
+.metrics-filters {
+    display: flex;
+    gap: 10px;
+    padding: 10px;
+    background: var(--ctp-mocha-mantle);
+    border-radius: 8px;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+
+.metrics-search {
+    flex: 1;
+    padding: 8px;
+    border: 1px solid var(--ctp-mocha-overlay0);
+    border-radius: 4px;
+    background: var(--ctp-mocha-base);
+    color: var(--ctp-mocha-text);
+}
+
+.metrics-category-filter {
+    padding: 8px;
+    border: 1px solid var(--ctp-mocha-overlay0);
+    border-radius: 4px;
+    background: var(--ctp-mocha-base);
+    color: var(--ctp-mocha-text);
+}
+
+.metrics-list {
+    flex: 1;
+    overflow-y: auto;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.metrics-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.metrics-group h3 {
+    color: var(--ctp-mocha-text);
+    border-bottom: 2px solid var(--ctp-mocha-overlay0);
+    padding-bottom: 5px;
+}
+
+.metric-item {
+    padding: 15px;
+    border: 1px solid var(--ctp-mocha-overlay0);
+    border-radius: 8px;
+    background: var(--ctp-mocha-mantle);
+}
+
+.metric-item label {
+    display: flex;
+    gap: 15px;
+    cursor: pointer;
+}
+
+.metric-info {
+    flex: 1;
+}
+
+.metric-info strong {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--ctp-mocha-text);
+}
+
+.metric-info p {
+    margin: 5px 0;
+    color: var(--ctp-mocha-subtext0);
+}
+
+.metric-details {
+    display: block;
+    font-size: 0.9em;
+    color: var(--ctp-mocha-subtext1);
+    margin-top: 5px;
+}
+
+.metrics-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    padding: 10px;
+    border-top: 1px solid var(--ctp-mocha-overlay0);
+}
+
+.save-button,
+.cancel-button {
+    padding: 8px 16px;
+    border-radius: 4px;
+    border: none;
+    cursor: pointer;
+}
+
+.save-button {
+    background: var(--ctp-mocha-green);
+    color: var(--ctp-mocha-base);
+}
+
+.cancel-button {
+    background: var(--ctp-mocha-surface0);
+    color: var(--ctp-mocha-text);
+}
+
+.metrics-loading {
+    text-align: center;
+    padding: 20px;
+    color: var(--ctp-mocha-text);
+}

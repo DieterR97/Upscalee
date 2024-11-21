@@ -1937,3 +1937,47 @@ a:active {
 .no-decoration:hover {
   border-bottom: none !important;
 }
+
+/* Add these styles for the metrics configuration section */
+.metrics-config-button {
+  padding: 10px 20px;
+  background: var(--ctp-mocha-blue);
+  color: var(--ctp-mocha-base);
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.2s;
+  width: 100%;
+  max-width: 250px;
+}
+
+.metrics-config-button:hover {
+  background: var(--ctp-mocha-sapphire);
+}
+
+.config-section {
+  background: var(--ctp-mocha-surface0);
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.section-description {
+  color: var(--ctp-mocha-subtext0);
+  margin-bottom: 15px;
+  font-size: 14px;
+}
+
+/* Update existing styles if needed */
+.config-options {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.config-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}

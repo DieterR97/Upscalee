@@ -13,3 +13,4 @@ spandrel
 watchdog
 python-socketio
 flask-socketio
+scikit-image

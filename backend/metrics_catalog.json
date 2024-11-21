@@ -91,7 +91,7 @@
     "name": "Cross-scale Knowledge Distillation Network",
     "description": "Multi-scale approach using knowledge distillation for quality assessment",
     "score_range": [0, 100],
-    "type": "nr",
+    "type": "fr",
     "higher_better": true,
     "category": "Deep Learning Based"
   },

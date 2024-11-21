@@ -2,7 +2,17 @@
   "maxImageDimension": 1024,
   "modelPath": "D:\\upscalee_custom_models",
   "selectedMetrics": {
-    "nr": ["musiq", "nima"],
-    "fr": ["psnr", "ssim"]
+    "fr": [
+      "gmsd",
+      "lpips-vgg+",
+      "qalign_4bit"
+    ],
+    "nr": [
+      "arniqa-spaq",
+      "arniqa-tid",
+      "brisque",
+      "clipiqa",
+      "ckdn"
+    ]
   }
 }

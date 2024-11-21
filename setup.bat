@@ -57,6 +57,9 @@ pip install --timeout 1000 --retries 5 requests
 pip install --timeout 1000 --retries 5 tqdm
 pip install --timeout 1000 --retries 5 spandrel
 
+pip install --timeout 1000 --retries 5 packaging --upgrade
+pip install --timeout 1000 --retries 5 setuptools --upgrade
+
 pip install --timeout 1000 --retries 5 -r backend/requirements.txt
 
 REM Create necessary directories

@@ -24,6 +24,11 @@ import re
 from spandrel_inference import SpandrelUpscaler
 from model_watcher import setup_model_watcher
 from flask_socketio import SocketIO
+from typing import Dict, List
+import base64
+import io
+import pkg_resources
+import subprocess
 
 app = Flask(__name__)
 CORS(app, resources={
@@ -296,15 +301,13 @@ def check_model_status(model_name):
 
 # Get available metrics and their types
 def get_metric_info():
-    metrics = {}
-    for metric_name in pyiqa.list_models():
-        metric = pyiqa.create_metric(metric_name)
-        metrics[metric_name] = {
-            'name': metric_name,
-            'type': 'fr' if metric.metric_mode == 'fr' else 'nr',  # 'fr' for full-reference, 'nr' for no-reference
-            'score_range': metric.score_range
-        }
-    return metrics
+    """Get information about available metrics."""
+    catalog = load_metrics_catalog()
+    selected = get_selected_metrics()
+    
+    # Filter catalog to only include selected metrics
+    selected_metrics = selected['nr'] + selected['fr']
+    return {k: v for k, v in catalog.items() if k in selected_metrics}
 
 # @app.route('/available-metrics', methods=['GET'])
 # def get_available_metrics():
@@ -833,6 +836,223 @@ def register_model():
 
 config = load_config()
 socketio = setup_model_watcher(app, config["modelPath"])
+
+# Add these constants near your other global variables
+METRICS_CATALOG_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "metrics_catalog.json")
+DEFAULT_METRICS = {
+    "nr": ["musiq", "nima"],  # Default NR metrics
+    "fr": ["psnr", "ssim"]    # Default FR metrics
+}
+
+def load_metrics_catalog() -> Dict:
+    """Load the complete metrics catalog from JSON file."""
+    with open(METRICS_CATALOG_PATH, 'r') as f:
+        return json.load(f)
+
+def get_selected_metrics() -> Dict[str, List[str]]:
+    """Get currently selected metrics from config."""
+    config = load_config()
+    return config.get('selectedMetrics', DEFAULT_METRICS)
+
+def save_selected_metrics(metrics: Dict[str, List[str]]) -> None:
+    """Save selected metrics to config file."""
+    config = load_config()
+    config['selectedMetrics'] = metrics
+    save_config(config)
+
+# Add these new routes
+@app.route('/metrics/catalog', methods=['GET'])
+def get_metrics_catalog():
+    """Get the complete metrics catalog."""
+    return jsonify(load_metrics_catalog())
+
+@app.route('/metrics/selected', methods=['GET'])
+def get_selected_metrics_route():
+    """Get currently selected metrics."""
+    return jsonify(get_selected_metrics())
+
+@app.route('/metrics/selected', methods=['POST'])
+def update_selected_metrics():
+    """Update selected metrics."""
+    metrics = request.json
+    if not isinstance(metrics, dict) or not all(k in metrics for k in ['nr', 'fr']):
+        return jsonify({'error': 'Invalid metrics format'}), 400
+    
+    save_selected_metrics(metrics)
+    return jsonify({'status': 'success'})
+
+@app.route('/calculate-metrics', methods=['POST'])
+def calculate_metrics():
+    try:
+        data = request.json
+        original_image_b64 = data.get('original_image')
+        upscaled_image_b64 = data.get('upscaled_image')
+        metrics_to_calculate = data.get('metrics', {'nr': [], 'fr': []})
+
+        def base64_to_image(base64_str):
+            if 'data:image' in base64_str:
+                base64_str = base64_str.split(',')[1]
+            image_bytes = base64.b64decode(base64_str)
+            image = Image.open(io.BytesIO(image_bytes))
+            if image.mode != 'RGB':
+                image = image.convert('RGB')
+            return image, np.array(image)
+
+        original_image, original_array = base64_to_image(original_image_b64)
+        upscaled_image, upscaled_array = base64_to_image(upscaled_image_b64)
+
+        # Resize original image to match upscaled image size for FR metrics
+        if metrics_to_calculate['fr']:
+            upscaled_size = upscaled_image.size
+            original_image_resized = original_image.resize(upscaled_size, Image.Resampling.LANCZOS)
+            original_array_resized = np.array(original_image_resized)
+        else:
+            original_image_resized = original_image
+            original_array_resized = original_array
+
+        results = {}
+
+        # Calculate No-Reference metrics
+        for metric_id in metrics_to_calculate['nr']:
+            try:
+                metric = pyiqa.create_metric(metric_id).to(device)
+                temp_original = f'temp_original_{metric_id}.png'
+                temp_upscaled = f'temp_upscaled_{metric_id}.png'
+                
+                original_image.save(temp_original)
+                upscaled_image.save(temp_upscaled)
+                
+                with torch.no_grad():
+                    original_score = metric(temp_original).item()
+                    upscaled_score = metric(temp_upscaled).item()
+                
+                os.remove(temp_original)
+                os.remove(temp_upscaled)
+                
+                results[metric_id] = {
+                    'type': 'nr',
+                    'original': float(original_score),
+                    'upscaled': float(upscaled_score)
+                }
+            except Exception as e:
+                print(f"Error calculating {metric_id}: {str(e)}")
+                results[metric_id] = {'type': 'nr', 'error': str(e)}
+
+        # Calculate Full-Reference metrics
+        for metric_id in metrics_to_calculate['fr']:
+            try:
+                if metric_id == 'psnr':
+                    score = calculate_psnr(original_array_resized, upscaled_array)
+                elif metric_id == 'ssim':
+                    score = calculate_ssim(original_array_resized, upscaled_array)
+                else:
+                    metric = pyiqa.create_metric(metric_id).to(device)
+                    temp_original = f'temp_original_{metric_id}.png'
+                    temp_upscaled = f'temp_upscaled_{metric_id}.png'
+                    
+                    original_image_resized.save(temp_original)
+                    upscaled_image.save(temp_upscaled)
+                    
+                    with torch.no_grad():
+                        score = metric(temp_upscaled, temp_original).item()
+                    
+                    os.remove(temp_original)
+                    os.remove(temp_upscaled)
+                
+                results[metric_id] = {
+                    'type': 'fr',
+                    'score': float(score)
+                }
+            except Exception as e:
+                print(f"Error calculating {metric_id}: {str(e)}")
+                results[metric_id] = {'type': 'fr', 'error': str(e)}
+
+        return jsonify(results)
+
+    except Exception as e:
+        print(f"Error in calculate_metrics: {str(e)}")
+        return jsonify({'error': str(e)}), 500
+
+# Update metric calculation functions to handle numpy arrays properly
+def calculate_psnr(img1, img2):
+    # Ensure same shape
+    if img1.shape != img2.shape:
+        # Resize img2 to match img1 if necessary
+        img2 = np.array(Image.fromarray(img2).resize(
+            (img1.shape[1], img1.shape[0]), 
+            Image.Resampling.LANCZOS
+        ))
+    
+    mse = np.mean((img1 - img2) ** 2)
+    if mse == 0:
+        return 100.0
+    PIXEL_MAX = 255.0
+    return float(20 * np.log10(PIXEL_MAX / np.sqrt(mse)))
+
+def calculate_ssim(img1, img2):
+    from skimage.metrics import structural_similarity as ssim
+    
+    # Ensure same shape
+    if img1.shape != img2.shape:
+        img2 = np.array(Image.fromarray(img2).resize(
+            (img1.shape[1], img1.shape[0]), 
+            Image.Resampling.LANCZOS
+        ))
+    
+    return float(ssim(img1, img2, channel_axis=2))
+
+# Add more metric calculation functions as needed
+
+# Add a new route to check metric loading status
+@app.route('/metrics/status', methods=['GET'])
+def get_metrics_status():
+    return jsonify({
+        'loading': LOADING_METRICS,
+        'loaded_metrics': LOADED_METRICS
+    })
+
+# Add these at the top of the file with other imports
+from threading import Lock
+LOADING_METRICS = set()  # Set of metrics currently being downloaded
+LOADED_METRICS = set()   # Set of metrics that are ready to use
+metrics_lock = Lock()
+
+def initialize_metric(metric_id):
+    """Initialize a metric and handle its loading state"""
+    try:
+        with metrics_lock:
+            if metric_id not in LOADING_METRICS and metric_id not in LOADED_METRICS:
+                LOADING_METRICS.add(metric_id)
+        
+        metric = pyiqa.create_metric(metric_id).to(device)
+        
+        with metrics_lock:
+            LOADING_METRICS.remove(metric_id)
+            LOADED_METRICS.add(metric_id)
+            
+        return metric
+    except Exception as e:
+        with metrics_lock:
+            if metric_id in LOADING_METRICS:
+                LOADING_METRICS.remove(metric_id)
+        print(f"Error initializing metric {metric_id}: {str(e)}")
+        raise
+
+# Add this function near the top
+def install_package(package):
+    subprocess.check_call([sys.executable, "-m", "pip", "install", package])
+
+# Try to import packaging, install if not present
+try:
+    import packaging
+except ImportError:
+    install_package('packaging')
+
+# Update the metrics catalog to correctly categorize CKDN
+METRIC_TYPES = {
+    'ckdn': 'fr',  # Change CKDN to full-reference
+    # ... other metrics ...
+}
 
 if __name__ == '__main__':
     socketio.run(app, debug=True, port=5000, allow_unsafe_werkzeug=True)
