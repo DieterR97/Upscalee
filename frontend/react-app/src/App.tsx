@@ -696,8 +696,8 @@ const ImageUpscaler: React.FC = () => {
     };
 
     return (
-      <div className="modal welcome-modal">
-        <div className="modal-content welcome-content">
+      <div className="modal-overlay">
+        <div className="modal-container">
           <h2>Welcome! 👋</h2>
           <p>
             This application features helpful tooltips throughout the interface.
