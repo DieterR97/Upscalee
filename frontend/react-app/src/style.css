@@ -110,6 +110,11 @@
 
 .no-decoration {
   text-decoration: none;
+  border-bottom: none !important;
+}
+
+.no-decoration:hover {
+  border-bottom: none !important;
 }
 
 .seperator {
@@ -1902,4 +1907,33 @@ var(--ctp-mocha-blue)
 
 .close-welcome-button:hover {
   background-color: var(--ctp-mocha-sapphire);
+}
+
+/* Add this new style for links */
+a {
+  color: var(--ctp-mocha-blue);
+  text-decoration: none;
+  transition: color 0.2s ease;
+  border-bottom: 1px solid transparent;
+  padding-bottom: 1px;
+}
+
+a:hover {
+  color: var(--ctp-mocha-sapphire);
+  border-bottom-color: var(--ctp-mocha-sapphire);
+}
+
+a:active {
+  color: var(--ctp-mocha-lavender);
+  border-bottom-color: var(--ctp-mocha-lavender);
+}
+
+/* If you want to keep the 'no-decoration' class behavior */
+.no-decoration {
+  text-decoration: none;
+  border-bottom: none !important;
+}
+
+.no-decoration:hover {
+  border-bottom: none !important;
 }

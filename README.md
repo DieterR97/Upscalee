@@ -246,16 +246,16 @@ The concept for Upscalee emerged from several key observations and needs in the 
 - View [Reviews & Testing Report Here](https://docs.google.com/spreadsheets/d/1lrbd0VWHyAr1QmtIAJurzlhOCdozIPXzV_enouf2T60/edit?usp=sharing)
 
 ### Future Implementation
-* Batch processing capabilities
-* Export IQA (Image Quality Assessment) Results
-* Export Slider Comparison View (Snapshot)
-* Progress indicator for upscaling process
-* Image Comparison: Switch Mode (switch original/upscaled image view full view with mouse click/keyboard arrows)
-* Image Comparison: Difference Mode (pixel difference/heatmap of original vs. upscaled result)
-* Advanced image preprocessing options
-* Advanced project configuration options
-* Generate image caption/description using computer vision AI
-* Use image classification AI model (possibly fine-tuned/trained by me) to analyse image and recomend applicable/appropriate upscale model to use
+- [ ] Batch processing capabilities
+- [ ] Export IQA (Image Quality Assessment) Results
+- [x] Export Slider Comparison View (Snapshot)
+- [ ] Progress indicator for upscaling process
+- [x] Image Comparison: Switch Mode (switch original/upscaled image view full view with mouse click/keyboard arrows)
+- [x] Image Comparison: Difference Mode (pixel difference/heatmap of original vs. upscaled result)
+- [ ] Advanced image preprocessing options
+- [ ] Advanced project configuration options
+- [ ] Generate image caption/description using computer vision AI
+- [ ] Use image classification AI model (possibly fine-tuned/trained by me) to analyse image and recomend applicable/appropriate upscale model to use
 
 ## Final Outcome
 

@@ -768,8 +768,20 @@ const ImageUpscaler: React.FC = () => {
 
         {/* <h1>Image Upscaler</h1> */}
         <div className="logo-container">
-          <img src={logo2} alt="Logo" className="logo" />
-          <img src={logo} alt="Logo" className="logoName" />
+          <img 
+            src={logo2} 
+            alt="Logo" 
+            className="logo" 
+            onClick={() => setActiveTab('about')}
+            style={{ cursor: 'pointer' }}
+          />
+          <img 
+            src={logo} 
+            alt="Logo" 
+            className="logoName" 
+            onClick={() => setActiveTab('about')}
+            style={{ cursor: 'pointer' }}
+          />
         </div>
 
         {/* Add the tab navigation */}
