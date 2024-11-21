@@ -7,9 +7,6 @@ opencv-python-headless==4.10.0.84 # OpenCV library for computer vision tasks wit
 Pillow==9.5.0               # A Python Imaging Library (PIL) fork that adds image processing capabilities.
 pyiqa==0.1.13               # A library for perceptual image quality assessment using deep learning.
 realesrgan==0.3.0           # A Real-World Super Resolution Generative Adversarial Network for image enhancement.
-torch==2.4.1+cu118          # PyTorch, an open-source machine learning framework for tensor computation.
-torchaudio==2.4.1+cu118     # PyTorch's audio processing library, providing functionalities for audio processing.
-torchvision==0.19.1         # PyTorch's computer vision library, providing datasets, model architectures, and image transformations.
 requests
 tqdm
 spandrel

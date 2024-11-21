@@ -26,6 +26,10 @@ REM Create and activate virtual environment
 call venv\Scripts\activate
 @REM venv\Scripts\activate
 
+REM Add before pip installations
+echo This installation may take a while. If it appears to hang, wait at least 5 minutes before canceling.
+echo If you need to cancel, you can safely run setup.bat again to resume from where it left off.
+
 REM Upgrade pip first
 python -m pip install --upgrade pip
 
@@ -39,16 +43,19 @@ if %errorlevel% equ 0 (
     pip install --timeout 1000 --retries 5 torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu
 )
 
-REM Install core dependencies
-pip install --timeout 1000 --retries 5 flask flask-cors Pillow numpy opencv-python
-
-REM Install pyiqa and its dependencies separately with increased timeout
-pip install --timeout 1000 --retries 5 basicsr
-pip install --timeout 1000 --retries 5 realesrgan
-pip install --timeout 1000 --retries 5 pyiqa
-
-REM Then install the rest
-pip install --timeout 1000 --retries 5 -r backend/requirements.txt
+REM Install core dependencies one by one
+pip install --timeout 1000 --retries 5 flask==3.0.3
+pip install --timeout 1000 --retries 5 flask-cors==5.0.0
+pip install --timeout 1000 --retries 5 basicsr==1.4.2
+pip install --timeout 1000 --retries 5 numpy==1.26.3
+pip install --timeout 1000 --retries 5 opencv-python==4.10.0.84
+pip install --timeout 1000 --retries 5 opencv-python-headless==4.10.0.84
+pip install --timeout 1000 --retries 5 Pillow==9.5.0
+pip install --timeout 1000 --retries 5 pyiqa==0.1.13
+pip install --timeout 1000 --retries 5 realesrgan==0.3.0
+pip install --timeout 1000 --retries 5 requests
+pip install --timeout 1000 --retries 5 tqdm
+pip install --timeout 1000 --retries 5 spandrel
 
 REM Create necessary directories
 mkdir backend\temp_uploads 2>nul
