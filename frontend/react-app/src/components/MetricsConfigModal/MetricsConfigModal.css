@@ -1,21 +1,33 @@
 .metrics-config-modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: var(--ctp-mocha-base);
+    border-radius: 8px;
     max-width: 800px;
     width: 90vw;
+    max-height: 80vh;
+    border: 1px solid var(--ctp-mocha-overlay0);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
 }
 
 .metrics-config-content {
     display: flex;
     flex-direction: column;
     gap: 20px;
-    max-height: 70vh;
+    padding: 24px;
+    height: 100%;
+    max-height: calc(80vh - 48px); /* Account for padding */
     overflow: hidden;
 }
 
 .metrics-filters {
     display: flex;
     gap: 10px;
-    padding: 10px;
-    background: var(--ctp-mocha-mantle);
+    padding: 12px;
+    background: var(--ctp-mocha-surface0);
     border-radius: 8px;
     position: sticky;
     top: 0;
@@ -24,19 +36,22 @@
 
 .metrics-search {
     flex: 1;
-    padding: 8px;
+    padding: 8px 12px;
     border: 1px solid var(--ctp-mocha-overlay0);
     border-radius: 4px;
-    background: var(--ctp-mocha-base);
+    background: var(--ctp-mocha-mantle);
     color: var(--ctp-mocha-text);
+    font-family: "cartograph-cf", monospace;
 }
 
 .metrics-category-filter {
-    padding: 8px;
+    min-width: 150px;
+    padding: 8px 12px;
     border: 1px solid var(--ctp-mocha-overlay0);
     border-radius: 4px;
-    background: var(--ctp-mocha-base);
+    background: var(--ctp-mocha-mantle);
     color: var(--ctp-mocha-text);
+    font-family: "cartograph-cf", monospace;
 }
 
 .metrics-list {
@@ -48,31 +63,37 @@
     gap: 20px;
 }
 
-.metrics-group {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-
 .metrics-group h3 {
     color: var(--ctp-mocha-text);
     border-bottom: 2px solid var(--ctp-mocha-overlay0);
-    padding-bottom: 5px;
+    padding-bottom: 8px;
+    margin-bottom: 16px;
     font-family: "cartograph-cf", monospace;
     font-weight: 700;
 }
 
 .metric-item {
-    padding: 15px;
+    padding: 16px;
     border: 1px solid var(--ctp-mocha-overlay0);
     border-radius: 8px;
-    background: var(--ctp-mocha-mantle);
+    background: var(--ctp-mocha-surface0);
+    margin-bottom: 12px;
+    transition: background-color 0.2s;
+}
+
+.metric-item:hover {
+    background: var(--ctp-mocha-surface1);
 }
 
 .metric-item label {
     display: flex;
-    gap: 15px;
+    gap: 16px;
     cursor: pointer;
+    align-items: flex-start;
+}
+
+.metric-item input[type="checkbox"] {
+    margin-top: 4px;
 }
 
 .metric-info {
@@ -88,34 +109,41 @@
 }
 
 .metric-info p {
-    margin: 5px 0;
+    margin: 8px 0;
     color: var(--ctp-mocha-subtext0);
+    line-height: 1.4;
 }
 
 .metric-details {
     display: block;
     font-size: 0.9em;
     color: var(--ctp-mocha-subtext1);
-    margin-top: 5px;
+    margin-top: 8px;
     font-family: "cartograph-cf", monospace;
-    font-weight: 400;
     font-style: italic;
 }
 
 .metrics-actions {
     display: flex;
     justify-content: flex-end;
-    gap: 10px;
-    padding: 10px;
+    gap: 12px;
+    padding: 16px;
     border-top: 1px solid var(--ctp-mocha-overlay0);
+    background: var(--ctp-mocha-mantle);
+    border-radius: 0 0 8px 8px;
+    position: sticky;
+    bottom: 0;
 }
 
 .save-button,
 .cancel-button {
-    padding: 8px 16px;
+    padding: 8px 20px;
     border-radius: 4px;
     border: none;
     cursor: pointer;
+    font-family: "cartograph-cf", monospace;
+    font-weight: 500;
+    transition: background-color 0.2s;
 }
 
 .save-button {
@@ -123,25 +151,43 @@
     color: var(--ctp-mocha-base);
 }
 
+.save-button:hover {
+    background: var(--ctp-mocha-teal);
+}
+
 .cancel-button {
     background: var(--ctp-mocha-surface0);
     color: var(--ctp-mocha-text);
 }
 
+.cancel-button:hover {
+    background: var(--ctp-mocha-surface1);
+}
+
 .metrics-loading {
     text-align: center;
-    padding: 20px;
+    padding: 24px;
     color: var(--ctp-mocha-text);
+    font-family: "cartograph-cf", monospace;
 }
 
 .metric-id {
     font-size: 0.85em;
     color: var(--ctp-mocha-subtext1);
     font-weight: normal;
-    font-family: monospace;
+    font-family: "cartograph-cf", monospace;
 }
 
-.metric-info strong .metric-id {
-    display: inline-block;
-    margin-left: 6px;
+/* Add modal overlay */
+.metrics-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(30, 30, 46, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 999;
 }

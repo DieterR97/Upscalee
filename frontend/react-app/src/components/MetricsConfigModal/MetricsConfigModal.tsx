@@ -109,103 +109,104 @@ export const MetricsConfigModal: React.FC<MetricsConfigModalProps> = ({ isOpen, 
     };
 
     return (
-        <Modal
-            isOpen={isOpen}
-            onClose={onClose}
-            title="Configure Quality Metrics"
-            className="metrics-config-modal"
-        >
-            <div className="metrics-config-content">
-                <div className="metrics-filters">
-                    <input
-                        type="text"
-                        placeholder="Search metrics..."
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                        className="metrics-search"
-                    />
-                    <select
-                        value={categoryFilter}
-                        onChange={(e) => setCategoryFilter(e.target.value)}
-                        className="metrics-category-filter"
-                    >
-                        {categories.map(category => (
-                            <option key={category} value={category}>
-                                {category === 'all' ? 'All Categories' : category}
-                            </option>
-                        ))}
-                    </select>
-                </div>
+        <>
+            {isOpen && (
+                <div className="metrics-modal-overlay">
+                    <div className="metrics-config-modal">
+                        <div className="metrics-config-content">
+                            <div className="metrics-filters">
+                                <input
+                                    type="text"
+                                    placeholder="Search metrics..."
+                                    value={searchTerm}
+                                    onChange={(e) => setSearchTerm(e.target.value)}
+                                    className="metrics-search"
+                                />
+                                <select
+                                    value={categoryFilter}
+                                    onChange={(e) => setCategoryFilter(e.target.value)}
+                                    className="metrics-category-filter"
+                                >
+                                    {categories.map(category => (
+                                        <option key={category} value={category}>
+                                            {category === 'all' ? 'All Categories' : category}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
 
-                {loading ? (
-                    <div className="metrics-loading">Loading metrics...</div>
-                ) : (
-                    <div className="metrics-list">
-                        <div className="metrics-group">
-                            <h3>No-Reference Metrics</h3>
-                            {filteredMetrics
-                                .filter(([, metric]) => metric.type === 'nr')
-                                .map(([id, metric]) => (
-                                    <div key={id} className="metric-item">
-                                        <label>
-                                            <input
-                                                type="checkbox"
-                                                checked={selected.nr.includes(id)}
-                                                onChange={() => handleMetricToggle(id, 'nr')}
-                                            />
-                                            <div className="metric-info">
-                                                <strong>
-                                                    {metric.name} <span className="metric-id">({id})</span>
-                                                </strong>
-                                                <p>{metric.description}</p>
-                                                <span className="metric-details">
-                                                    Range: {metric.score_range.join(' - ')}
-                                                    ({metric.higher_better ? 'Higher is better' : 'Lower is better'})
-                                                </span>
-                                            </div>
-                                        </label>
+                            {loading ? (
+                                <div className="metrics-loading">Loading metrics...</div>
+                            ) : (
+                                <div className="metrics-list">
+                                    <div className="metrics-group">
+                                        <h3>No-Reference Metrics</h3>
+                                        {filteredMetrics
+                                            .filter(([, metric]) => metric.type === 'nr')
+                                            .map(([id, metric]) => (
+                                                <div key={id} className="metric-item">
+                                                    <label>
+                                                        <input
+                                                            type="checkbox"
+                                                            checked={selected.nr.includes(id)}
+                                                            onChange={() => handleMetricToggle(id, 'nr')}
+                                                        />
+                                                        <div className="metric-info">
+                                                            <strong>
+                                                                {metric.name} <span className="metric-id">({id})</span>
+                                                            </strong>
+                                                            <p>{metric.description}</p>
+                                                            <span className="metric-details">
+                                                                Range: {metric.score_range.join(' - ')}
+                                                                ({metric.higher_better ? 'Higher is better' : 'Lower is better'})
+                                                            </span>
+                                                        </div>
+                                                    </label>
+                                                </div>
+                                            ))}
                                     </div>
-                                ))}
-                        </div>
 
-                        <div className="metrics-group">
-                            <h3>Full-Reference Metrics</h3>
-                            {filteredMetrics
-                                .filter(([, metric]) => metric.type === 'fr')
-                                .map(([id, metric]) => (
-                                    <div key={id} className="metric-item">
-                                        <label>
-                                            <input
-                                                type="checkbox"
-                                                checked={selected.fr.includes(id)}
-                                                onChange={() => handleMetricToggle(id, 'fr')}
-                                            />
-                                            <div className="metric-info">
-                                                <strong>
-                                                    {metric.name} <span className="metric-id">({id})</span>
-                                                </strong>
-                                                <p>{metric.description}</p>
-                                                <span className="metric-details">
-                                                    Range: {metric.score_range.join(' - ')}
-                                                    ({metric.higher_better ? 'Higher is better' : 'Lower is better'})
-                                                </span>
-                                            </div>
-                                        </label>
+                                    <div className="metrics-group">
+                                        <h3>Full-Reference Metrics</h3>
+                                        {filteredMetrics
+                                            .filter(([, metric]) => metric.type === 'fr')
+                                            .map(([id, metric]) => (
+                                                <div key={id} className="metric-item">
+                                                    <label>
+                                                        <input
+                                                            type="checkbox"
+                                                            checked={selected.fr.includes(id)}
+                                                            onChange={() => handleMetricToggle(id, 'fr')}
+                                                        />
+                                                        <div className="metric-info">
+                                                            <strong>
+                                                                {metric.name} <span className="metric-id">({id})</span>
+                                                            </strong>
+                                                            <p>{metric.description}</p>
+                                                            <span className="metric-details">
+                                                                Range: {metric.score_range.join(' - ')}
+                                                                ({metric.higher_better ? 'Higher is better' : 'Lower is better'})
+                                                            </span>
+                                                        </div>
+                                                    </label>
+                                                </div>
+                                            ))}
                                     </div>
-                                ))}
+                                </div>
+                            )}
+
+                            <div className="metrics-actions">
+                                <button onClick={handleSave} className="save-button">
+                                    Save Changes
+                                </button>
+                                <button onClick={onClose} className="cancel-button">
+                                    Cancel
+                                </button>
+                            </div>
                         </div>
                     </div>
-                )}
-
-                <div className="metrics-actions">
-                    <button onClick={handleSave} className="save-button">
-                        Save Changes
-                    </button>
-                    <button onClick={onClose} className="cancel-button">
-                        Cancel
-                    </button>
                 </div>
-            </div>
-        </Modal>
+            )}
+        </>
     );
 };
