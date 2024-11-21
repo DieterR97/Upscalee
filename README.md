@@ -21,16 +21,16 @@
 ## Quick Navigation
 <div align="center">
   <a href="#-ai-powered-upscaling">
-    <br />🤖 AI Upscaling
-  </a>&nbsp;&nbsp;&nbsp;&nbsp;
-  <a href="#%EF%B8%8F-real-time-comparison">
-    <br />⚖️ Comparison
-  </a>&nbsp;&nbsp;&nbsp;&nbsp;
-  <a href="#-quality-assessment">
-    <br />📊 Quality Assessment
-  </a>&nbsp;&nbsp;&nbsp;&nbsp;
+    <br />🤖 <h3 style="display: inline;">AI Upscaling</h3>
+  </a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  <a href="#comparison-examples">
+    <br />⚖️ <h3 style="display: inline;">Comparison</h3>
+  </a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  <a href="#-image-quality-assessment-iqa">
+    <br />📊 <h3 style="display: inline;">Quality Assessment</h3>
+  </a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
   <a href="#%EF%B8%8F-advanced-configuration">
-    <br />⚙️ Configuration
+    <br />⚙️ <h3 style="display: inline;">Configuration</h3>
   </a>
 </div>
 
