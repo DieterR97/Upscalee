@@ -507,18 +507,21 @@ const ImageComparisonSlider: React.FC<ImageComparisonSliderProps> = ({ leftImage
                 <button 
                     className={`mode-button ${currentMode === 'slider' ? 'active' : ''}`}
                     onClick={() => handleModeChange('slider')}
+                    data-tooltip="Compare images using an interactive slider"
                 >
                     Slider Mode
                 </button>
                 <button 
                     className={`mode-button ${currentMode === 'switch' ? 'active' : ''}`}
                     onClick={() => handleModeChange('switch')}
+                    data-tooltip="Toggle between original and upscaled images using arrow keys"
                 >
                     Switch Mode
                 </button>
                 <button 
                     className={`mode-button ${currentMode === 'diff' ? 'active' : ''}`}
                     onClick={() => handleModeChange('diff')}
+                    data-tooltip="Highlight differences between images. Red areas indicate where changes occurred during upscaling"
                 >
                     Difference Mode
                 </button>
