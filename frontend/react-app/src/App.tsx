@@ -18,6 +18,7 @@ import IQA_PyTorch from './assets/pyiqa.png';
 import OpenCV from './assets/opencv.svg';
 import ee from './assets/ee.png';
 import catppuccin from './assets/catppuccin.png';
+import { io } from 'socket.io-client';
 
 // Define interfaces for type safety and better code documentation
 interface ModelInfo {
@@ -722,6 +723,28 @@ const ImageUpscaler: React.FC = () => {
       </div>
     );
   };
+
+  useEffect(() => {
+    const socket = io('http://localhost:5000');
+    
+    socket.on('connect', () => {
+      console.log('Connected to WebSocket server');
+    });
+    
+    socket.on('model_directory_changed', () => {
+      console.log('Model directory changed, refreshing models...');
+      fetchModels().then(() => {
+        toast.info('New changes detected in model directory', {
+          position: "top-center",
+          autoClose: 3000,
+        });
+      });
+    });
+    
+    return () => {
+      socket.disconnect();
+    };
+  }, []);
 
   return (
     <div className="Root">

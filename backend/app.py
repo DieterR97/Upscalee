@@ -22,6 +22,8 @@ import sys
 from threading import Lock
 import re
 from spandrel_inference import SpandrelUpscaler
+from model_watcher import setup_model_watcher
+from flask_socketio import SocketIO
 
 app = Flask(__name__)
 CORS(app, resources={
@@ -829,10 +831,9 @@ def register_model():
     except Exception as e:
         return jsonify({"success": False, "error": str(e)}), 400
 
-if __name__ == "__main__":
-    app.run(debug=True, port=5000, extra_files=[
-        # Only watch your application files
-        './app.py',
-        './model.py'
-    ])
+config = load_config()
+socketio = setup_model_watcher(app, config["modelPath"])
+
+if __name__ == '__main__':
+    socketio.run(app, debug=True, port=5000, allow_unsafe_werkzeug=True)
 
