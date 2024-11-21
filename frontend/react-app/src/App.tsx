@@ -156,6 +156,9 @@ const ImageUpscaler: React.FC = () => {
     return localStorage.getItem('hideWelcomeModal') !== 'true';
   });
 
+  const [isUploading, setIsUploading] = useState(false);
+  const [isDownloading, setIsDownloading] = useState(false);
+
   /**
    * Fetches available upscaling models from the backend when component mounts
    * Updates the models state with retrieved data
@@ -225,12 +228,17 @@ const ImageUpscaler: React.FC = () => {
   }, [activeTab]);
 
   // Handle image selection
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
+  const handleImageChange = async (file: File) => {
+    setIsUploading(true);
+    try {
       setSelectedImage(file);
       setImagePreview(URL.createObjectURL(file));
       setUpscaledImage(null);
+    } catch (error) {
+      console.error('Error handling image:', error);
+      toast.error('Failed to process image');
+    } finally {
+      setIsUploading(false);
     }
   };
 
@@ -1059,8 +1067,9 @@ const ImageUpscaler: React.FC = () => {
 
               <div>
                 <DropZone
-                  onFileSelect={handleFileSelect}
+                  onFileSelect={handleImageChange}
                   previewUrl={imagePreview}
+                  isUploading={isUploading}
                 />
 
                 <div className="button-container">
@@ -1104,6 +1113,7 @@ const ImageUpscaler: React.FC = () => {
                       modelName={selectedModel}
                       scale={selectedScale}
                       originalFilename={selectedImage?.name}
+                      isDownloading={isDownloading}
                     />
                   </div>
                 ) : imagePreview && loading ? (

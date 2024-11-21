@@ -400,3 +400,25 @@ button:disabled {
 .mode-button[data-mode="diff"].active {
     background-color: var(--ctp-mocha-maroon);
 }
+
+/* Add these styles */
+.button-spinner {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid var(--ctp-mocha-crust);
+  border-top: 2px solid transparent;
+  border-radius: 50%;
+  margin-right: 8px;
+  animation: spin 1s linear infinite;
+  vertical-align: middle;
+}
+
+button.downloading {
+  opacity: 0.8;
+  cursor: not-allowed;
+}
+
+button.downloading:hover {
+  background-color: var(--ctp-mocha-blue);
+}

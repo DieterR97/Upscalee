@@ -4,9 +4,10 @@ import './DropZone.css';
 interface DropZoneProps {
   onFileSelect: (file: File) => void;
   previewUrl?: string | null;
+  isUploading?: boolean;
 }
 
-const DropZone: React.FC<DropZoneProps> = ({ onFileSelect, previewUrl }) => {
+const DropZone: React.FC<DropZoneProps> = ({ onFileSelect, previewUrl, isUploading }) => {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [isDragging, setIsDragging] = useState(false);
 
@@ -41,7 +42,7 @@ const DropZone: React.FC<DropZoneProps> = ({ onFileSelect, previewUrl }) => {
 
   return (
     <div
-      className={`drop-zone ${isDragging ? 'dragging' : ''}`}
+      className={`drop-zone ${isDragging ? 'dragging' : ''} ${isUploading ? 'uploading' : ''}`}
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
@@ -54,7 +55,12 @@ const DropZone: React.FC<DropZoneProps> = ({ onFileSelect, previewUrl }) => {
         accept="image/*"
         style={{ display: 'none' }}
       />
-      {previewUrl ? (
+      {isUploading ? (
+        <div className="upload-loading">
+          <div className="loading-spinner"></div>
+          <p>Uploading image...</p>
+        </div>
+      ) : previewUrl ? (
         <img 
           src={previewUrl} 
           alt="Selected" 

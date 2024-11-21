@@ -16,9 +16,10 @@ interface ImageComparisonSliderProps {
     onCompareClick?: () => void;
     mode?: 'slider' | 'switch' | 'diff';
     onModeChange?: (mode: 'slider' | 'switch' | 'diff') => void;
+    isDownloading?: boolean;
 }
 
-const ImageComparisonSlider: React.FC<ImageComparisonSliderProps> = ({ leftImage, rightImage, onQueue, showQueueButton = false, leftLabel, rightLabel, modelName = 'unknown', scale: initialScale = 0, originalFilename, onCompareClick, mode, onModeChange }) => {
+const ImageComparisonSlider: React.FC<ImageComparisonSliderProps> = ({ leftImage, rightImage, onQueue, showQueueButton = false, leftLabel, rightLabel, modelName = 'unknown', scale: initialScale = 0, originalFilename, onCompareClick, mode, onModeChange, isDownloading = false }) => {
     // Refs for DOM elements
     const containerRef = useRef<HTMLDivElement>(null);
     const sliderRef = useRef<HTMLInputElement>(null);
@@ -285,12 +286,11 @@ const ImageComparisonSlider: React.FC<ImageComparisonSliderProps> = ({ leftImage
     }, []);
 
     // Add this function inside the ImageComparisonSlider component
-    const handleDownload = () => {
-        console.log('originalFilename:', originalFilename);
+    const handleDownload = async () => {
+        if (isDownloading) return;
+
         const baseFilename = originalFilename?.replace('.jpg', '') || 'image';
-        console.log('baseFilename:', baseFilename);
         const filename = `${baseFilename}_${modelName}_x${initialScale}.png`;
-        console.log('final filename:', filename);
         
         const link = document.createElement('a');
         link.href = rightImage;
@@ -624,9 +624,18 @@ const ImageComparisonSlider: React.FC<ImageComparisonSliderProps> = ({ leftImage
                 </button>
                 <button 
                     onClick={handleDownload}
+                    disabled={isDownloading}
                     data-tooltip="Download the upscaled image to your device"
+                    className={isDownloading ? 'downloading' : ''}
                 >
-                    DOWNLOAD
+                    {isDownloading ? (
+                        <>
+                            <span className="button-spinner"></span>
+                            DOWNLOADING...
+                        </>
+                    ) : (
+                        'DOWNLOAD'
+                    )}
                 </button>
                 {showQueueButton && onQueue && (
                     <button 
