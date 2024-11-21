@@ -32,11 +32,18 @@ export const MetricsConfigModal: React.FC<MetricsConfigModalProps> = ({ isOpen, 
     const [categoryFilter, setCategoryFilter] = useState<string>('all');
     const [loading, setLoading] = useState(true);
 
-    // Get unique categories from catalog
+    // Get unique categories including special filter options
     const categories = useMemo(() => {
-        const cats = new Set(['all']);
-        Object.values(catalog).forEach(metric => cats.add(metric.category));
-        return Array.from(cats);
+        const standardCats = new Set(['all']);
+        Object.values(catalog).forEach(metric => standardCats.add(metric.category));
+        return [
+            'all',
+            'No-Reference (NR) Metrics',
+            'Full-Reference (FR) Metrics',
+            'Selected',
+            'Unselected',
+            ...Array.from(standardCats).filter(cat => !['all'].includes(cat))
+        ];
     }, [catalog]);
 
     // Filter metrics based on search and category
@@ -47,12 +54,30 @@ export const MetricsConfigModal: React.FC<MetricsConfigModalProps> = ({ isOpen, 
                 metric.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                 metric.description.toLowerCase().includes(searchTerm.toLowerCase());
 
-            const matchesCategory =
-                categoryFilter === 'all' || metric.category === categoryFilter;
+            let matchesCategory = true;
+            switch (categoryFilter) {
+                case 'No-Reference (NR) Metrics':
+                    matchesCategory = metric.type === 'nr';
+                    break;
+                case 'Full-Reference (FR) Metrics':
+                    matchesCategory = metric.type === 'fr';
+                    break;
+                case 'Selected':
+                    matchesCategory = selected[metric.type].includes(id);
+                    break;
+                case 'Unselected':
+                    matchesCategory = !selected[metric.type].includes(id);
+                    break;
+                case 'all':
+                    matchesCategory = true;
+                    break;
+                default:
+                    matchesCategory = metric.category === categoryFilter;
+            }
 
             return matchesSearch && matchesCategory;
         });
-    }, [catalog, searchTerm, categoryFilter]);
+    }, [catalog, searchTerm, categoryFilter, selected]);
 
     // Load catalog and selected metrics
     useEffect(() => {
@@ -108,6 +133,27 @@ export const MetricsConfigModal: React.FC<MetricsConfigModalProps> = ({ isOpen, 
         }
     };
 
+    // Add handlers for Select All and Deselect All
+    const handleSelectAll = () => {
+        const metricsToSelect = filteredMetrics.reduce((acc, [id, metric]) => {
+            if (!selected[metric.type].includes(id)) {
+                acc[metric.type].push(id);
+            }
+            return acc;
+        }, { nr: [...selected.nr], fr: [...selected.fr] });
+        
+        setSelected(metricsToSelect);
+    };
+
+    const handleDeselectAll = () => {
+        const metricsToKeep = { 
+            nr: selected.nr.filter(id => !filteredMetrics.some(([filteredId]) => filteredId === id)),
+            fr: selected.fr.filter(id => !filteredMetrics.some(([filteredId]) => filteredId === id))
+        };
+        
+        setSelected(metricsToKeep);
+    };
+
     return (
         <>
             {isOpen && (
@@ -133,6 +179,20 @@ export const MetricsConfigModal: React.FC<MetricsConfigModalProps> = ({ isOpen, 
                                         </option>
                                     ))}
                                 </select>
+                                <div className="metrics-bulk-actions">
+                                    <button 
+                                        onClick={handleSelectAll}
+                                        className="select-all-button"
+                                    >
+                                        Select All
+                                    </button>
+                                    <button 
+                                        onClick={handleDeselectAll}
+                                        className="deselect-all-button"
+                                    >
+                                        Deselect All
+                                    </button>
+                                </div>
                             </div>
 
                             {loading ? (

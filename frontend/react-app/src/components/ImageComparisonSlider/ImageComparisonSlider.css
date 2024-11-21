@@ -181,7 +181,7 @@ button:disabled {
 
 /* Styling for buttons inside the button container */
 .button-container button {
-    padding: 10px 20px;
+    padding: -2px 20px;
     font-size: 16px;
     cursor: pointer;
     background-color: var(--ctp-mocha-blue);

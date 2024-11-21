@@ -1417,31 +1417,6 @@ const ImageUpscaler: React.FC = () => {
           <div className="config-tab">
             <h2 className='titleSizeColour'>Configuration</h2>
 
-            {/* Add Metrics Configuration Section before Unregistered Models Section */}
-            <div className="config-section">
-              <h3>Quality Metrics Configuration</h3>
-              <p className="section-description">
-                Configure which image quality assessment metrics are available for comparing upscaled images.
-              </p>
-              <div className="config-options">
-                <div className="config-option">
-                  <button
-                    className="metrics-config-button"
-                    onClick={() => setIsMetricsModalOpen(true)}
-                    data-tooltip="Configure which quality metrics are used for image assessment"
-                  >
-                    Configure Quality Metrics
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            {/* Add MetricsConfigModal */}
-            <MetricsConfigModal 
-              isOpen={isMetricsModalOpen}
-              onClose={() => setIsMetricsModalOpen(false)}
-            />
-
             {/* Unregistered Models Section */}
             {unregisteredModels.length > 0 && (
               <div className="config-section">
@@ -1489,6 +1464,32 @@ const ImageUpscaler: React.FC = () => {
                 </div>
               </div>
             )}
+
+
+            {/* Add Metrics Configuration Section before Unregistered Models Section */}
+            <div className="config-section">
+              <h3>Quality Metrics Configuration</h3>
+              <p className="section-description">
+                Configure which image quality assessment metrics are available for comparing upscaled images.
+              </p>
+              <div className="config-options">
+                <div className="config-option">
+                  <button
+                    className="metrics-config-button"
+                    onClick={() => setIsMetricsModalOpen(true)}
+                    data-tooltip="Configure which quality metrics are used for image assessment"
+                  >
+                    Configure Quality Metrics
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Add MetricsConfigModal */}
+            <MetricsConfigModal 
+              isOpen={isMetricsModalOpen}
+              onClose={() => setIsMetricsModalOpen(false)}
+            />
 
             {/* Registration Modal */}
             {showRegisterModal && selectedUnregisteredModel && (
