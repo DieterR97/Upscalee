@@ -29,6 +29,11 @@ import base64
 import io
 import pkg_resources
 import subprocess
+import requests
+from requests.adapters import HTTPAdapter
+from requests.packages.urllib3.util.retry import Retry
+import hashlib
+from tqdm import tqdm
 
 app = Flask(__name__)
 CORS(app, resources={
@@ -1018,12 +1023,26 @@ LOADED_METRICS = set()   # Set of metrics that are ready to use
 metrics_lock = Lock()
 
 def initialize_metric(metric_id):
-    """Initialize a metric and handle its loading state"""
+    """Initialize a metric and handle its loading state with robust download handling"""
     try:
         with metrics_lock:
             if metric_id not in LOADING_METRICS and metric_id not in LOADED_METRICS:
                 LOADING_METRICS.add(metric_id)
         
+        # Get the metric weights path and URL from pyiqa
+        weights_path = pyiqa.get_metric_weights_path(metric_id)
+        weights_url = pyiqa.get_metric_weights_url(metric_id)
+        
+        # Download weights if needed
+        if weights_url and not os.path.exists(weights_path):
+            success = download_file_with_retry(
+                url=weights_url,
+                destination=weights_path,
+                max_retries=3
+            )
+            if not success:
+                raise RuntimeError(f"Failed to download weights for metric {metric_id}")
+
         metric = pyiqa.create_metric(metric_id).to(device)
         
         with metrics_lock:
@@ -1053,6 +1072,64 @@ METRIC_TYPES = {
     'ckdn': 'fr',  # Change CKDN to full-reference
     # ... other metrics ...
 }
+
+def download_file_with_retry(url, destination, expected_sha256=None, max_retries=3):
+    """
+    Download a file with retry logic and progress tracking
+    """
+    # Setup retry strategy
+    retry_strategy = Retry(
+        total=max_retries,
+        backoff_factor=1,
+        status_forcelist=[500, 502, 503, 504]
+    )
+    adapter = HTTPAdapter(max_retries=retry_strategy)
+    session = requests.Session()
+    session.mount("https://", adapter)
+    session.mount("http://", adapter)
+
+    # Create parent directories if they don't exist
+    os.makedirs(os.path.dirname(destination), exist_ok=True)
+
+    # If file exists and hash matches, skip download
+    if os.path.exists(destination) and expected_sha256:
+        with open(destination, 'rb') as f:
+            file_hash = hashlib.sha256(f.read()).hexdigest()
+            if file_hash == expected_sha256:
+                return True
+
+    # Download with progress bar
+    try:
+        response = session.get(url, stream=True)
+        response.raise_for_status()
+        total_size = int(response.headers.get('content-length', 0))
+
+        with open(destination, 'wb') as f, tqdm(
+            desc=os.path.basename(destination),
+            total=total_size,
+            unit='iB',
+            unit_scale=True,
+            unit_divisor=1024,
+        ) as pbar:
+            for data in response.iter_content(chunk_size=1024):
+                size = f.write(data)
+                pbar.update(size)
+
+        # Verify hash if provided
+        if expected_sha256:
+            with open(destination, 'rb') as f:
+                file_hash = hashlib.sha256(f.read()).hexdigest()
+                if file_hash != expected_sha256:
+                    os.remove(destination)
+                    raise ValueError("Downloaded file hash doesn't match expected hash")
+
+        return True
+
+    except Exception as e:
+        if os.path.exists(destination):
+            os.remove(destination)
+        print(f"Error downloading file: {str(e)}")
+        return False
 
 if __name__ == '__main__':
     socketio.run(app, debug=True, port=5000, allow_unsafe_werkzeug=True)

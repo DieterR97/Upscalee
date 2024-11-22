@@ -416,7 +416,7 @@ Project Link: [https://github.com/DieterR97/Upscalee](https://github.com/DieterR
 * [Real-ESRGAN](https://github.com/xinntao/Real-ESRGAN)
 * [Spandrel](https://github.com/chaiNNer-org/spandrel)
 * [PyIQA](https://github.com/chaofengc/IQA-PyTorch)
-* [Catppuccin](https://catppuccin.com/palette)
+* [Catppuccin](https://catppuccin.com/)
 * [Flask](https://flask.palletsprojects.com/) 
 * [PyTorch](https://pytorch.org/)
 * [Cursor](https://www.cursor.com/)
