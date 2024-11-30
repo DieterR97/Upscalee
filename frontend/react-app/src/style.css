@@ -2217,3 +2217,26 @@ button {
 .status-item.pending {
   color: #ffa726;
 }
+
+/* Update the tab button styles to be responsive */
+.tabs button {
+  font-size: clamp(0.8rem, 1.5vw, 1.3rem);
+  font-weight: 800;
+  padding: clamp(0.5rem, 1vw, 1rem) clamp(0.8rem, 2vw, 1.5rem);
+  white-space: nowrap;
+}
+
+/* Add media queries for different screen sizes */
+@media screen and (max-width: 768px) {
+  .tabs button {
+    font-size: 0.85rem;
+    padding: 0.5rem 0.8rem;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .tabs button {
+    font-size: 0.75rem;
+    padding: 0.4rem 0.6rem;
+  }
+}
