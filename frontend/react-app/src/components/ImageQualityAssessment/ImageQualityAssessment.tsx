@@ -128,6 +128,14 @@ export const ImageQualityAssessment: React.FC<ImageQualityAssessmentProps> = ({
       return;
     }
 
+    setTimeout(() => {
+      // Scroll to loading indicator immediately after button click
+      const loadingElement = document.querySelector('.iqa-loading-status');
+      if (loadingElement) {
+        loadingElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }, 100);
+
     setLoading(true);
     setError(null);
 
@@ -157,6 +165,14 @@ export const ImageQualityAssessment: React.FC<ImageQualityAssessmentProps> = ({
 
       const data = await response.json();
       setScores(data);
+
+      // Scroll to results once they're loaded
+      setTimeout(() => {
+        const resultsElement = document.querySelector('.results');
+        if (resultsElement) {
+          resultsElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }, 100);
     } catch (error) {
       console.error('Error:', error);
       setError(error instanceof Error ? error.message : 'Failed to calculate metrics');
