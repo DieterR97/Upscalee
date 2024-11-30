@@ -569,20 +569,26 @@ def evaluate_quality():
     - Download status tracking
     - Concurrent request handling
     - Error handling and reporting
+    
+    Includes cleanup of temporary files after evaluation.
     """
     global download_in_progress
+    temp_files = []  # Track files to clean up
     
     try:
         original_file = request.files['original_image']
         upscaled_file = request.files['upscaled_image']
         metrics = json.loads(request.form['metrics'])
         
+        # Save temporary files and track their paths
         original_path = os.path.join(UPLOAD_FOLDER, secure_filename(original_file.filename))
         upscaled_path = os.path.join(UPLOAD_FOLDER, secure_filename(upscaled_file.filename))
+        temp_files.extend([original_path, upscaled_path])
         
         original_file.save(original_path)
         upscaled_file.save(upscaled_path)
-        # Load images
+        
+        # Load and process images
         original_img = Image.open(original_file)
         upscaled_img = Image.open(upscaled_file)
         
@@ -593,7 +599,7 @@ def evaluate_quality():
         original_img_resized.save(original_path)
         upscaled_img.save(upscaled_path)
 
-        # Check each metric for downloads
+        # Check metrics for downloads
         for metric_name in metrics:
             try:
                 metric = get_cached_metric_with_download_check(metric_name)
@@ -613,7 +619,7 @@ def evaluate_quality():
         with download_lock:
             download_in_progress = False
 
-        # If we get here, proceed with evaluation
+        # Evaluate metrics
         results = {}
         for metric_name in metrics:
             try:
@@ -647,11 +653,24 @@ def evaluate_quality():
                     'higher_better': metric_info['higher_better']
                 }
         
+        # Clean up temporary files only after successful evaluation
+        cleanup_temp_files(temp_files)
         return jsonify(results)
         
     except Exception as e:
+        # Clean up temporary files in case of error
+        cleanup_temp_files(temp_files)
         print(f"Error in evaluate_quality: {str(e)}")
         return jsonify({'error': str(e)}), 500
+
+def cleanup_temp_files(file_paths):
+    """Clean up temporary files used during quality evaluation."""
+    for file_path in file_paths:
+        try:
+            if os.path.exists(file_path):
+                os.remove(file_path)
+        except Exception as e:
+            print(f"Error cleaning up temporary file {file_path}: {str(e)}")
 
 # Add this to disable Flask's reloader for specific paths
 logging.getLogger('watchdog.observers.inotify_buffer').setLevel(logging.WARNING)
