@@ -201,21 +201,6 @@ button:disabled {
     cursor: not-allowed;
 }
 
-.placeholder-container {
-    position: relative;
-    width: 80vw;
-    height: calc(80vw * (3 / 4));
-    max-width: 50vw;
-    max-height: 60vh;
-    background-color: var(--ctp-mocha-base);
-    border: 1px solid var(--ctp-mocha-overlay0);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    color: var(--ctp-mocha-text);
-    margin-bottom: 60px;
-}
-
 .spinner {
     width: 50px;
     height: 50px;
@@ -427,4 +412,21 @@ button.downloading:hover {
     background: var(--ctp-mocha-surface0);
     color: var(--ctp-mocha-text);
     border: 1px solid var(--ctp-mocha-overlay0);
+}
+
+.placeholder-container {
+    position: relative;
+    height: calc(80vw * (3 / 4));
+    max-height: 40vh;
+    background-color: var(--ctp-mocha-base);
+    border: 1px solid var(--ctp-mocha-overlay0);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: var(--ctp-mocha-text);
+
+    max-width: 1100px;
+    width: 100%;
+    margin: 0 auto;
+    margin-bottom: 60px;
 }

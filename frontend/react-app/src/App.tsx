@@ -1185,7 +1185,8 @@ const ImageUpscaler: React.FC = () => {
                 </div>
               )}
 
-              <div className="App">
+              {/* <div className="App"> */}
+              <div>
                 {imagePreview && upscaledImage ? (
                   <div>
                     <h2 className='image-comparison-header'>Image Comparison</h2>

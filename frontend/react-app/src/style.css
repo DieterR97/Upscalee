@@ -1812,12 +1812,6 @@ var(--ctp-mocha-blue)
   margin-left: 20px;
 } */
 
-.placeholder-container {
-  /* width: 80vw; */
-  max-width: 60vw !important;
-  width: 100% !important;
-}
-
 .image-comparison-header {
   margin: 0px 20px 20px;
 }
