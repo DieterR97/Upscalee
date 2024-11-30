@@ -229,11 +229,25 @@ export const ImageQualityAssessment: React.FC<ImageQualityAssessmentProps> = ({
     return score.toFixed(3);
   };
 
-  const getScoreClass = (score: number, info: MetricInfo) => {
-    const midpoint = (info.score_range[1] - info.score_range[0]) / 2;
-    return info.higher_better ? 
-      (score > midpoint ? 'good' : 'bad') : 
-      (score < midpoint ? 'good' : 'bad');
+  const getScoreClass = (score: number, info: MetricInfo, type: 'fr' | 'nr', compareScore?: number) => {
+    if (type === 'nr' && compareScore !== undefined) {
+      // For NR metrics, compare the two scores directly
+      if (info.higher_better) {
+        return score > compareScore ? 'good' : 'bad';
+      }
+      return score < compareScore ? 'good' : 'bad';
+    } else if (type === 'fr') {
+      // For FR metrics, compare against the midpoint of the range
+      const range = info.score_range;
+      const midpoint = (range[1] + range[0]) / 2;
+      const threshold = (range[1] - range[0]) * 0.2; // 20% of range
+      
+      if (info.higher_better) {
+        return score > midpoint + threshold ? 'good' : 'bad';
+      }
+      return score < midpoint - threshold ? 'good' : 'bad';
+    }
+    return '';
   };
 
   return (
@@ -362,15 +376,15 @@ export const ImageQualityAssessment: React.FC<ImageQualityAssessmentProps> = ({
                           {result.error ? (
                             <span className="error">{result.error}</span>
                           ) : result.type === 'fr' ? (
-                            <span className={getScoreClass(result.score!, info)}>
+                            <span className={getScoreClass(result.score!, info, 'fr')}>
                               {formatScore(result.score!, info.score_range)}
                             </span>
                           ) : (
                             <div className="nr-scores">
-                              <div className={getScoreClass(result.original!, info)}>
+                              <div className={getScoreClass(result.original!, info, 'nr', result.upscaled!)}>
                                 Original: {formatScore(result.original!, info.score_range)}
                               </div>
-                              <div className={getScoreClass(result.upscaled!, info)}>
+                              <div className={getScoreClass(result.upscaled!, info, 'nr', result.original!)}>
                                 Upscaled: {formatScore(result.upscaled!, info.score_range)}
                               </div>
                             </div>
