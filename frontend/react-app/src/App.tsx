@@ -271,6 +271,20 @@ const ImageUpscaler: React.FC = () => {
   const upscaleImage = async () => {
     if (!selectedImage) return;
 
+    // Check if a model is selected
+    if (!selectedModel) {
+      toast.error('Please select an AI model before upscaling.', {
+        position: "top-center",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        toastId: 'no-model-selected'
+      });
+      return;
+    }
+
     // Clear the upscaled image before starting the new upscale
     setUpscaledImage(null);
 
