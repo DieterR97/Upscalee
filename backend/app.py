@@ -36,6 +36,7 @@ import hashlib
 from tqdm import tqdm
 from threading import Event
 import time
+import shutil
 
 app = Flask(__name__)
 CORS(app, resources={
@@ -573,7 +574,7 @@ def evaluate_quality():
     Includes cleanup of temporary files after evaluation.
     """
     global download_in_progress
-    temp_files = []  # Track files to clean up
+    temp_files = []
     
     try:
         original_file = request.files['original_image']
@@ -626,8 +627,15 @@ def evaluate_quality():
                 metric = get_cached_metric(metric_name)
                 metric_info = SUPPORTED_METRICS[metric_name]
                 
+                print(f"\n{'='*50}")
+                print(f"Calculating: {metric_name}")
+                print(f"Type: {metric_info['type']}")
+                print(f"Expected Range: {metric_info['score_range']}")
+                print(f"Higher is better: {metric_info['higher_better']}")
+                
                 if metric_info['type'] == 'fr':
                     score = metric(upscaled_path, original_path).item()
+                    print(f"Score: {score:.4f}")
                     results[metric_name] = {
                         'score': score,
                         'type': 'fr',
@@ -637,6 +645,8 @@ def evaluate_quality():
                 else:  # No-reference metric
                     original_score = metric(original_path).item()
                     upscaled_score = metric(upscaled_path).item()
+                    print(f"Original Score: {original_score:.4f}")
+                    print(f"Upscaled Score: {upscaled_score:.4f}")
                     results[metric_name] = {
                         'original': original_score,
                         'upscaled': upscaled_score,
@@ -644,8 +654,11 @@ def evaluate_quality():
                         'score_range': metric_info['score_range'],
                         'higher_better': metric_info['higher_better']
                     }
+                print(f"{'='*50}\n")
             except Exception as e:
-                print(f"Error processing metric {metric_name}: {str(e)}")
+                print(f"\nError calculating {metric_name}:")
+                print(f"Error: {str(e)}")
+                print(f"{'='*50}\n")
                 results[metric_name] = {
                     'error': str(e),
                     'type': metric_info['type'],
@@ -866,8 +879,8 @@ socketio = setup_model_watcher(app, config["modelPath"])
 # Add these constants near your other global variables
 METRICS_CATALOG_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "metrics_catalog.json")
 DEFAULT_METRICS = {
-    "nr": ["musiq", "nima"],  # Default NR metrics
-    "fr": ["psnr", "ssim"]    # Default FR metrics
+    "nr": ["musiq", "nima", "brisque", "niqe"],  # Added brisque and niqe as they are classic baselines
+    "fr": ["psnr", "ssim", "lpips", "dists"]     # Added lpips and dists as they are modern perceptual metrics
 }
 
 def load_metrics_catalog() -> Dict:
@@ -915,6 +928,10 @@ def calculate_metrics():
         upscaled_image_b64 = data.get('upscaled_image')
         metrics_to_calculate = data.get('metrics', {'nr': [], 'fr': []})
 
+        # Load metrics catalog for score ranges
+        with open('metrics_catalog.json', 'r') as f:
+            metrics_catalog = json.load(f)
+
         def base64_to_image(base64_str):
             if 'data:image' in base64_str:
                 base64_str = base64_str.split(',')[1]
@@ -927,75 +944,208 @@ def calculate_metrics():
         original_image, original_array = base64_to_image(original_image_b64)
         upscaled_image, upscaled_array = base64_to_image(upscaled_image_b64)
 
-        # Resize original image to match upscaled image size for FR metrics
-        if metrics_to_calculate['fr']:
-            upscaled_size = upscaled_image.size
-            original_image_resized = original_image.resize(upscaled_size, Image.Resampling.LANCZOS)
-            original_array_resized = np.array(original_image_resized)
-        else:
-            original_image_resized = original_image
-            original_array_resized = original_array
+        # Add minimum size check and resizing
+        def ensure_min_size(image, min_size=224):
+            """Ensure image meets minimum size requirements."""
+            width, height = image.size
+            if width < min_size or height < min_size:
+                # Calculate new size maintaining aspect ratio
+                if width < height:
+                    new_width = min_size
+                    new_height = int(height * (min_size / width))
+                else:
+                    new_height = min_size
+                    new_width = int(width * (min_size / height))
+                return image.resize((new_width, new_height), Image.Resampling.LANCZOS)
+            return image
+
+        # List of metrics that require minimum 224px size
+        min_size_metrics = ['liqe', 'liqe_mix']
+
+        # Create temporary directories for inception_score
+        temp_original_dir = 'temp_original_inception'
+        temp_upscaled_dir = 'temp_upscaled_inception'
+
 
         results = {}
+        temp_files = []  # Track all temporary files
 
         # Calculate No-Reference metrics
         for metric_id in metrics_to_calculate['nr']:
             try:
-                metric = pyiqa.create_metric(metric_id).to(device)
-                temp_original = f'temp_original_{metric_id}.png'
-                temp_upscaled = f'temp_upscaled_{metric_id}.png'
+
+                metric_info = metrics_catalog[metric_id]
+                score_range = metric_info['score_range']
+                higher_better = metric_info['higher_better']
                 
-                original_image.save(temp_original)
-                upscaled_image.save(temp_upscaled)
+                print(f"\n{'='*50}")
+                print(f"Calculating metric: {metric_id}")
+                print(f"Type: {metric_info['type']}")
+                print(f"Category: {metric_info['category']}")
+
+                print(f"Score range: [{score_range[0]}, {score_range[1]}]")
+
+                print(f"Expected Range: {metrics_catalog[metric_id]['score_range']}")
+                print(f"Higher is better: {metrics_catalog[metric_id]['higher_better']}")
                 
-                with torch.no_grad():
-                    original_score = metric(temp_original).item()
-                    upscaled_score = metric(temp_upscaled).item()
+                if metric_id == 'inception_score':
+                    # Special handling for inception_score
+                    os.makedirs(temp_original_dir, exist_ok=True)
+                    os.makedirs(temp_upscaled_dir, exist_ok=True)
+                    
+                    orig_path = os.path.join(temp_original_dir, 'image.png')
+                    upsc_path = os.path.join(temp_upscaled_dir, 'image.png')
+                    original_image.save(orig_path)
+                    upscaled_image.save(upsc_path)
+                    
+                    metric = pyiqa.create_metric(metric_id).to(device)
+                    with torch.no_grad():
+                        original_result = metric(temp_original_dir)
+                        upscaled_result = metric(temp_upscaled_dir)
+                        # Print the result structure to debug
+                        print(f"Original result type: {type(original_result)}")
+                        print(f"Original result structure: {original_result}")
+                        
+                        # Extract the inception score mean
+                        original_score = original_result['inception_score_mean']
+                        upscaled_score = upscaled_result['inception_score_mean']
+                        
+                        # Convert to float if needed
+                        original_score = float(original_score) if hasattr(original_score, 'item') else float(original_score)
+                        upscaled_score = float(upscaled_score) if hasattr(upscaled_score, 'item') else float(upscaled_score)
+                    
+                    # Clean up inception directories
+                    shutil.rmtree(temp_original_dir, ignore_errors=True)
+                    shutil.rmtree(temp_upscaled_dir, ignore_errors=True)
+                else:
+                    # Normal metric calculation
+                    metric = pyiqa.create_metric(metric_id).to(device)
+                    temp_original = f'temp_original_{metric_id}.png'
+                    temp_upscaled = f'temp_upscaled_{metric_id}.png'
+                    temp_files.extend([temp_original, temp_upscaled])
+                    
+                    # Apply resizing only for metrics that need it
+                    if metric_id in min_size_metrics:
+                        temp_orig_img = ensure_min_size(original_image)
+                        temp_upsc_img = ensure_min_size(upscaled_image)
+                    else:
+                        temp_orig_img = original_image
+                        temp_upsc_img = upscaled_image
+                    
+                    temp_orig_img.save(temp_original)
+                    temp_upsc_img.save(temp_upscaled)
+                    
+                    with torch.no_grad():
+                        original_score = metric(temp_original).item()
+                        upscaled_score = metric(temp_upscaled).item()
                 
-                os.remove(temp_original)
-                os.remove(temp_upscaled)
+                print(f"Original Score: {original_score:.4f}")
+                print(f"Upscaled Score: {upscaled_score:.4f}")
+                print(f"{'='*50}\n")
                 
+                # Store raw scores without normalization
                 results[metric_id] = {
                     'type': 'nr',
+                    'category': metric_info['category'],
                     'original': float(original_score),
-                    'upscaled': float(upscaled_score)
+                    'upscaled': float(upscaled_score),
+                    'higher_better': higher_better,
+                    'score_range': score_range
                 }
+
             except Exception as e:
-                print(f"Error calculating {metric_id}: {str(e)}")
+                print(f"\nError calculating {metric_id}: {str(e)}")
+                print(f"Type: No-Reference")
+                print(f"Error: {str(e)}")
+                print(f"{'='*50}\n")
                 results[metric_id] = {'type': 'nr', 'error': str(e)}
 
         # Calculate Full-Reference metrics
         for metric_id in metrics_to_calculate['fr']:
             try:
+                metric_info = metrics_catalog[metric_id]
+                print(f"\n{'='*50}")
+                print(f"Calculating metric: {metric_id}")
+                print(f"Type: Full-Reference")
+                print(f"Expected Range: {metrics_catalog[metric_id]['score_range']}")
+                print(f"Higher is better: {metrics_catalog[metric_id]['higher_better']}")
+
                 if metric_id == 'psnr':
-                    score = calculate_psnr(original_array_resized, upscaled_array)
+                    score = calculate_psnr(original_array, upscaled_array)
                 elif metric_id == 'ssim':
-                    score = calculate_ssim(original_array_resized, upscaled_array)
-                else:
+                    score = calculate_ssim(original_array, upscaled_array)
+                elif metric_id == 'fid':
+                    # Special handling for FID metric
                     metric = pyiqa.create_metric(metric_id).to(device)
-                    temp_original = f'temp_original_{metric_id}.png'
-                    temp_upscaled = f'temp_upscaled_{metric_id}.png'
+                    temp_orig_dir = 'temp_original_fid'
+                    temp_upsc_dir = 'temp_upscaled_fid'
+                    os.makedirs(temp_orig_dir, exist_ok=True)
+                    os.makedirs(temp_upsc_dir, exist_ok=True)
                     
-                    original_image_resized.save(temp_original)
-                    upscaled_image.save(temp_upscaled)
+                    try:
+                        original_image.save(os.path.join(temp_orig_dir, 'image.png'))
+                        upscaled_image.save(os.path.join(temp_upsc_dir, 'image.png'))
+                        score = metric(temp_orig_dir, temp_upsc_dir).item()
+                    finally:
+                        shutil.rmtree(temp_orig_dir, ignore_errors=True)
+                        shutil.rmtree(temp_upsc_dir, ignore_errors=True)
+                else:
+                    # Handle other FR metrics
+                    metric = pyiqa.create_metric(metric_id).to(device)
                     
-                    with torch.no_grad():
-                        score = metric(temp_upscaled, temp_original).item()
+                    # Create temporary files
+                    temp_orig = f'temp_original_{metric_id}.png'
+                    temp_upsc = f'temp_upscaled_{metric_id}.png'
+                    temp_files.extend([temp_orig, temp_upsc])
                     
-                    os.remove(temp_original)
-                    os.remove(temp_upscaled)
+                    # Ensure minimum size and matching dimensions
+                    orig_resized = ensure_min_size(original_image)
+                    upsc_resized = ensure_min_size(upscaled_image)
+                    orig_resized = orig_resized.resize(upsc_resized.size, Image.Resampling.LANCZOS)
+                    
+                    # Save temporary files
+                    orig_resized.save(temp_orig)
+                    upsc_resized.save(temp_upsc)
+                    
+                    try:
+                        score = metric(temp_upsc, temp_orig).item()
+                    except Exception as e:
+                        print(f"Error with metric {metric_id}: {str(e)}")
+                        raise
+
+                print(f"Score: {score:.4f}")
                 
                 results[metric_id] = {
                     'type': 'fr',
-                    'score': float(score)
+                    'score': float(score),
+                    'score_range': metric_info['score_range'],
+                    'higher_better': metric_info['higher_better']
                 }
+
             except Exception as e:
-                print(f"Error calculating {metric_id}: {str(e)}")
+                print(f"\nError calculating {metric_id}:")
+                print(f"Type: Full-Reference")
+                print(f"Error: {str(e)}")
                 results[metric_id] = {'type': 'fr', 'error': str(e)}
+
+        # Clean up all temporary files
+        for temp_file in temp_files:
+            try:
+                if os.path.exists(temp_file):
+                    os.remove(temp_file)
+            except Exception as e:
+                print(f"Error removing temporary file {temp_file}: {str(e)}")
 
         return jsonify(results)
 
     except Exception as e:
+        # Clean up all temporary files in case of error
+        for temp_file in temp_files:
+            try:
+                if os.path.exists(temp_file):
+                    os.remove(temp_file)
+            except:
+                pass
         print(f"Error in calculate_metrics: {str(e)}")
         return jsonify({'error': str(e)}), 500
 
@@ -1090,7 +1240,13 @@ except ImportError:
 
 # Update the metrics catalog to correctly categorize CKDN
 METRIC_TYPES = {
-    'ckdn': 'fr',  # Change CKDN to full-reference
+    'ckdn': 'fr',
+    'dists': 'fr',
+    'lpips': 'fr',
+    'musiq': 'nr',
+    'nima': 'nr',
+    'brisque': 'nr',
+    'niqe': 'nr'
     # ... other metrics ...
 }
 

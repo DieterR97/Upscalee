@@ -1,16 +1,16 @@
 {
   "ahiq": {
-    "name": "Attention-based Hierarchical IQA (AHIQ)",
-    "description": "Deep learning model using hierarchical attention for no-reference image quality assessment",
-    "score_range": [0, 100],
-    "type": "nr",
+    "name": "AHIQ",
+    "description": "Adaptive High Image Quality Assessment",
+    "score_range": [0, 1],
+    "type": "fr",
     "higher_better": true,
     "category": "Deep Learning Based"
   },
   "arniqa": {
-    "name": "Attention-guided Reference-less Neural IQA",
+    "name": "Attention-based Reference-less Neural IQA",
     "description": "Base ARNIQA model for no-reference quality assessment",
-    "score_range": [0, 100],
+    "score_range": [0, 1],
     "type": "nr",
     "higher_better": true,
     "category": "Deep Learning Based"
@@ -18,7 +18,7 @@
   "arniqa-clive": {
     "name": "ARNIQA (CLIVE Dataset)",
     "description": "ARNIQA variant trained on the CLIVE dataset for in-the-wild image quality assessment",
-    "score_range": [0, 100],
+    "score_range": [0, 1],
     "type": "nr",
     "higher_better": true,
     "category": "Deep Learning Based"
@@ -26,7 +26,7 @@
   "arniqa-csiq": {
     "name": "ARNIQA (CSIQ Dataset)",
     "description": "ARNIQA variant trained on the CSIQ dataset for controlled distortion assessment",
-    "score_range": [0, 100],
+    "score_range": [0, 1],
     "type": "nr",
     "higher_better": true,
     "category": "Deep Learning Based"
@@ -34,7 +34,7 @@
   "arniqa-flive": {
     "name": "ARNIQA (FLIVE Dataset)",
     "description": "ARNIQA variant optimized for face image quality assessment using FLIVE dataset",
-    "score_range": [0, 100],
+    "score_range": [0, 1],
     "type": "nr",
     "higher_better": true,
     "category": "Deep Learning Based"
@@ -42,7 +42,7 @@
   "arniqa-kadid": {
     "name": "ARNIQA (KADID Dataset)",
     "description": "ARNIQA variant trained on the KADID-10k dataset for authentic distortion assessment",
-    "score_range": [0, 100],
+    "score_range": [0, 1],
     "type": "nr",
     "higher_better": true,
     "category": "Deep Learning Based"
@@ -88,9 +88,9 @@
     "category": "Traditional"
   },
   "ckdn": {
-    "name": "Cross-scale Knowledge Distillation Network",
-    "description": "Multi-scale approach using knowledge distillation for quality assessment",
-    "score_range": [0, 100],
+    "name": "CKDN",
+    "description": "Content-aware Knowledge Distillation Network",
+    "score_range": [0, 1],
     "type": "fr",
     "higher_better": true,
     "category": "Deep Learning Based"
@@ -98,7 +98,7 @@
   "clipiqa": {
     "name": "CLIP Image Quality Assessment",
     "description": "Uses CLIP's vision-language model for quality assessment",
-    "score_range": [0, 100],
+    "score_range": [0, 1],
     "type": "nr",
     "higher_better": true,
     "category": "Deep Learning Based"
@@ -106,7 +106,7 @@
   "clipiqa+": {
     "name": "CLIP Image Quality Assessment Plus",
     "description": "Enhanced version of CLIPIQA with improved performance",
-    "score_range": [0, 100],
+    "score_range": [0, 1],
     "type": "nr",
     "higher_better": true,
     "category": "Deep Learning Based"
@@ -114,7 +114,7 @@
   "clipiqa+_rn50_512": {
     "name": "CLIPIQA+ (ResNet-50 512)",
     "description": "CLIPIQA+ variant using ResNet-50 backbone with 512 resolution",
-    "score_range": [0, 100],
+    "score_range": [0, 1],
     "type": "nr",
     "higher_better": true,
     "category": "Deep Learning Based"
@@ -122,54 +122,46 @@
   "clipiqa+_vitL14_512": {
     "name": "CLIPIQA+ (ViT-L/14 512)",
     "description": "CLIPIQA+ variant using Vision Transformer Large/14 with 512 resolution",
-    "score_range": [0, 100],
-    "type": "nr",
-    "higher_better": true,
-    "category": "Deep Learning Based"
-  },
-  "clipscore": {
-    "name": "CLIPScore",
-    "description": "Image-text similarity metric based on CLIP embeddings",
-    "score_range": [0, 100],
+    "score_range": [0, 1],
     "type": "nr",
     "higher_better": true,
     "category": "Deep Learning Based"
   },
   "cnniqa": {
     "name": "CNN-based Image Quality Assessment",
-    "description": "Convolutional Neural Network approach for blind image quality assessment",
-    "score_range": [0, 100],
+    "description": "Deep learning model trained on KonIQ-10k dataset for no-reference quality assessment",
+    "score_range": [0, 1],
     "type": "nr",
     "higher_better": true,
     "category": "Deep Learning Based"
   },
   "cw_ssim": {
     "name": "Complex Wavelet SSIM",
-    "description": "Complex wavelet domain extension of SSIM",
+    "description": "Complex Wavelet Structural Similarity",
     "score_range": [0, 1],
     "type": "fr",
     "higher_better": true,
     "category": "Traditional"
   },
   "dbcnn": {
-    "name": "Deep Bilinear CNN",
-    "description": "Deep bilinear model for blind image quality assessment",
-    "score_range": [0, 100],
+    "name": "Deep Bilinear CNN for IQA",
+    "description": "Deep bilinear CNN model for no-reference image quality assessment",
+    "score_range": [0, 1],
     "type": "nr",
     "higher_better": true,
     "category": "Deep Learning Based"
   },
   "dists": {
     "name": "Deep Image Structure and Texture Similarity",
-    "description": "Deep learning metric comparing structural and textural features",
+    "description": "Deep learning based image quality metric",
     "score_range": [0, 1],
     "type": "fr",
-    "higher_better": true,
+    "higher_better": false,
     "category": "Deep Learning Based"
   },
   "entropy": {
     "name": "Image Entropy",
-    "description": "Measures information content in the image",
+    "description": "Measures image information content using Shannon entropy",
     "score_range": [0, 8],
     "type": "nr",
     "higher_better": true,
@@ -177,8 +169,8 @@
   },
   "fid": {
     "name": "Fréchet Inception Distance",
-    "description": "Measures similarity of generated images to real images",
-    "score_range": [0, 9999],
+    "description": "Measures similarity between two datasets of images",
+    "score_range": [0, 100],
     "type": "fr",
     "higher_better": false,
     "category": "Deep Learning Based"
@@ -200,9 +192,9 @@
     "category": "Traditional"
   },
   "hyperiqa": {
-    "name": "Hyper IQA",
-    "description": "Hypernetwork-based approach for blind image quality assessment",
-    "score_range": [0, 100],
+    "name": "Hypernetwork IQA",
+    "description": "Hypernetwork-based approach for no-reference image quality assessment",
+    "score_range": [0, 1],
     "type": "nr",
     "higher_better": true,
     "category": "Deep Learning Based"
@@ -225,7 +217,7 @@
   },
   "laion_aes": {
     "name": "LAION Aesthetics Predictor",
-    "description": "Aesthetic quality predictor trained on LAION-Aesthetics dataset",
+    "description": "Aesthetic quality predictor trained on LAION dataset",
     "score_range": [0, 10],
     "type": "nr",
     "higher_better": true,
@@ -233,16 +225,16 @@
   },
   "liqe": {
     "name": "Learning-based Image Quality Evaluator",
-    "description": "Deep learning model for blind image quality assessment",
-    "score_range": [0, 100],
+    "description": "Deep learning model for no-reference image quality assessment",
+    "score_range": [0, 10],
     "type": "nr",
     "higher_better": true,
     "category": "Deep Learning Based"
   },
   "liqe_mix": {
     "name": "LIQE Mixed Dataset",
-    "description": "LIQE variant trained on multiple IQA datasets",
-    "score_range": [0, 100],
+    "description": "LIQE variant trained on multiple datasets",
+    "score_range": [0, 10],
     "type": "nr",
     "higher_better": true,
     "category": "Deep Learning Based"
@@ -282,31 +274,31 @@
   "mad": {
     "name": "Most Apparent Distortion",
     "description": "Adaptive quality metric based on distortion visibility",
-    "score_range": [0, 100],
+    "score_range": [0, 200],
     "type": "fr",
     "higher_better": false,
     "category": "Traditional"
   },
   "maniqa": {
     "name": "Multi-dimension Attention Network IQA",
-    "description": "Base MANIQA model using multi-dimensional attention",
-    "score_range": [0, 100],
+    "description": "Multi-dimensional attention network for no-reference image quality assessment",
+    "score_range": [0, 1],
     "type": "nr",
     "higher_better": true,
     "category": "Deep Learning Based"
   },
   "maniqa-kadid": {
-    "name": "MANIQA (KADID Dataset)",
-    "description": "MANIQA variant trained on KADID-10k dataset",
-    "score_range": [0, 100],
+    "name": "MANIQA KADID-10K",
+    "description": "MANIQA trained on KADID-10K dataset",
+    "score_range": [0, 1],
     "type": "nr",
     "higher_better": true,
     "category": "Deep Learning Based"
   },
   "maniqa-pipal": {
-    "name": "MANIQA (PIPAL Dataset)",
-    "description": "MANIQA variant trained on PIPAL dataset for perceptual IQA",
-    "score_range": [0, 100],
+    "name": "MANIQA PIPAL",
+    "description": "MANIQA trained on PIPAL dataset",
+    "score_range": [0, 1],
     "type": "nr",
     "higher_better": true,
     "category": "Deep Learning Based"
@@ -322,30 +314,30 @@
   "msswd": {
     "name": "Multi-Scale Sliced Wasserstein Distance",
     "description": "Multi-scale approach using Wasserstein distance for quality assessment",
-    "score_range": [0, 100],
+    "score_range": [0, 1],
     "type": "fr",
     "higher_better": false,
     "category": "Traditional"
   },
   "musiq": {
-    "name": "Multi-scale Image Quality Transformer",
-    "description": "Base MUSIQ model using transformer architecture",
+    "name": "MUSIQ KonIQ-10K",
+    "description": "Multi-scale Image Quality Transformer trained on KonIQ-10K",
     "score_range": [0, 100],
     "type": "nr",
     "higher_better": true,
     "category": "Deep Learning Based"
   },
   "musiq-ava": {
-    "name": "MUSIQ (AVA Dataset)",
-    "description": "MUSIQ variant trained on AVA dataset for aesthetic assessment",
-    "score_range": [0, 100],
+    "name": "MUSIQ AVA",
+    "description": "MUSIQ trained on AVA dataset",
+    "score_range": [0, 10],
     "type": "nr",
     "higher_better": true,
     "category": "Deep Learning Based"
   },
   "musiq-paq2piq": {
-    "name": "MUSIQ (PAQ2PIQ Dataset)",
-    "description": "MUSIQ variant trained on PAQ2PIQ dataset",
+    "name": "MUSIQ PAQ2PIQ",
+    "description": "MUSIQ trained on PAQ2PIQ dataset",
     "score_range": [0, 100],
     "type": "nr",
     "higher_better": true,
@@ -370,7 +362,7 @@
   "nima-koniq": {
     "name": "NIMA (KonIQ Dataset)",
     "description": "NIMA variant trained on KonIQ-10k dataset for in-the-wild image quality",
-    "score_range": [1, 10],
+    "score_range": [0, 1],
     "type": "nr",
     "higher_better": true,
     "category": "Deep Learning Based"
@@ -378,7 +370,7 @@
   "nima-spaq": {
     "name": "NIMA (SPAQ Dataset)",
     "description": "NIMA variant optimized for smartphone photo quality",
-    "score_range": [1, 10],
+    "score_range": [0, 100],
     "type": "nr",
     "higher_better": true,
     "category": "Deep Learning Based"
@@ -394,7 +386,7 @@
   "niqe": {
     "name": "Natural Image Quality Evaluator",
     "description": "Opinion-unaware image quality assessment using natural scene statistics",
-    "score_range": [0, 100],
+    "score_range": [0, 15],
     "type": "nr",
     "higher_better": false,
     "category": "Traditional"
@@ -402,7 +394,7 @@
   "niqe_matlab": {
     "name": "NIQE (MATLAB Implementation)",
     "description": "MATLAB-compatible implementation of NIQE metric",
-    "score_range": [0, 100],
+    "score_range": [0, 15],
     "type": "nr",
     "higher_better": false,
     "category": "Traditional"
@@ -418,7 +410,7 @@
   "nrqm": {
     "name": "No-Reference Quality Metric",
     "description": "General-purpose no-reference quality assessment",
-    "score_range": [0, 100],
+    "score_range": [0, 10],
     "type": "nr",
     "higher_better": true,
     "category": "Traditional"
@@ -442,7 +434,7 @@
   "pieapp": {
     "name": "Perceptual Image-Error Assessment through Pairwise Preference",
     "description": "Learning-based metric using pairwise preferences",
-    "score_range": [0, 100],
+    "score_range": [0, 1],
     "type": "fr",
     "higher_better": true,
     "category": "Deep Learning Based"
@@ -482,7 +474,7 @@
   "qalign_4bit": {
     "name": "Quality Alignment (4-bit)",
     "description": "4-bit variant of QAlign metric",
-    "score_range": [0, 1],
+    "score_range": [0, 5],
     "type": "fr",
     "higher_better": true,
     "category": "Deep Learning Based"
@@ -490,7 +482,7 @@
   "qalign_8bit": {
     "name": "Quality Alignment (8-bit)",
     "description": "8-bit variant of QAlign metric",
-    "score_range": [0, 1],
+    "score_range": [0, 5],
     "type": "fr",
     "higher_better": true,
     "category": "Deep Learning Based"
@@ -530,7 +522,7 @@
   "topiq_fr": {
     "name": "Top-down Image Quality Assessment (Full-Reference)",
     "description": "Full-reference variant of TOPIQ framework",
-    "score_range": [0, 100],
+    "score_range": [0, 1],
     "type": "fr",
     "higher_better": true,
     "category": "Deep Learning Based"
@@ -538,7 +530,7 @@
   "topiq_fr-pipal": {
     "name": "TOPIQ-FR (PIPAL Dataset)",
     "description": "TOPIQ-FR variant trained on PIPAL dataset",
-    "score_range": [0, 100],
+    "score_range": [0, 1],
     "type": "fr",
     "higher_better": true,
     "category": "Deep Learning Based"
@@ -546,7 +538,7 @@
   "topiq_iaa": {
     "name": "TOPIQ Image Aesthetic Assessment",
     "description": "TOPIQ variant for aesthetic quality assessment",
-    "score_range": [0, 100],
+    "score_range": [0, 10],
     "type": "nr",
     "higher_better": true,
     "category": "Deep Learning Based"
@@ -554,7 +546,7 @@
   "topiq_iaa_res50": {
     "name": "TOPIQ-IAA (ResNet-50)",
     "description": "ResNet-50 based variant of TOPIQ-IAA",
-    "score_range": [0, 100],
+    "score_range": [0, 10],
     "type": "nr",
     "higher_better": true,
     "category": "Deep Learning Based"
@@ -562,70 +554,70 @@
   "topiq_nr": {
     "name": "TOPIQ No-Reference",
     "description": "No-reference variant of TOPIQ framework",
-    "score_range": [0, 100],
+    "score_range": [0, 1],
     "type": "nr",
     "higher_better": true,
     "category": "Deep Learning Based"
   },
   "topiq_nr-face": {
-    "name": "TOPIQ-NR (Face)",
-    "description": "TOPIQ-NR specialized for face image quality",
-    "score_range": [0, 100],
+    "name": "TOPIQ No-Reference (Face)",
+    "description": "TOPIQ-NR variant specialized for face image quality",
+    "score_range": [0, 1],
     "type": "nr",
     "higher_better": true,
     "category": "Deep Learning Based"
   },
   "topiq_nr-flive": {
-    "name": "TOPIQ-NR (FLIVE Dataset)",
-    "description": "TOPIQ-NR trained on FLIVE dataset",
-    "score_range": [0, 100],
+    "name": "TOPIQ No-Reference (FLIVE)",
+    "description": "TOPIQ-NR variant trained on FLIVE dataset",
+    "score_range": [0, 1],
     "type": "nr",
     "higher_better": true,
     "category": "Deep Learning Based"
   },
   "topiq_nr-spaq": {
-    "name": "TOPIQ-NR (SPAQ Dataset)",
-    "description": "TOPIQ-NR optimized for smartphone photos",
-    "score_range": [0, 100],
+    "name": "TOPIQ No-Reference (SPAQ)",
+    "description": "TOPIQ-NR variant trained on SPAQ dataset",
+    "score_range": [0, 1],
     "type": "nr",
     "higher_better": true,
     "category": "Deep Learning Based"
   },
   "tres": {
-    "name": "Transformer-based Image Quality Assessment",
-    "description": "Base TRES model using transformer architecture",
+    "name": "TReS KonIQ-10K",
+    "description": "Transformer-based Reference-free System trained on KonIQ-10K",
     "score_range": [0, 100],
     "type": "nr",
     "higher_better": true,
     "category": "Deep Learning Based"
   },
   "tres-flive": {
-    "name": "TRES (FLIVE Dataset)",
-    "description": "TRES variant trained on FLIVE dataset",
+    "name": "TReS FLIVE",
+    "description": "TReS variant trained on FLIVE dataset",
     "score_range": [0, 100],
     "type": "nr",
     "higher_better": true,
     "category": "Deep Learning Based"
   },
   "unique": {
-    "name": "Unified Image Quality Assessment",
-    "description": "Unified approach for both FR and NR quality assessment",
-    "score_range": [0, 100],
+    "name": "Unified No-reference Image Quality and Uncertainty Evaluator",
+    "description": "Deep learning model with uncertainty estimation",
+    "score_range": [0, 10],
     "type": "nr",
     "higher_better": true,
     "category": "Deep Learning Based"
   },
   "uranker": {
-    "name": "Universal Image Quality Ranker",
-    "description": "Learning-to-rank approach for image quality assessment",
-    "score_range": [0, 100],
+    "name": "URanker",
+    "description": "Uncertainty-aware ranking model for image quality assessment",
+    "score_range": [0, 2],
     "type": "nr",
     "higher_better": true,
     "category": "Deep Learning Based"
   },
   "vif": {
     "name": "Visual Information Fidelity",
-    "description": "Information theoretic approach to quality assessment",
+    "description": "Information theoretic approach that quantifies the amount of information shared between reference and distorted images.",
     "score_range": [0, 1],
     "type": "fr",
     "higher_better": true,
@@ -642,15 +634,15 @@
   "wadiqam_fr": {
     "name": "Weighted Average Deep IQA Metric (Full-Reference)",
     "description": "Full-reference variant of WADIQAM",
-    "score_range": [0, 100],
+    "score_range": [-1, 1],
     "type": "fr",
     "higher_better": true,
     "category": "Deep Learning Based"
   },
   "wadiqam_nr": {
-    "name": "Weighted Average Deep IQA Metric (No-Reference)",
-    "description": "No-reference variant of WADIQAM",
-    "score_range": [0, 100],
+    "name": "WaDIQaM No-Reference",
+    "description": "Weighted Average Deep IQA Model (No-Reference variant)",
+    "score_range": [-1, 1],
     "type": "nr",
     "higher_better": true,
     "category": "Deep Learning Based"

@@ -128,6 +128,7 @@ export const ImageQualityAssessment: React.FC<ImageQualityAssessmentProps> = ({
       return;
     }
 
+    // Scroll to loading indicator
     setTimeout(() => {
       // Scroll to loading indicator immediately after button click
       const loadingElement = document.querySelector('.iqa-loading-status');
@@ -139,43 +140,62 @@ export const ImageQualityAssessment: React.FC<ImageQualityAssessmentProps> = ({
     setLoading(true);
     setError(null);
 
-    try {
-      // Convert blob URLs to base64
-      const [originalBase64, upscaledBase64] = await Promise.all([
-        blobUrlToBase64(originalImage),
-        blobUrlToBase64(upscaledImage)
-      ]);
+    let retryCount = 0;
+    const maxRetries = 3;
+    const retryDelay = 1000; // 1 second
 
-      const response = await fetch('http://localhost:5000/calculate-metrics', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          original_image: originalBase64,
-          upscaled_image: upscaledBase64,
-          metrics: metricsToRun
-        })
-      });
+    const attemptCalculation = async (): Promise<void> => {
+      try {
+        // Convert blob URLs to base64
+        const [originalBase64, upscaledBase64] = await Promise.all([
+          blobUrlToBase64(originalImage),
+          blobUrlToBase64(upscaledImage)
+        ]);
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to calculate metrics');
-      }
+        const response = await fetch('http://localhost:5000/calculate-metrics', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            original_image: originalBase64,
+            upscaled_image: upscaledBase64,
+            metrics: metricsToRun
+          })
+        });
 
-      const data = await response.json();
-      setScores(data);
-
-      // Scroll to results once they're loaded
-      setTimeout(() => {
-        const resultsElement = document.querySelector('.results');
-        if (resultsElement) {
-          resultsElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.error || 'Failed to calculate metrics');
         }
-      }, 100);
-    } catch (error) {
-      console.error('Error:', error);
-      setError(error instanceof Error ? error.message : 'Failed to calculate metrics');
+
+        const data = await response.json();
+        setScores(data);
+
+        // Scroll to results
+        setTimeout(() => {
+          const resultsElement = document.querySelector('.results');
+          if (resultsElement) {
+            resultsElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+        }, 100);
+      } catch (error) {
+        if (retryCount < maxRetries) {
+          retryCount++;
+          console.log(`Retry attempt ${retryCount}/${maxRetries}...`);
+          await new Promise(resolve => setTimeout(resolve, retryDelay));
+          return attemptCalculation();
+        }
+        
+        console.error('Error:', error);
+        setError(
+          'Unable to connect to the server. Please check if the backend service is running and try again in a few moments.'
+        );
+      }
+    };
+
+    try {
+      await attemptCalculation();
     } finally {
       setLoading(false);
     }
@@ -203,10 +223,10 @@ export const ImageQualityAssessment: React.FC<ImageQualityAssessmentProps> = ({
   };
 
   const formatScore = (score: number, range: [number, number]) => {
-    if (range[1] <= 1) {
-      return score.toFixed(3);
+    if (range[1] === 100 && range[0] === 0) {
+      return score.toFixed(1);
     }
-    return score.toFixed(1);
+    return score.toFixed(3);
   };
 
   const getScoreClass = (score: number, info: MetricInfo) => {

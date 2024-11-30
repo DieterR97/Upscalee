@@ -1,0 +1,10 @@
+{
+  "clipscore": {
+    "name": "CLIPScore",
+    "description": "Image-text similarity metric based on CLIP embeddings",
+    "score_range": [0, 100],
+    "type": "nr",
+    "higher_better": true,
+    "category": "Deep Learning Based"
+  }
+}

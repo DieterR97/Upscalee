@@ -3,7 +3,6 @@
   "modelPath": "D:\\upscalee_custom_models",
   "selectedMetrics": {
     "nr": [
-      "ahiq",
       "arniqa",
       "arniqa-clive",
       "arniqa-csiq",
@@ -18,7 +17,6 @@
       "clipiqa+",
       "clipiqa+_rn50_512",
       "clipiqa+_vitL14_512",
-      "clipscore",
       "cnniqa",
       "dbcnn",
       "entropy",
@@ -58,6 +56,7 @@
       "wadiqam_nr"
     ],
     "fr": [
+      "ahiq",
       "ckdn",
       "cw_ssim",
       "dists",
