@@ -6,5 +6,13 @@
     "type": "nr",
     "higher_better": true,
     "category": "Deep Learning Based"
+  },
+  "qalign": {
+    "name": "Quality Alignment",
+    "description": "Alignment-based quality assessment metric",
+    "score_range": [0, 5],
+    "type": "fr",
+    "higher_better": true,
+    "category": "Deep Learning Based"
   }
 }
