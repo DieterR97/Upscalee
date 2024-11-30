@@ -3,19 +3,19 @@
   "modelPath": "D:\\upscalee_custom_models",
   "selectedMetrics": {
     "nr": [
+      "brisque",
+      "hyperiqa",
+      "maniqa",
       "musiq",
       "nima",
-      "brisque",
-      "niqe",
-      "hyperiqa",
-      "maniqa"
+      "niqe"
     ],
     "fr": [
-      "psnr",
-      "ssim",
-      "lpips",
       "dists",
       "fsim",
+      "lpips",
+      "psnr",
+      "ssim",
       "vif"
     ]
   }

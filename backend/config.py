@@ -4,28 +4,28 @@ DEFAULT_CONFIG = {
     "modelPath": os.path.join(os.path.dirname(os.path.abspath(__file__)), "weights"),
     "selectedMetrics": {
         "nr": [
+            "brisque", # Traditional baseline
+            "hyperiqa", # Recent high-performer
+            "maniqa",   # Multi-dimensional attention
             "musiq",    # Modern transformer-based
             "nima",     # Classic aesthetic quality
-            "brisque", # Traditional baseline
-            "niqe",    # Opinion-unaware baseline
-            "hyperiqa", # Recent high-performer
-            "maniqa"   # Multi-dimensional attention
+            "niqe"     # Opinion-unaware baseline
         ],
         "fr": [
-            "psnr",    # Traditional baseline
-            "ssim",    # Traditional structural
-            "lpips",   # Learned perceptual
             "dists",   # Deep structure/texture
             "fsim",    # Feature similarity
+            "lpips",   # Learned perceptual
+            "psnr",    # Traditional baseline
+            "ssim",    # Traditional structural
             "vif"      # Information fidelity
         ]
     },
     "metricCategories": {
         "traditional": [
-            "psnr", "ssim", "ms_ssim", "fsim", "vif", "brisque", "niqe"
+            "brisque", "fsim", "ms_ssim", "niqe", "psnr", "ssim", "vif"
         ],
         "deepLearning": [
-            "musiq", "nima", "lpips", "dists", "hyperiqa", "maniqa"
+            "dists", "hyperiqa", "lpips", "maniqa", "musiq", "nima"
         ]
     }
 }
