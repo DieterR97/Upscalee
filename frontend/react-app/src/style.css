@@ -2198,3 +2198,22 @@ button {
 .community-card a:hover {
   background: var(--ctp-mocha-sapphire);
 }
+
+.startup-status {
+  margin-top: 1rem;
+  font-size: 0.9rem;
+  text-align: left;
+}
+
+.status-item {
+  margin: 0.25rem 0;
+  opacity: 0.8;
+}
+
+.status-item.ready {
+  color: #4caf50;
+}
+
+.status-item.pending {
+  color: #ffa726;
+}

@@ -34,6 +34,8 @@ from requests.adapters import HTTPAdapter
 from requests.packages.urllib3.util.retry import Retry
 import hashlib
 from tqdm import tqdm
+from threading import Event
+import time
 
 app = Flask(__name__)
 CORS(app, resources={
@@ -1131,6 +1133,74 @@ def download_file_with_retry(url, destination, expected_sha256=None, max_retries
         print(f"Error downloading file: {str(e)}")
         return False
 
+# Add these near the top with other global variables
+startup_complete = Event()
+startup_status = {
+    "ready": False,
+    "services": {
+        "cuda": False,
+        "models_directory": False,
+        "temp_directories": False
+    },
+    "message": "Starting up..."
+}
+
+def initialize_backend():
+    """Initialize all backend services and track their status."""
+    global startup_status
+    
+    try:
+        # Check CUDA availability
+        startup_status["message"] = "Checking CUDA availability..."
+        cuda_available = torch.cuda.is_available()
+        startup_status["services"]["cuda"] = cuda_available
+        
+        # Initialize directories
+        startup_status["message"] = "Setting up directories..."
+        try:
+            cleanup_temp_directories()
+            startup_status["services"]["temp_directories"] = True
+        except Exception as e:
+            startup_status["message"] = f"Error setting up directories: {str(e)}"
+            return False
+            
+        # Check models directory
+        startup_status["message"] = "Checking models directory..."
+        config = load_config()
+        model_dir = Path(config["modelPath"])
+        if not model_dir.exists():
+            os.makedirs(model_dir)
+        startup_status["services"]["models_directory"] = True
+        
+        # Mark startup as complete
+        startup_status["ready"] = True
+        startup_status["message"] = "Backend ready"
+        startup_complete.set()
+        return True
+        
+    except Exception as e:
+        startup_status["message"] = f"Startup error: {str(e)}"
+        return False
+
+@app.route("/health", methods=["GET"])
+def health_check():
+    """Health check endpoint that returns backend status."""
+    return jsonify({
+        "status": "ready" if startup_status["ready"] else "starting",
+        "services": startup_status["services"],
+        "message": startup_status["message"],
+        "cuda_available": torch.cuda.is_available(),
+        "cuda_device": str(device),
+        "version": "1.0.0"  # Add version tracking as needed
+    })
+
+# Update the main startup
 if __name__ == '__main__':
+    # Initialize backend in a separate thread
+    import threading
+    startup_thread = threading.Thread(target=initialize_backend)
+    startup_thread.start()
+    
+    # Start the Flask app
     socketio.run(app, debug=True, port=5000, allow_unsafe_werkzeug=True)
 

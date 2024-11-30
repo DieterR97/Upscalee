@@ -5,14 +5,34 @@ import logo from './assets/upscalee.png'; // Make sure to import your logo
 
 const Root = () => {
   const [isLoading, setIsLoading] = useState(true);
+  const [backendStatus, setBackendStatus] = useState<{
+    status: string;
+    message: string;
+    services: Record<string, boolean>;
+  } | null>(null);
 
   useEffect(() => {
-    // Wait for the initial render and styles to load
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 1000); // Adjust timing as needed
+    const checkBackendHealth = async () => {
+      try {
+        const response = await fetch('http://localhost:5000/health');
+        const status = await response.json();
+        setBackendStatus(status);
+        
+        if (status.status === 'ready') {
+          // Wait a bit longer to ensure everything is loaded
+          setTimeout(() => setIsLoading(false), 500);
+        } else {
+          // Check again in 1 second
+          setTimeout(checkBackendHealth, 1000);
+        }
+      } catch (error) {
+        console.error('Backend health check failed:', error);
+        // Retry in 2 seconds if failed
+        setTimeout(checkBackendHealth, 2000);
+      }
+    };
 
-    return () => clearTimeout(timer);
+    checkBackendHealth();
   }, []);
 
   return (
@@ -21,7 +41,20 @@ const Root = () => {
         <div className={`loading-overlay ${!isLoading ? 'fade-out' : ''}`}>
           <img src={logo} alt="Upscalee Logo" />
           <div className="loading-spinner" />
-          <p>Loading Upscalee...</p>
+          <p>
+            {backendStatus
+              ? backendStatus.message
+              : 'Connecting to backend...'}
+          </p>
+          {backendStatus?.services && (
+            <div className="startup-status">
+              {Object.entries(backendStatus.services).map(([service, ready]) => (
+                <div key={service} className={`status-item ${ready ? 'ready' : 'pending'}`}>
+                  {service.replace('_', ' ')}: {ready ? '✓' : '...'}
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       )}
       <React.StrictMode>
