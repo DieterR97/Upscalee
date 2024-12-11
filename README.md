@@ -124,12 +124,14 @@ The project's practical value lies in its combination of powerful AI technology 
 
 ### Short Demo Video
 
-<div align="center">
+<!-- <div align="center">
   <video width="1000" controls>
     <source src="assets/Short_Demo_Video.mp4" type="video/mp4">
     Your browser does not support the video tag.
   </video>
-</div>
+</div> -->
+
+[![Short Demo Video](https://raw.githubusercontent.com/DieterR97/Upscalee/main/assets/Short_Demo_Video_Thumbnail.png)](https://raw.githubusercontent.com/DieterR97/Upscalee/main/assets/Short_Demo_Video.mp4)
 
 # 
 
