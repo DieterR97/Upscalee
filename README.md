@@ -131,7 +131,9 @@ The project's practical value lies in its combination of powerful AI technology 
   </video>
 </div> -->
 
-[![Short Demo Video](https://raw.githubusercontent.com/DieterR97/Upscalee/main/assets/Short_Demo_Video_Thumbnail.png)](https://raw.githubusercontent.com/DieterR97/Upscalee/main/assets/Short_Demo_Video.mp4)
+<!-- [![Short Demo Video](https://raw.githubusercontent.com/DieterR97/Upscalee/main/assets/Short_Demo_Video_Thumbnail.png)](https://raw.githubusercontent.com/DieterR97/Upscalee/main/assets/Short_Demo_Video.mp4) -->
+
+https://github.com/user-attachments/assets/399f5cf1-cf7b-4bb7-819d-d72868e0fab5
 
 # 
 
