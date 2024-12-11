@@ -18,22 +18,23 @@
 
 # Upscalee
 
+### 🏆 Open Window Institute: 2024 Pangolin Award Winner - "Best AI OR Technical Implementation" 🏆
+### 🏆 Open Window Institute: 2024 Pangolin Award Winner - "Creative Technologies Trailblazer Award" 🏆
+
 ## Quick Navigation
 <div align="center">
   <h3 style="display: inline;"><a href="#-ai-powered-upscaling">🤖 AI Upscaling</a></h3>
-  &nbsp;&nbsp;
-  <br /><h3 style="display: inline;"><a href="#comparison-examples">⚖️ Comparison</a></h3>
-  &nbsp;&nbsp;
-  <br /><h3 style="display: inline;"><a href="#-image-quality-assessment-iqa">📊 Quality Assessment</a></h3>
-  &nbsp;&nbsp;
-  <br /><h3 style="display: inline;"><a href="#%EF%B8%8F-advanced-configuration">⚙️ Configuration</a></h3>
-  &nbsp;&nbsp;
+  <h3 style="display: inline;"><a href="#comparison-examples">⚖️ Comparison</a></h3>
+  <h3 style="display: inline;"><a href="#-image-quality-assessment-iqa">📊 Quality Assessment</a></h3>
+  <h3 style="display: inline;"><a href="#%EF%B8%8F-advanced-configuration">⚙️ Configuration</a></h3>
 </div>
 
 ## Table of Contents
 * [About the Project](#about-the-project)
   * [Project Description](#project-description)
+  * [Real World Context & Practical Applications](#real-world-context--practical-applications)
   * [Built With](#built-with)
+  * [Short Demo Video](#short-demo-video)
 * [Getting Started](#getting-started)
   * [Prerequisites](#prerequisites)
   * [Installation](#installation)
@@ -75,6 +76,34 @@ Upscalee is a powerful image upscaling application that leverages state-of-the-a
 
 # 
 
+### Real World Context & Practical Applications
+
+Upscalee addresses key challenges across multiple industries and use-cases:
+
+* **Digital Content Creation**
+  * Enhance low-resolution product images for e-commerce
+  * Upscale social media content and thumbnails
+  * Improve presentation visuals and marketing materials
+
+* **Digital Preservation**
+  * Restore and enhance historical photographs
+  * Upgrade family photos to modern display standards
+  * Preserve and digitize artwork collections
+
+* **Web Development**
+  * Optimize images for high-resolution displays
+  * Scale graphics and logos without quality loss
+  * Create responsive images for various screen sizes
+
+* **Professional & Personal Use**
+  * Provide accessible alternative to expensive commercial software
+  * Enable photographers to enhance image details
+  * Help hobbyists improve personal photo collections
+
+The project's practical value lies in its combination of powerful AI technology with an intuitive interface, making professional-grade image enhancement accessible to both professionals and casual users, while providing comprehensive quality assessment tools for informed decision-making.
+
+# 
+
 ### Built With
 * **Frontend:**
   * [React](https://create-react-app.dev/)
@@ -90,6 +119,19 @@ Upscalee is a powerful image upscaling application that leverages state-of-the-a
   * [Real-ESRGAN](https://github.com/xinntao/Real-ESRGAN)
   * [Spandrel](https://github.com/chaiNNer-org/spandrel)
   * [PyIQA](https://github.com/chaofengc/IQA-PyTorch)
+
+# 
+
+### Short Demo Video
+
+<div align="center">
+  <video width="1000" controls>
+    <source src="assets/Short_Demo_Video.mp4" type="video/mp4">
+    Your browser does not support the video tag.
+  </video>
+</div>
+
+# 
 
 ## Getting Started
 
